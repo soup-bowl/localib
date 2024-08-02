@@ -95,4 +95,6 @@ export interface IProfile {
 	rank: number
 	releases_rated: number
 	rating_avg: number
+	avatar_url: string
+	banner_url: string
 }

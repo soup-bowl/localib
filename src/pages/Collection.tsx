@@ -12,7 +12,7 @@ import {
 import ExploreContainer from "../components/ExploreContainer"
 import { useQuery } from "@tanstack/react-query"
 import { ICollections, getCollectionReleases } from "../api"
-import "./collection.css"
+import "./Collection.css"
 
 const CollectionPage: React.FC = () => {
 	// const query = useQuery<ICollections>({
@@ -31,7 +31,7 @@ const CollectionPage: React.FC = () => {
 					<IonTitle>
 						<IonList>
 							<IonItem>
-								<IonSelect aria-label="Fruit" interface="popover" value="albums">
+								<IonSelect aria-label="SortType" interface="popover" value="albums">
 									<IonSelectOption value="artists">Artists</IonSelectOption>
 									<IonSelectOption value="albums">Albums</IonSelectOption>
 									<IonSelectOption value="labels">Labels</IonSelectOption>

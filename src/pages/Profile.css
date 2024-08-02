@@ -1,0 +1,17 @@
+.avatarBackground {
+	background-size: cover;
+	background-position: center center;
+}
+
+.profileColumn {
+	margin: 5px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+ion-avatar {
+	--border-radius: 4px;
+	height: 100px;
+	width: 100px;
+}

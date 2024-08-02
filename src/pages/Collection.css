@@ -6,3 +6,7 @@ ion-list {
 ion-item::part(native) {
 	background-color: unset;
 }
+
+.select-wrapper#select-label {
+	justify-content: center;
+}
