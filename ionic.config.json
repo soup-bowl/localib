@@ -1,0 +1,7 @@
+{
+	"name": "Cheese",
+	"integrations": {
+		"capacitor": {}
+	},
+	"type": "react-vite"
+}

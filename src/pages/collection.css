@@ -1,0 +1,8 @@
+ion-list {
+	background: none;
+	background-color: unset !important;
+}
+
+ion-item::part(native) {
+	background-color: unset;
+}
