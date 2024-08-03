@@ -1,11 +1,15 @@
+import { useState } from "react"
 import { IonAvatar, IonButton, IonContent, IonHeader, IonIcon, IonPage, IonToolbar } from "@ionic/react"
-import { FullpageLoading, StatDisplay } from "../components"
-import { getProfile, IProfile } from "../api"
 import { useQuery } from "@tanstack/react-query"
 import { cogOutline, eye, hourglass, library } from "ionicons/icons"
+import { FullpageLoading, StatDisplay } from "../components"
+import { getProfile, IProfile } from "../api"
+import { Settings } from "../modal"
 import "./Profile.css"
 
 const ProfilePage: React.FC = () => {
+	const [openSettingsDialog, setOpenSettingsDialog] = useState<boolean>(false)
+
 	const { data, isLoading } = useQuery<IProfile>({
 		queryKey: ["profile"],
 		queryFn: getProfile,
@@ -32,7 +36,7 @@ const ProfilePage: React.FC = () => {
 				<div className="avatarBackground" style={{ backgroundImage: `url(${data?.banner_url})` }}>
 					<IonHeader translucent>
 						<IonToolbar>
-							<IonButton fill="clear" size="large" slot="end">
+							<IonButton fill="clear" size="large" slot="end" onClick={() => setOpenSettingsDialog(true)}>
 								<IonIcon icon={cogOutline}></IonIcon>
 							</IonButton>
 						</IonToolbar>
@@ -57,6 +61,12 @@ const ProfilePage: React.FC = () => {
 					/>
 				</div>
 			</IonContent>
+
+			<Settings
+				open={openSettingsDialog}
+				onClose={() => setOpenSettingsDialog(false)}
+				onSave={() => setOpenSettingsDialog(false)}
+			/>
 		</IonPage>
 	)
 }

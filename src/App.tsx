@@ -15,6 +15,7 @@ import {
 import { IonReactRouter } from "@ionic/react-router"
 import { discOutline, searchOutline, personOutline } from "ionicons/icons"
 import { CollectionPage, ProfilePage, SearchPage } from "./pages"
+import { UserProvider } from "./context/UserContext"
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css"
@@ -63,42 +64,44 @@ const persister = createSyncStoragePersister({
 })
 
 const App: React.FC = () => (
-	<PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
-		<IonApp>
-			<IonReactRouter>
-				<IonTabs>
-					<IonRouterOutlet>
-						<Route exact path="/collection">
-							<CollectionPage />
-						</Route>
-						<Route exact path="/profile">
-							<ProfilePage />
-						</Route>
-						<Route path="/search">
-							<SearchPage />
-						</Route>
-						<Route exact path="/">
-							<Redirect to="/collection" />
-						</Route>
-					</IonRouterOutlet>
-					<IonTabBar slot="bottom" translucent>
-						<IonTabButton tab="collection" href="/collection">
-							<IonIcon aria-hidden="true" icon={discOutline} />
-							<IonLabel>Collection</IonLabel>
-						</IonTabButton>
-						<IonTabButton tab="profile" href="/profile">
-							<IonIcon aria-hidden="true" icon={personOutline} />
-							<IonLabel>Profile</IonLabel>
-						</IonTabButton>
-						<IonTabButton tab="search" href="/search">
-							<IonIcon aria-hidden="true" icon={searchOutline} />
-							<IonLabel>Search</IonLabel>
-						</IonTabButton>
-					</IonTabBar>
-				</IonTabs>
-			</IonReactRouter>
-		</IonApp>
-	</PersistQueryClientProvider>
+	<UserProvider>
+		<PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
+			<IonApp>
+				<IonReactRouter>
+					<IonTabs>
+						<IonRouterOutlet>
+							<Route exact path="/collection">
+								<CollectionPage />
+							</Route>
+							<Route exact path="/profile">
+								<ProfilePage />
+							</Route>
+							<Route path="/search">
+								<SearchPage />
+							</Route>
+							<Route exact path="/">
+								<Redirect to="/collection" />
+							</Route>
+						</IonRouterOutlet>
+						<IonTabBar slot="bottom" translucent>
+							<IonTabButton tab="collection" href="/collection">
+								<IonIcon aria-hidden="true" icon={discOutline} />
+								<IonLabel>Collection</IonLabel>
+							</IonTabButton>
+							<IonTabButton tab="profile" href="/profile">
+								<IonIcon aria-hidden="true" icon={personOutline} />
+								<IonLabel>Profile</IonLabel>
+							</IonTabButton>
+							<IonTabButton tab="search" href="/search">
+								<IonIcon aria-hidden="true" icon={searchOutline} />
+								<IonLabel>Search</IonLabel>
+							</IonTabButton>
+						</IonTabBar>
+					</IonTabs>
+				</IonReactRouter>
+			</IonApp>
+		</PersistQueryClientProvider>
+	</UserProvider>
 )
 
 export default App
