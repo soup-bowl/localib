@@ -9,6 +9,9 @@ import {
 	IonContent,
 	IonItem,
 	IonInput,
+	IonNote,
+	IonList,
+	IonInputPasswordToggle,
 } from "@ionic/react"
 import { UserContext } from "../context/UserContext"
 
@@ -19,31 +22,29 @@ interface Props {
 }
 
 const Settings: React.FC<Props> = ({ open, onClose, onSave }) => {
-	const userContext = useContext(UserContext);
+	const userContext = useContext(UserContext)
 
 	if (!userContext) {
-		throw new Error('SettingsPanel must be used within a UserProvider');
+		throw new Error("SettingsPanel must be used within a UserProvider")
 	}
 
-	const { username, setUsername, password, setPassword } = userContext;
-	const [newUsername, setNewUsername] = useState<string>(username);
-	const [newPassword, setNewPassword] = useState<string>(password);
+	const { username, setUsername, password, setPassword } = userContext
+	const [newUsername, setNewUsername] = useState<string>(username)
+	const [newPassword, setNewPassword] = useState<string>(password)
 
 	const handleSave = () => {
 		console.log("Save", newUsername, newPassword, username, password)
-		setUsername(newUsername);
-		setPassword(newPassword);
+		setUsername(newUsername)
+		setPassword(newPassword)
 		onSave()
-	};
+	}
 
 	return (
 		<IonModal isOpen={open}>
 			<IonHeader>
 				<IonToolbar>
 					<IonButtons slot="start">
-						<IonButton onClick={() => onClose()}>
-							Close
-						</IonButton>
+						<IonButton onClick={() => onClose()}>Close</IonButton>
 					</IonButtons>
 					<IonTitle>Settings</IonTitle>
 					<IonButtons slot="end">
@@ -54,12 +55,30 @@ const Settings: React.FC<Props> = ({ open, onClose, onSave }) => {
 				</IonToolbar>
 			</IonHeader>
 			<IonContent className="ion-padding">
-				<IonItem>
-					<IonInput label="Username" value={newUsername} onIonChange={(e) => setNewUsername(`${e.target.value}`)} />
-				</IonItem>
-				<IonItem>
-					<IonInput label="Password" value={newPassword} onIonChange={(e) => setNewPassword(`${e.target.value}`)} />
-				</IonItem>
+				<IonList inset={true}>
+					<IonItem>
+						<IonInput
+							label="Username"
+							value={newUsername}
+							onIonChange={(e) => setNewUsername(`${e.target.value}`)}
+						/>
+					</IonItem>
+					<IonItem>
+						<IonInput
+							type="password"
+							label="Password"
+							value={newPassword}
+							onIonChange={(e) => setNewPassword(`${e.target.value}`)}
+						>
+							<IonInputPasswordToggle slot="end"></IonInputPasswordToggle>
+						</IonInput>
+					</IonItem>
+				</IonList>
+				<IonNote color="medium" class="ion-margin-horizontal">
+					Until OAuth is implemented, we currently use Access Token for authentication. To get your token,{" "}
+					<a href="https://www.discogs.com/settings/developers">visit the Developer page</a> and copy your
+					token, or click Generate if you do not have one.
+				</IonNote>
 			</IonContent>
 		</IonModal>
 	)
