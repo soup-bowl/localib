@@ -29,7 +29,9 @@ export const getProfile = async (): Promise<IProfile> => {
 	return response.json()
 }
 
-export const getCollectionReleases = async (): Promise<IReleases[]> => {
+export const getCollectionReleases = async (
+	onProgress?: (page: number, pages: number) => void
+): Promise<IReleases[]> => {
 	let allReleases: IReleases[] = []
 	let url: string | undefined = `${API_URL}/users/soup-bowl/collection/folders/0/releases?sort=added&per_page=100`
 
@@ -47,6 +49,10 @@ export const getCollectionReleases = async (): Promise<IReleases[]> => {
 
 		const data: ICollections = await response.json()
 		allReleases = [...allReleases, ...data.releases]
+
+		if (onProgress) {
+			onProgress(data.pagination.page, data.pagination.pages)
+		}
 
 		// Set the url to the next page, or undefined if there are no more pages
 		url = data.pagination.urls.next
