@@ -47,7 +47,6 @@ const CollectionDisplayModal: React.FC<DisplayProps> = ({ album, open, onClose }
 
 const CollectionPage: React.FC = () => {
 	const queryClient = useQueryClient()
-	const [modalOpen, setModalOpen] = useState<boolean>(false)
 	const [modalInfo, setModalInfo] = useState<IReleases | undefined>(undefined)
 	const [loading, setLoading] = useState<{ page: number; pages: number }>({ page: 0, pages: 0 })
 	const [sort, setSort] = useState<"artists" | "albums" | "labels">("albums")
@@ -104,21 +103,15 @@ const CollectionPage: React.FC = () => {
 				{data && (
 					<AlbumGrid
 						data={data}
-						onClickAlbum={(album) => {
-							setModalInfo(album)
-							setModalOpen(true)
-						}}
+						onClickAlbum={(album) => setModalInfo(album)}
 					/>
 				)}
 
 				{modalInfo && (
 					<CollectionDisplayModal
 						album={modalInfo}
-						open={modalOpen}
-						onClose={() => {
-							setModalOpen(false)
-							setModalInfo(undefined)
-						}}
+						open={typeof modalInfo !== undefined}
+						onClose={() => setModalInfo(undefined)}
 					/>
 				)}
 			</IonContent>
