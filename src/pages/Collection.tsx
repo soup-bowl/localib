@@ -5,17 +5,21 @@ import {
 	IonItem,
 	IonList,
 	IonPage,
+	IonRefresher,
+	IonRefresherContent,
 	IonSelect,
 	IonSelectOption,
 	IonTitle,
 	IonToolbar,
+	RefresherEventDetail,
 } from "@ionic/react"
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { IReleases, getCollectionReleases } from "../api"
 import { FullpageLoading, AlbumGrid } from "../components"
 import "./Collection.css"
 
 const CollectionPage: React.FC = () => {
+	const queryClient = useQueryClient()
 	const [loading, setLoading] = useState<{ page: number, pages: number }>({ page: 0, pages: 0 });
 	const [sort, setSort] = useState<"artists" | "albums" | "labels">("albums");
 
@@ -23,6 +27,11 @@ const CollectionPage: React.FC = () => {
 		queryKey: ["collection"],
 		queryFn: () => getCollectionReleases((page, pages) => setLoading({ page: page, pages: pages })),
 	})
+
+	const handleRefresh = async (event: CustomEvent<RefresherEventDetail>) => {
+		await queryClient.invalidateQueries({ queryKey: ['collection'] });
+		event.detail.complete();
+	}
 
 	if (data) {
 		console.log("aaa", data)
@@ -56,7 +65,12 @@ const CollectionPage: React.FC = () => {
 					</IonTitle>
 				</IonToolbar>
 			</IonHeader>
-			<IonContent fullscreen>{data && <AlbumGrid data={data} />}</IonContent>
+			<IonContent fullscreen>
+				<IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
+					<IonRefresherContent></IonRefresherContent>
+				</IonRefresher>
+				{data && <AlbumGrid data={data} />}
+			</IonContent>
 		</IonPage>
 	)
 }
