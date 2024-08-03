@@ -13,7 +13,7 @@ const ProfilePage: React.FC = () => {
 	})
 
 	if (data) {
-		console.log("aaa", data)
+		console.log("Profile", data)
 	}
 
 	if (isLoading) {
