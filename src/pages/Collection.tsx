@@ -20,8 +20,8 @@ import "./Collection.css"
 
 const CollectionPage: React.FC = () => {
 	const queryClient = useQueryClient()
-	const [loading, setLoading] = useState<{ page: number, pages: number }>({ page: 0, pages: 0 });
-	const [sort, setSort] = useState<"artists" | "albums" | "labels">("albums");
+	const [loading, setLoading] = useState<{ page: number; pages: number }>({ page: 0, pages: 0 })
+	const [sort, setSort] = useState<"artists" | "albums" | "labels">("albums")
 
 	const { data, isLoading } = useQuery<IReleases[]>({
 		queryKey: ["collection"],
@@ -29,8 +29,8 @@ const CollectionPage: React.FC = () => {
 	})
 
 	const handleRefresh = async (event: CustomEvent<RefresherEventDetail>) => {
-		await queryClient.invalidateQueries({ queryKey: ['collection'] });
-		event.detail.complete();
+		await queryClient.invalidateQueries({ queryKey: ["collection"] })
+		event.detail.complete()
 	}
 
 	if (data) {
@@ -40,10 +40,7 @@ const CollectionPage: React.FC = () => {
 	if (isLoading) {
 		return (
 			<IonPage>
-				<FullpageLoading
-					loadingProgress={(loading.page + 1)}
-					loadingComplete={loading.pages}
-				/>
+				<FullpageLoading loadingProgress={loading.page + 1} loadingComplete={loading.pages} />
 			</IonPage>
 		)
 	}
@@ -55,7 +52,12 @@ const CollectionPage: React.FC = () => {
 					<IonTitle>
 						<IonList>
 							<IonItem>
-								<IonSelect aria-label="SortType" interface="popover" value={sort} onChange={(e) => setSort(e.currentTarget.value)}>
+								<IonSelect
+									aria-label="SortType"
+									interface="popover"
+									value={sort}
+									onChange={(e) => setSort(e.currentTarget.value)}
+								>
 									<IonSelectOption value="artists">Artists</IonSelectOption>
 									<IonSelectOption value="albums">Albums</IonSelectOption>
 									<IonSelectOption value="labels">Labels</IonSelectOption>

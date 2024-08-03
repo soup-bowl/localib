@@ -10,8 +10,9 @@ const FullpageLoading: React.FC<Props> = ({ loadingProgress = undefined, loading
 	return (
 		<div className="loading-container">
 			<IonSpinner></IonSpinner>
-			{(loadingProgress && loadingComplete) &&
-				<IonProgressBar value={(loadingProgress / loadingComplete)} color="light" />}
+			{loadingProgress && loadingComplete && (
+				<IonProgressBar value={loadingProgress / loadingComplete} color="light" />
+			)}
 		</div>
 	)
 }
