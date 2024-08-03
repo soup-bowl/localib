@@ -2,7 +2,7 @@ import { useContext, useState } from "react"
 import { IonAvatar, IonButton, IonContent, IonHeader, IonIcon, IonPage, IonToolbar } from "@ionic/react"
 import { useQuery } from "@tanstack/react-query"
 import { cogOutline, eye, hourglass, library } from "ionicons/icons"
-import { FullpageLoading, StatDisplay } from "../components"
+import { FullpageInfo, FullpageLoading, StatDisplay } from "../components"
 import { getProfile, IProfile } from "../api"
 import { Settings } from "../modal"
 import "./Profile.css"
@@ -27,6 +27,29 @@ const ProfilePage: React.FC = () => {
 
 	if (data) {
 		console.log("Profile", data)
+	}
+
+	if (!username) {
+		return (
+			<IonPage>
+				<IonContent fullscreen>
+					<IonHeader translucent>
+						<IonToolbar>
+							<IonButton fill="clear" size="large" slot="end" onClick={() => setOpenSettingsDialog(true)}>
+								<IonIcon icon={cogOutline}></IonIcon>
+							</IonButton>
+						</IonToolbar>
+					</IonHeader>
+					<FullpageInfo text="You are not logged in." />
+				</IonContent>
+
+				<Settings
+					open={openSettingsDialog}
+					onClose={() => setOpenSettingsDialog(false)}
+					onSave={() => setOpenSettingsDialog(false)}
+				/>
+			</IonPage>
+		)
 	}
 
 	if (isLoading) {

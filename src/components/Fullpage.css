@@ -1,4 +1,4 @@
-.loading-container {
+.fullpage-container {
 	text-align: center;
 	position: absolute;
 	left: 0;
@@ -7,27 +7,27 @@
 	transform: translateY(-50%);
 }
 
-.loading-container strong {
+.fullpage-container strong {
 	font-size: 20px;
 	line-height: 26px;
 }
 
-.loading-container p {
+.fullpage-container p {
 	font-size: 16px;
 	line-height: 22px;
 	color: #8c8c8c;
 	margin: 0;
 }
 
-.loading-container a {
+.fullpage-container a {
 	text-decoration: none;
 }
 
-.loading-container ion-progress-bar {
+.fullpage-container ion-progress-bar {
 	width: 80%;
 	margin: 20px auto;
 }
 
-.loading-container ion-progress-bar::part(progress) {
+.fullpage-container ion-progress-bar::part(progress) {
 	background: #fff;
 }

@@ -15,7 +15,7 @@ import {
 } from "@ionic/react"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { IReleases, getCollectionReleases } from "../api"
-import { FullpageLoading, AlbumGrid } from "../components"
+import { FullpageLoading, AlbumGrid, FullpageInfo } from "../components"
 import { ViewAlbumDetails } from "../modal"
 import "./Collection.css"
 import { UserContext } from "../context/UserContext"
@@ -33,6 +33,16 @@ const CollectionPage: React.FC = () => {
 	}
 
 	const { username, password } = userContext
+
+	if (!username) {
+		return (
+			<IonPage>
+				<IonContent fullscreen>
+					<FullpageInfo text="You are not logged in." />
+				</IonContent>
+			</IonPage>
+		)
+	}
 
 	const { data, isLoading } = useQuery<IReleases[]>({
 		queryKey: ["collection"],

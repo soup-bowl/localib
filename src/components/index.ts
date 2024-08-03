@@ -1,3 +1,3 @@
 export { default as AlbumGrid } from "./AlbumGrid"
-export { default as FullpageLoading } from "./FullpageLoading"
+export { FullpageLoading, FullpageInfo } from "./Fullpage"
 export { default as StatDisplay } from "./StatDisplay"

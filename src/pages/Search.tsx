@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useContext, useState } from "react"
 import {
 	IonAvatar,
 	IonContent,
@@ -14,15 +14,35 @@ import {
 } from "@ionic/react"
 import { useQuery } from "@tanstack/react-query"
 import { IReleases, getCollectionReleases } from "../api"
-import { FullpageLoading } from "../components"
+import { FullpageInfo, FullpageLoading } from "../components"
 import { ViewAlbumDetails } from "../modal"
+import { UserContext } from "../context/UserContext"
 
 const SearchPage: React.FC = () => {
 	const [modalInfo, setModalInfo] = useState<IReleases | undefined>(undefined)
 	const [filterData, setFilterData] = useState<IReleases[]>([])
+
+	const userContext = useContext(UserContext)
+
+	if (!userContext) {
+		throw new Error("useApi must be used within a UserProvider")
+	}
+
+	const { username, password } = userContext
+
+	if (!username) {
+		return (
+			<IonPage>
+				<IonContent fullscreen>
+					<FullpageInfo text="You are not logged in." />
+				</IonContent>
+			</IonPage>
+		)
+	}
+
 	const { data, isLoading } = useQuery<IReleases[]>({
 		queryKey: ["collection"],
-		queryFn: () => getCollectionReleases(),
+		queryFn: () => getCollectionReleases(username, password),
 		staleTime: 1000 * 60 * 60 * 24, // 24 hours
 	})
 
