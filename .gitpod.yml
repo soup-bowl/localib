@@ -1,11 +1,11 @@
 tasks:
-  - before: |
-      npm i -g @ionic/cli
-      npm ci
-    command: |
-      npm i -g @ionic/cli
-      ionic serve
+    - before: |
+          npm i -g @ionic/cli
+          npm ci
+      command: |
+          npm i -g @ionic/cli
+          ionic serve
 
 ports:
-  - name: App
-    port: 8100
+    - name: App
+      port: 8100

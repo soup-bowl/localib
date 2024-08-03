@@ -1,8 +1,7 @@
 import { IonAvatar, IonButton, IonContent, IonHeader, IonIcon, IonPage, IonTitle, IonToolbar } from "@ionic/react"
-import ExploreContainer from "../components/ExploreContainer"
+import { ExploreContainer, FullpageLoading } from "../components"
 import { getProfile, IProfile } from "../api"
 import { useQuery } from "@tanstack/react-query"
-import FullpageLoading from "../components/FullpageLoading"
 import { cogOutline } from "ionicons/icons"
 import "./Profile.css"
 

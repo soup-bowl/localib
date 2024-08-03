@@ -9,24 +9,32 @@ import {
 	IonTitle,
 	IonToolbar,
 } from "@ionic/react"
-import ExploreContainer from "../components/ExploreContainer"
 import { useQuery } from "@tanstack/react-query"
 import { ICollections, getCollectionReleases } from "../api"
+import { FullpageLoading, AlbumGrid } from "../components"
 import "./Collection.css"
 
 const CollectionPage: React.FC = () => {
-	// const query = useQuery<ICollections>({
-	// 	queryKey: ["todos"],
-	// 	queryFn: getCollectionReleases,
-	// })
+	const { data, isLoading } = useQuery<ICollections>({
+		queryKey: ["collection"],
+		queryFn: getCollectionReleases,
+	})
 
-	// if (query.data) {
-	// 	console.log("aaa", query.data?.releases[0].basic_information.title)
-	// }
+	if (data) {
+		console.log("aaa", data)
+	}
+
+	if (isLoading) {
+		return (
+			<IonPage>
+				<FullpageLoading />
+			</IonPage>
+		)
+	}
 
 	return (
 		<IonPage>
-			<IonHeader>
+			<IonHeader translucent>
 				<IonToolbar>
 					<IonTitle>
 						<IonList>
@@ -41,9 +49,7 @@ const CollectionPage: React.FC = () => {
 					</IonTitle>
 				</IonToolbar>
 			</IonHeader>
-			<IonContent>
-				<ExploreContainer name="Tab 1 page" />
-			</IonContent>
+			<IonContent fullscreen>{data && <AlbumGrid data={data} />}</IonContent>
 		</IonPage>
 	)
 }

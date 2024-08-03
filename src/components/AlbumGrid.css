@@ -1,0 +1,24 @@
+.album-art-div {
+	max-width: 800px;
+	/* Center the grid container */
+	margin: 0 auto;
+	/* Add some padding to ensure the grid doesn't touch the edges */
+	padding: 0 16px;
+}
+
+.album-art-container {
+	width: 100%;
+	/* 1:1 Aspect Ratio */
+	padding-top: 100%;
+	position: relative;
+}
+
+.album-art {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	/* Ensures the image covers the container while maintaining aspect ratio */
+	object-fit: cover;
+}
