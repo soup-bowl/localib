@@ -109,26 +109,28 @@ const CollectionPage: React.FC = () => {
 
 	return (
 		<IonPage>
-			<IonHeader translucent>
-				<IonToolbar>
-					<IonTitle>
-						<IonList>
-							<IonItem>
-								<IonSelect
-									aria-label="SortType"
-									interface="popover"
-									value={sort}
-									onChange={(e) => setSort(e.currentTarget.value)}
-								>
-									<IonSelectOption value="artists">Artists</IonSelectOption>
-									<IonSelectOption value="albums">Albums</IonSelectOption>
-									<IonSelectOption value="labels">Labels</IonSelectOption>
-								</IonSelect>
-							</IonItem>
-						</IonList>
-					</IonTitle>
-				</IonToolbar>
-			</IonHeader>
+			<div className="fancy-header">
+				<IonHeader translucent>
+					<IonToolbar>
+						<IonTitle>
+							<IonList>
+								<IonItem>
+									<IonSelect
+										aria-label="SortType"
+										interface="popover"
+										value={sort}
+										onChange={(e) => setSort(e.currentTarget.value)}
+									>
+										<IonSelectOption value="artists">Artists</IonSelectOption>
+										<IonSelectOption value="albums">Albums</IonSelectOption>
+										<IonSelectOption value="labels">Labels</IonSelectOption>
+									</IonSelect>
+								</IonItem>
+							</IonList>
+						</IonTitle>
+					</IonToolbar>
+				</IonHeader>
+			</div>
 			<IonContent fullscreen>
 				<IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
 					<IonRefresherContent></IonRefresherContent>
