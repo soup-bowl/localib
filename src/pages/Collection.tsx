@@ -1,9 +1,12 @@
-import { useState } from "react"
+import { useRef, useState } from "react"
 import {
+	IonButton,
+	IonButtons,
 	IonContent,
 	IonHeader,
 	IonItem,
 	IonList,
+	IonModal,
 	IonPage,
 	IonRefresher,
 	IonRefresherContent,
@@ -18,8 +21,34 @@ import { IReleases, getCollectionReleases } from "../api"
 import { FullpageLoading, AlbumGrid } from "../components"
 import "./Collection.css"
 
+interface DisplayProps {
+	album: IReleases
+	open: boolean
+	onClose: () => void
+}
+
+const CollectionDisplayModal: React.FC<DisplayProps> = ({ album, open, onClose }) => {
+	return (
+		<IonModal isOpen={open}>
+			<IonHeader>
+				<IonToolbar>
+					<IonButtons slot="start">
+						<IonButton onClick={() => onClose()}>Close</IonButton>
+					</IonButtons>
+					<IonTitle>{album.basic_information.title}</IonTitle>
+				</IonToolbar>
+			</IonHeader>
+			<IonContent className="ion-padding">
+				<p>{album.basic_information.title}</p>
+			</IonContent>
+		</IonModal>
+	)
+}
+
 const CollectionPage: React.FC = () => {
 	const queryClient = useQueryClient()
+	const [modalOpen, setModalOpen] = useState<boolean>(false)
+	const [modalInfo, setModalInfo] = useState<IReleases | undefined>(undefined)
 	const [loading, setLoading] = useState<{ page: number; pages: number }>({ page: 0, pages: 0 })
 	const [sort, setSort] = useState<"artists" | "albums" | "labels">("albums")
 
@@ -72,7 +101,26 @@ const CollectionPage: React.FC = () => {
 				<IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
 					<IonRefresherContent></IonRefresherContent>
 				</IonRefresher>
-				{data && <AlbumGrid data={data} />}
+				{data && (
+					<AlbumGrid
+						data={data}
+						onClickAlbum={(album) => {
+							setModalInfo(album)
+							setModalOpen(true)
+						}}
+					/>
+				)}
+
+				{modalInfo && (
+					<CollectionDisplayModal
+						album={modalInfo}
+						open={modalOpen}
+						onClose={() => {
+							setModalOpen(false)
+							setModalInfo(undefined)
+						}}
+					/>
+				)}
 			</IonContent>
 		</IonPage>
 	)

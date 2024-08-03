@@ -48,11 +48,13 @@ const ProfilePage: React.FC = () => {
 					<p style={{}}>{data?.name}</p>
 				</div>
 				<div>
-					<StatDisplay items={[
-						{ icon: hourglass, value: yearJoined, label: "Registered" },
-						{ icon: library, value: data?.num_collection, label: "Collected" },
-						{ icon: eye, value: data?.num_wantlist, label: "Wanted" }
-					]} />
+					<StatDisplay
+						items={[
+							{ icon: hourglass, value: yearJoined, label: "Registered" },
+							{ icon: library, value: data?.num_collection, label: "Collected" },
+							{ icon: eye, value: data?.num_wantlist, label: "Wanted" },
+						]}
+					/>
 				</div>
 			</IonContent>
 		</IonPage>
