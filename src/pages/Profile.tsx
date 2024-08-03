@@ -1,5 +1,5 @@
 import { IonAvatar, IonButton, IonContent, IonHeader, IonIcon, IonPage, IonTitle, IonToolbar } from "@ionic/react"
-import { ExploreContainer, FullpageLoading } from "../components"
+import { FullpageLoading } from "../components"
 import { getProfile, IProfile } from "../api"
 import { useQuery } from "@tanstack/react-query"
 import { cogOutline } from "ionicons/icons"
@@ -42,8 +42,6 @@ const ProfilePage: React.FC = () => {
 						<p>ssss</p>
 					</div>
 				</div>
-
-				<ExploreContainer name="Profile" />
 			</IonContent>
 		</IonPage>
 	)

@@ -1,5 +1,4 @@
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from "@ionic/react"
-import { ExploreContainer } from "../components"
 
 const SearchPage: React.FC = () => {
 	return (
@@ -9,9 +8,7 @@ const SearchPage: React.FC = () => {
 					<IonTitle>Search</IonTitle>
 				</IonToolbar>
 			</IonHeader>
-			<IonContent fullscreen>
-				<ExploreContainer name="Search" />
-			</IonContent>
+			<IonContent fullscreen></IonContent>
 		</IonPage>
 	)
 }
