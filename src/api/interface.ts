@@ -1,16 +1,3 @@
-interface pagination {
-	page: number
-	pages: number
-	per_page: number
-	items: number
-	urls: {
-		first?: string
-		last?: string
-		prev?: string
-		next?: string
-	}
-}
-
 interface artist {
 	id: number
 	resource_url: string
@@ -30,7 +17,20 @@ interface label {
 	entity_type_name: string
 }
 
-interface releases {
+export interface IPagination {
+	page: number
+	pages: number
+	per_page: number
+	items: number
+	urls: {
+		first?: string
+		last?: string
+		prev?: string
+		next?: string
+	}
+}
+
+export interface IReleases {
 	id: number
 	instance_id: number
 	folder_id: number
@@ -60,8 +60,8 @@ interface releases {
 }
 
 export interface ICollections {
-	pagination: pagination
-	releases: releases[]
+	pagination: IPagination
+	releases: IReleases[]
 }
 
 export interface IIdentify {

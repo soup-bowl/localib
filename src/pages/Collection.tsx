@@ -10,12 +10,12 @@ import {
 	IonToolbar,
 } from "@ionic/react"
 import { useQuery } from "@tanstack/react-query"
-import { ICollections, getCollectionReleases } from "../api"
+import { IReleases, getCollectionReleases } from "../api"
 import { FullpageLoading, AlbumGrid } from "../components"
 import "./Collection.css"
 
 const CollectionPage: React.FC = () => {
-	const { data, isLoading } = useQuery<ICollections>({
+	const { data, isLoading } = useQuery<IReleases[]>({
 		queryKey: ["collection"],
 		queryFn: getCollectionReleases,
 	})

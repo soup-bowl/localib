@@ -1,2 +1,2 @@
 export { getCollectionReleases, getMe, getProfile } from "./discogs"
-export type { ICollections, IIdentify, IProfile } from "./interface"
+export type { ICollections, IIdentify, IProfile, IPagination, IReleases } from "./interface"
