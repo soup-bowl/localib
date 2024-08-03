@@ -14,9 +14,11 @@ import {
 import { useQuery } from "@tanstack/react-query"
 import { IReleases, getCollectionReleases } from "../api"
 import { FullpageLoading } from "../components"
-import { useEffect, useState } from "react"
+import { useState } from "react"
+import ViewAlbumDetails from "./ViewAlbumDetails"
 
 const SearchPage: React.FC = () => {
+	const [modalInfo, setModalInfo] = useState<IReleases | undefined>(undefined)
 	const [filterData, setFilterData] = useState<IReleases[]>([])
 	const { data, isLoading } = useQuery<IReleases[]>({
 		queryKey: ["collection"],
@@ -62,7 +64,7 @@ const SearchPage: React.FC = () => {
 				{filterData.length > 0 && (
 					<IonList lines="full">
 						{filterData.map((album, index) => (
-							<IonItem key={index}>
+							<IonItem key={index} onClick={() => setModalInfo(album)}>
 								<IonAvatar aria-hidden="true" slot="start">
 									<img alt="" src={album.basic_information.thumb} />
 								</IonAvatar>
@@ -74,6 +76,14 @@ const SearchPage: React.FC = () => {
 							</IonItem>
 						))}
 					</IonList>
+				)}
+
+				{modalInfo && (
+					<ViewAlbumDetails
+						album={modalInfo}
+						open={typeof modalInfo !== undefined}
+						onClose={() => setModalInfo(undefined)}
+					/>
 				)}
 			</IonContent>
 		</IonPage>
