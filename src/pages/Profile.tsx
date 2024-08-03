@@ -9,6 +9,7 @@ const ProfilePage: React.FC = () => {
 	const { data, isLoading } = useQuery<IProfile>({
 		queryKey: ["profile"],
 		queryFn: getProfile,
+		staleTime: 1000 * 60 * 60 * 24, // 24 hours
 	})
 
 	if (data) {

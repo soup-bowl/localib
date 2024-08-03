@@ -26,6 +26,7 @@ const CollectionPage: React.FC = () => {
 	const { data, isLoading } = useQuery<IReleases[]>({
 		queryKey: ["collection"],
 		queryFn: () => getCollectionReleases((page, pages) => setLoading({ page: page, pages: pages })),
+		staleTime: 1000 * 60 * 60 * 24, // 24 hours
 	})
 
 	const handleRefresh = async (event: CustomEvent<RefresherEventDetail>) => {
