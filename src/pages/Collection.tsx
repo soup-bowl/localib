@@ -52,25 +52,29 @@ const CollectionDisplayModal: React.FC<DisplayProps> = ({ album, open, onClose }
 				<IonItem>
 					<IonLabel>
 						<h2>Artist</h2>
-						<p>{album.basic_information.artists.map(artist => artist.name).join(', ')}</p>
+						<p>{album.basic_information.artists.map((artist) => artist.name).join(", ")}</p>
 					</IonLabel>
 				</IonItem>
 				<IonItem>
 					<IonLabel>
 						<h2>Genre</h2>
-						<p>{album.basic_information.genres.map(genre => genre).join(', ')}</p>
+						<p>{album.basic_information.genres.map((genre) => genre).join(", ")}</p>
 					</IonLabel>
 				</IonItem>
 				<IonItem>
 					<IonLabel>
 						<h2>Label</h2>
-						<p>{album.basic_information.labels.map(label => label.name).join(', ')}</p>
+						<p>{album.basic_information.labels.map((label) => label.name).join(", ")}</p>
 					</IonLabel>
 				</IonItem>
 				<IonItem>
 					<IonLabel>
 						<h2>Owned Formats</h2>
-						<p>{album.basic_information.formats.map(format => `${format.name} (${format.qty})`).join(', ')}</p>
+						<p>
+							{album.basic_information.formats
+								.map((format) => `${format.name} (${format.qty})`)
+								.join(", ")}
+						</p>
 					</IonLabel>
 				</IonItem>
 			</IonContent>
@@ -135,12 +139,7 @@ const CollectionPage: React.FC = () => {
 				<IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
 					<IonRefresherContent></IonRefresherContent>
 				</IonRefresher>
-				{data && (
-					<AlbumGrid
-						data={data}
-						onClickAlbum={(album) => setModalInfo(album)}
-					/>
-				)}
+				{data && <AlbumGrid data={data} onClickAlbum={(album) => setModalInfo(album)} />}
 
 				{modalInfo && (
 					<CollectionDisplayModal

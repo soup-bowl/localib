@@ -1,4 +1,16 @@
-import { IonAvatar, IonContent, IonHeader, IonItem, IonLabel, IonList, IonPage, IonSearchbar, IonText, IonTitle, IonToolbar } from "@ionic/react"
+import {
+	IonAvatar,
+	IonContent,
+	IonHeader,
+	IonItem,
+	IonLabel,
+	IonList,
+	IonPage,
+	IonSearchbar,
+	IonText,
+	IonTitle,
+	IonToolbar,
+} from "@ionic/react"
 import { useQuery } from "@tanstack/react-query"
 import { IReleases, getCollectionReleases } from "../api"
 import { FullpageLoading } from "../components"
@@ -13,11 +25,16 @@ const SearchPage: React.FC = () => {
 	})
 
 	const searchData = (data: IReleases[], search: string) => {
-		const lowerCaseSearchTerm = search.toLowerCase();
-		setFilterData(data.filter(item =>
-			item.basic_information.title.toLowerCase().includes(lowerCaseSearchTerm) ||
-			item.basic_information.artists.some(artist => artist.name.toLowerCase().includes(lowerCaseSearchTerm))
-		));
+		const lowerCaseSearchTerm = search.toLowerCase()
+		setFilterData(
+			data.filter(
+				(item) =>
+					item.basic_information.title.toLowerCase().includes(lowerCaseSearchTerm) ||
+					item.basic_information.artists.some((artist) =>
+						artist.name.toLowerCase().includes(lowerCaseSearchTerm)
+					)
+			)
+		)
 	}
 
 	if (isLoading) {
@@ -35,25 +52,29 @@ const SearchPage: React.FC = () => {
 					<IonTitle>Search</IonTitle>
 				</IonToolbar>
 				<IonToolbar>
-					<IonSearchbar debounce={1000} onIonInput={(ev) => searchData(data ?? [], ev.target.value?.toLowerCase() ?? '')} />
+					<IonSearchbar
+						debounce={1000}
+						onIonInput={(ev) => searchData(data ?? [], ev.target.value?.toLowerCase() ?? "")}
+					/>
 				</IonToolbar>
 			</IonHeader>
 			<IonContent fullscreen>
-			{filterData.length > 0 &&
-				<IonList lines="full">
-					{filterData.map((album, index) => (
-						<IonItem key={index}>
-							<IonAvatar aria-hidden="true" slot="start">
-								<img alt="" src={album.basic_information.thumb} />
-							</IonAvatar>
-							<IonLabel>
-								<strong>{album.basic_information.title}</strong><br/>
-								<IonText>{album.basic_information.artists[0].name}</IonText>
-							</IonLabel>
-						</IonItem>
-					))}
-				</IonList>
-			}
+				{filterData.length > 0 && (
+					<IonList lines="full">
+						{filterData.map((album, index) => (
+							<IonItem key={index}>
+								<IonAvatar aria-hidden="true" slot="start">
+									<img alt="" src={album.basic_information.thumb} />
+								</IonAvatar>
+								<IonLabel>
+									<strong>{album.basic_information.title}</strong>
+									<br />
+									<IonText>{album.basic_information.artists[0].name}</IonText>
+								</IonLabel>
+							</IonItem>
+						))}
+					</IonList>
+				)}
 			</IonContent>
 		</IonPage>
 	)
