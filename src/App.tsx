@@ -69,7 +69,7 @@ const App: React.FC = () => (
 							<Redirect to="/collection" />
 						</Route>
 					</IonRouterOutlet>
-					<IonTabBar slot="bottom">
+					<IonTabBar slot="bottom" translucent>
 						<IonTabButton tab="collection" href="/collection">
 							<IonIcon aria-hidden="true" icon={discOutline} />
 							<IonLabel>Collection</IonLabel>
