@@ -16,11 +16,11 @@ export const getMe = async (): Promise<IIdentify> => {
 	return response.json()
 }
 
-export const getProfile = async (): Promise<IProfile> => {
-	const response = await fetch(`${API_URL}/users/soup-bowl`, {
+export const getProfile = async (username: string, password: string): Promise<IProfile> => {
+	const response = await fetch(`${API_URL}/users/${username}`, {
 		headers: {
 			"Content-Type": "application/json",
-			Authorization: `Discogs token=${API_TOKEN}`,
+			Authorization: `Discogs token=${password}`,
 		},
 	})
 	if (!response.ok) {
@@ -30,16 +30,18 @@ export const getProfile = async (): Promise<IProfile> => {
 }
 
 export const getCollectionReleases = async (
+	username: string,
+	password: string,
 	onProgress?: (page: number, pages: number) => void
 ): Promise<IReleases[]> => {
 	let allReleases: IReleases[] = []
-	let url: string | undefined = `${API_URL}/users/soup-bowl/collection/folders/0/releases?sort=added&per_page=100`
+	let url: string | undefined = `${API_URL}/users/${username}/collection/folders/0/releases?sort=added&per_page=100`
 
 	while (url) {
 		const response = await fetch(url, {
 			headers: {
 				"Content-Type": "application/json",
-				Authorization: `Discogs token=${API_TOKEN}`,
+				Authorization: `Discogs token=${password}`,
 			},
 		})
 

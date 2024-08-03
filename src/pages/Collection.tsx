@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useContext, useState } from "react"
 import {
 	IonContent,
 	IonHeader,
@@ -18,6 +18,7 @@ import { IReleases, getCollectionReleases } from "../api"
 import { FullpageLoading, AlbumGrid } from "../components"
 import { ViewAlbumDetails } from "../modal"
 import "./Collection.css"
+import { UserContext } from "../context/UserContext"
 
 const CollectionPage: React.FC = () => {
 	const queryClient = useQueryClient()
@@ -25,9 +26,18 @@ const CollectionPage: React.FC = () => {
 	const [loading, setLoading] = useState<{ page: number; pages: number }>({ page: 0, pages: 0 })
 	const [sort, setSort] = useState<"artists" | "albums" | "labels">("albums")
 
+	const userContext = useContext(UserContext)
+
+	if (!userContext) {
+		throw new Error("useApi must be used within a UserProvider")
+	}
+
+	const { username, password } = userContext
+
 	const { data, isLoading } = useQuery<IReleases[]>({
 		queryKey: ["collection"],
-		queryFn: () => getCollectionReleases((page, pages) => setLoading({ page: page, pages: pages })),
+		queryFn: () =>
+			getCollectionReleases(username, password, (page, pages) => setLoading({ page: page, pages: pages })),
 		staleTime: 1000 * 60 * 60 * 24, // 24 hours
 	})
 

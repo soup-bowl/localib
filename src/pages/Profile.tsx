@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useContext, useState } from "react"
 import { IonAvatar, IonButton, IonContent, IonHeader, IonIcon, IonPage, IonToolbar } from "@ionic/react"
 import { useQuery } from "@tanstack/react-query"
 import { cogOutline, eye, hourglass, library } from "ionicons/icons"
@@ -6,13 +6,22 @@ import { FullpageLoading, StatDisplay } from "../components"
 import { getProfile, IProfile } from "../api"
 import { Settings } from "../modal"
 import "./Profile.css"
+import { UserContext } from "../context/UserContext"
 
 const ProfilePage: React.FC = () => {
 	const [openSettingsDialog, setOpenSettingsDialog] = useState<boolean>(false)
 
+	const userContext = useContext(UserContext)
+
+	if (!userContext) {
+		throw new Error("useApi must be used within a UserProvider")
+	}
+
+	const { username, password } = userContext
+
 	const { data, isLoading } = useQuery<IProfile>({
 		queryKey: ["profile"],
-		queryFn: getProfile,
+		queryFn: () => getProfile(username, password),
 		staleTime: 1000 * 60 * 60 * 24, // 24 hours
 	})
 
