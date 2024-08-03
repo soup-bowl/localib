@@ -22,3 +22,12 @@
 .loading-container a {
 	text-decoration: none;
 }
+
+.loading-container ion-progress-bar {
+	width: 80%;
+	margin: 20px auto;
+}
+
+.loading-container ion-progress-bar::part(progress) {
+	background: #fff;
+}

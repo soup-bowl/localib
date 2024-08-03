@@ -31,7 +31,10 @@ const CollectionPage: React.FC = () => {
 	if (isLoading) {
 		return (
 			<IonPage>
-				<FullpageLoading />
+				<FullpageLoading
+					loadingProgress={(loading.page + 1)}
+					loadingComplete={loading.pages}
+				/>
 			</IonPage>
 		)
 	}
