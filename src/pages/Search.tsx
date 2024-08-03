@@ -1,3 +1,4 @@
+import { useState } from "react"
 import {
 	IonAvatar,
 	IonContent,
@@ -14,8 +15,7 @@ import {
 import { useQuery } from "@tanstack/react-query"
 import { IReleases, getCollectionReleases } from "../api"
 import { FullpageLoading } from "../components"
-import { useState } from "react"
-import ViewAlbumDetails from "./ViewAlbumDetails"
+import { ViewAlbumDetails } from "../modal"
 
 const SearchPage: React.FC = () => {
 	const [modalInfo, setModalInfo] = useState<IReleases | undefined>(undefined)

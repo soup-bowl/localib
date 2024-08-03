@@ -1,13 +1,9 @@
-import { useRef, useState } from "react"
+import { useState } from "react"
 import {
-	IonButton,
-	IonButtons,
 	IonContent,
 	IonHeader,
 	IonItem,
-	IonLabel,
 	IonList,
-	IonModal,
 	IonPage,
 	IonRefresher,
 	IonRefresherContent,
@@ -20,7 +16,7 @@ import {
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { IReleases, getCollectionReleases } from "../api"
 import { FullpageLoading, AlbumGrid } from "../components"
-import ViewAlbumDetails from "./ViewAlbumDetails"
+import { ViewAlbumDetails } from "../modal"
 import "./Collection.css"
 
 const CollectionPage: React.FC = () => {

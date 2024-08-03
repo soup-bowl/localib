@@ -1,8 +1,8 @@
-import { IonAvatar, IonButton, IonContent, IonHeader, IonIcon, IonPage, IonTitle, IonToolbar } from "@ionic/react"
+import { IonAvatar, IonButton, IonContent, IonHeader, IonIcon, IonPage, IonToolbar } from "@ionic/react"
 import { FullpageLoading, StatDisplay } from "../components"
 import { getProfile, IProfile } from "../api"
 import { useQuery } from "@tanstack/react-query"
-import { cogOutline, eye, happy, hourglass, library, statsChart, thumbsUp } from "ionicons/icons"
+import { cogOutline, eye, hourglass, library } from "ionicons/icons"
 import "./Profile.css"
 
 const ProfilePage: React.FC = () => {
