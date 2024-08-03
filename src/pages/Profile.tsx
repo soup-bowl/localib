@@ -27,7 +27,7 @@ const ProfilePage: React.FC = () => {
 		<IonPage>
 			<IonContent fullscreen>
 				<div className="avatarBackground" style={{ backgroundImage: `url(${data?.banner_url})` }}>
-					<IonHeader collapse="condense" translucent>
+					<IonHeader translucent>
 						<IonToolbar>
 							<IonTitle size="large">{data?.name}</IonTitle>
 							<IonButton fill="clear" size="large" slot="end">
