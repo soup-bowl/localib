@@ -1,4 +1,4 @@
-import { IonCol, IonGrid, IonRow } from "@ionic/react"
+import { IonCol, IonGrid, IonRow, IonText } from "@ionic/react"
 import { IReleases } from "../api"
 import "./AlbumGrid.css"
 
@@ -17,6 +17,9 @@ const AlbumGrid: React.FC<Props> = ({ data, onClickAlbum }) => {
 							<div className="album-art-container" onClick={() => onClickAlbum(album)}>
 								<img src={album.basic_information.thumb} className="album-art" alt={`Album ${index}`} />
 							</div>
+							<strong style={{ margin: 0 }}>{album.basic_information.title}</strong>
+							<br/>
+							<IonText>{album.basic_information.artists[0].name}</IonText>
 						</IonCol>
 					))}
 				</IonRow>
