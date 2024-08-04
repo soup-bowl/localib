@@ -1,4 +1,7 @@
-# Discogs Offline Library (name TBD)
+<h1 align="center">Discogs Offline Library (name TBD)</h1>
+<p align="center">
+  <img src="https://f.subo.dev/i/discogs-app-image.png" alt="" />
+</p>
 
 A mobile PWA designed to retain your Discogs library offline, so you can check your library while collecting without worrying about mobile reception.
 
