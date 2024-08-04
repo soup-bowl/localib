@@ -1,30 +1,62 @@
 import { IonCol, IonGrid, IonRow, IonText } from "@ionic/react"
 import { IReleases } from "../api"
+import { splitRecordsByYear } from "../utils"
 import "./AlbumGrid.css"
 
-interface Props {
-	data: IReleases[]
+interface AlbumProps {
+	album: IReleases
+	index: number
 	onClickAlbum: (album: IReleases) => void
 }
 
-const AlbumGrid: React.FC<Props> = ({ data, onClickAlbum }) => {
+const AlbumGridEntry: React.FC<AlbumProps> = ({ album, index, onClickAlbum }) => {
 	return (
-		<div className="album-art-div">
-			<IonGrid>
-				<IonRow>
-					{data.map((album, index) => (
-						<IonCol size="6" sizeMd="4" sizeLg="3" key={index}>
-							<div className="album-art-container" onClick={() => onClickAlbum(album)}>
-								<img src={album.basic_information.thumb} className="album-art" alt="" />
-							</div>
-							<strong style={{ margin: 0 }}>{album.basic_information.title}</strong>
-							<br />
-							<IonText>{album.basic_information.artists.map((artist) => artist.name).join(", ")}</IonText>
-						</IonCol>
-					))}
-				</IonRow>
-			</IonGrid>
-		</div>
+		<IonCol size="6" sizeMd="4" sizeLg="3" key={index}>
+			<div className="album-art-container" onClick={() => onClickAlbum(album)}>
+				<img src={album.basic_information.thumb} className="album-art" alt="" />
+			</div>
+			<strong style={{ margin: 0 }}>{album.basic_information.title}</strong>
+			<br />
+			<IonText>{album.basic_information.artists.map((artist) => artist.name).join(", ")}</IonText>
+		</IonCol>
+	)
+}
+
+interface CollectionProps {
+	data: IReleases[]
+	sort?: "release" | "none"
+	onClickAlbum: (album: IReleases) => void
+}
+
+const AlbumGrid: React.FC<CollectionProps> = ({ data, sort = "none", onClickAlbum }) => {
+	let displayData: [string, IReleases[]][] = []
+	let labelText = ""
+	switch (sort) {
+		default:
+		case "none":
+			displayData = [["", data]]
+			break
+		case "release":
+			displayData = splitRecordsByYear(data)
+			labelText = "Collected in "
+			break
+	}
+
+	return (
+		<>
+			{displayData.map((options, index) => (
+				<div className="album-art-div">
+					<h2>{labelText + options[0]}</h2>
+					<IonGrid>
+						<IonRow>
+							{options[1].map((album, index) => (
+								<AlbumGridEntry album={album} index={index} onClickAlbum={onClickAlbum} />
+							))}
+						</IonRow>
+					</IonGrid>
+				</div>
+			))}
+		</>
 	)
 }
 

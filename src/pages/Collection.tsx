@@ -17,8 +17,9 @@ import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { IReleases, getCollectionReleases } from "../api"
 import { FullpageLoading, AlbumGrid, FullpageInfo } from "../components"
 import { ViewAlbumDetails } from "../modal"
-import "./Collection.css"
 import { UserContext } from "../context/UserContext"
+import { splitRecordsByYear } from "../utils"
+import "./Collection.css"
 
 const CollectionPage: React.FC = () => {
 	const queryClient = useQueryClient()
@@ -57,7 +58,7 @@ const CollectionPage: React.FC = () => {
 	}
 
 	if (data) {
-		console.log("Collection Data", data)
+		console.log("Collection Data", data, splitRecordsByYear(data))
 	}
 
 	if (isLoading) {
@@ -104,7 +105,7 @@ const CollectionPage: React.FC = () => {
 				<IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
 					<IonRefresherContent></IonRefresherContent>
 				</IonRefresher>
-				{data && <AlbumGrid data={data} onClickAlbum={(album) => setModalInfo(album)} />}
+				{data && <AlbumGrid data={data} sort="release" onClickAlbum={(album) => setModalInfo(album)} />}
 
 				{modalInfo && (
 					<ViewAlbumDetails
