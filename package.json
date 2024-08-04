@@ -1,5 +1,6 @@
 {
 	"name": "cheese",
+	"description": "Collects your Discogs library for low-data usage",
 	"private": true,
 	"version": "0.0.1",
 	"type": "module",
@@ -53,6 +54,5 @@
 		"typescript": "^5.1.6",
 		"vite": "~5.2.0",
 		"vitest": "^0.34.6"
-	},
-	"description": "An Ionic project"
+	}
 }
