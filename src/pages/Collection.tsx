@@ -18,7 +18,6 @@ import { filter as filterIcon } from "ionicons/icons"
 import { IReleases, getCollectionReleases } from "../api"
 import { FullpageLoading, AlbumGrid, FullpageInfo } from "../components"
 import { ViewAlbumDetails } from "../modal"
-import { splitRecordsByYear } from "../utils"
 import { useAuth } from "../hooks"
 
 const filterActionButtons = [
@@ -29,9 +28,21 @@ const filterActionButtons = [
 		},
 	},
 	{
+		text: "Artists",
+		data: {
+			action: "artist",
+		},
+	},
+	{
 		text: "Year Collected",
 		data: {
 			action: "release",
+		},
+	},
+	{
+		text: "Record Label",
+		data: {
+			action: "label",
 		},
 	},
 	{
@@ -75,7 +86,7 @@ const CollectionPage: React.FC = () => {
 	}
 
 	if (data) {
-		console.log("Collection Data", data, splitRecordsByYear(data))
+		console.log("Collection Data", data)
 	}
 
 	if (isLoading) {

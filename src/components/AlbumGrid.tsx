@@ -1,6 +1,6 @@
 import { IonCol, IonGrid, IonRow, IonText } from "@ionic/react"
 import { IReleases } from "../api"
-import { splitRecordsByYear } from "../utils"
+import { splitRecordsByArtist, splitRecordsByLabel, splitRecordsByYear } from "../utils"
 import "./AlbumGrid.css"
 
 interface AlbumProps {
@@ -24,13 +24,14 @@ const AlbumGridEntry: React.FC<AlbumProps> = ({ album, index, onClickAlbum }) =>
 
 interface CollectionProps {
 	data: IReleases[]
-	sort?: "release" | "none"
+	sort?: "release" | "label" | "artist" | "none"
 	onClickAlbum: (album: IReleases) => void
 }
 
 const AlbumGrid: React.FC<CollectionProps> = ({ data, sort = "none", onClickAlbum }) => {
 	let displayData: [string, IReleases[]][] = []
 	let labelText = ""
+	console.log("HOTDOG", sort)
 	switch (sort) {
 		default:
 		case "none":
@@ -39,6 +40,12 @@ const AlbumGrid: React.FC<CollectionProps> = ({ data, sort = "none", onClickAlbu
 		case "release":
 			displayData = splitRecordsByYear(data)
 			labelText = "Collected in "
+			break
+		case "label":
+			displayData = splitRecordsByLabel(data)
+			break
+		case "artist":
+			displayData = splitRecordsByArtist(data)
 			break
 	}
 

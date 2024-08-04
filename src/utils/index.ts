@@ -1,1 +1,1 @@
-export { splitRecordsByYear } from "./collectionSort"
+export { splitRecordsByYear, splitRecordsByLabel, splitRecordsByArtist } from "./collectionSort"
