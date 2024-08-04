@@ -1,54 +1,54 @@
 name: 🚀 Deploy!
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'src/**'
-      - 'public/**'
-      - 'index.html'
-      - 'package-lock.json'
-      - 'tsconfig*'
-      - 'vite.config.ts'
-  release:
-    types:
-      - published
-  workflow_dispatch:
+    push:
+        branches:
+            - main
+        paths:
+            - "src/**"
+            - "public/**"
+            - "index.html"
+            - "package-lock.json"
+            - "tsconfig*"
+            - "vite.config.ts"
+    release:
+        types:
+            - published
+    workflow_dispatch:
 
 concurrency:
-  group: "pages"
-  cancel-in-progress: true
+    group: "pages"
+    cancel-in-progress: true
 
 jobs:
-  build:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+    build:
+        environment:
+            name: github-pages
+            url: ${{ steps.deployment.outputs.page_url }}
 
-    runs-on: ubuntu-latest
+        runs-on: ubuntu-latest
 
-    permissions:
-      contents: read
-      deployments: write
+        permissions:
+            contents: read
+            deployments: write
 
-    steps:
-      - uses: actions/checkout@v4
+        steps:
+            - uses: actions/checkout@v4
 
-      - name: 🏗 Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20.x
+            - name: 🏗 Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20.x
 
-      - name: 📦 Build Site
-        run: npm ci && npm run build
+            - name: 📦 Build Site
+              run: npm ci && npm run build
 
-      - name: 🚛 Publish Site
-        uses: cloudflare/pages-action@v1
-        with:
-          apiToken: ${{ secrets.CF_API_TOKEN }}
-          accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          projectName: discog
-          directory: ./dist
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.event_name == 'release' && 'main' || 'not-hotdog' }}
+            - name: 🚛 Publish Site
+              uses: cloudflare/pages-action@v1
+              with:
+                  apiToken: ${{ secrets.CF_API_TOKEN }}
+                  accountId: ${{ secrets.CF_ACCOUNT_ID }}
+                  projectName: discog
+                  directory: ./dist
+                  gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+                  branch: ${{ github.event_name == 'release' && 'main' || 'not-hotdog' }}

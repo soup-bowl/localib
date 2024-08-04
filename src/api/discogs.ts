@@ -6,7 +6,7 @@ export const getMe = async (password: string): Promise<IIdentify> => {
 	const response = await fetch(`${API_URL}/oauth/identity`, {
 		headers: {
 			"Content-Type": "application/json",
-			"Authorization": `Discogs token=${password}`,
+			Authorization: `Discogs token=${password}`,
 		},
 	})
 	if (!response.ok) {
@@ -19,7 +19,7 @@ export const getProfile = async (username: string, password: string): Promise<IP
 	const response = await fetch(`${API_URL}/users/${username}`, {
 		headers: {
 			"Content-Type": "application/json",
-			"Authorization": `Discogs token=${password}`,
+			Authorization: `Discogs token=${password}`,
 		},
 	})
 	if (!response.ok) {
@@ -40,7 +40,7 @@ export const getCollectionReleases = async (
 		const response = await fetch(url, {
 			headers: {
 				"Content-Type": "application/json",
-				"Authorization": `Discogs token=${password}`,
+				Authorization: `Discogs token=${password}`,
 			},
 		})
 

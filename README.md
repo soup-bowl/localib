@@ -7,7 +7,7 @@ A mobile PWA designed to retain your Discogs library offline, so you can check y
 
 ## Installing
 
-[Please see the Mozilla documentation](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Installing), which covers installing PWAs on all platforms. 
+[Please see the Mozilla documentation](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Installing), which covers installing PWAs on all platforms.
 
 ## Usage
 
