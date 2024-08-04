@@ -57,7 +57,7 @@ const filterActionButtons = [
 const CollectionPage: React.FC = () => {
 	const queryClient = useQueryClient()
 	const [present] = useIonActionSheet()
-	const [filter, setFilter] = useState<"none" | "release">("none")
+	const [filter, setFilter] = useState<"release" | "label" | "artist" | "none">("none")
 	const [modalInfo, setModalInfo] = useState<IReleases | undefined>(undefined)
 	const [loading, setLoading] = useState<{ page: number; pages: number }>({ page: 0, pages: 0 })
 
