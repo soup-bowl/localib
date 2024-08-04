@@ -44,7 +44,7 @@ const CollectionPage: React.FC = () => {
 		)
 	}
 
-	const { data, isLoading } = useQuery<IReleases[]>({
+	const { data, isLoading, isError } = useQuery<IReleases[]>({
 		queryKey: ["collection"],
 		queryFn: () =>
 			getCollectionReleases(username, password, (page, pages) => setLoading({ page: page, pages: pages })),
@@ -64,6 +64,14 @@ const CollectionPage: React.FC = () => {
 		return (
 			<IonPage>
 				<FullpageLoading loadingProgress={loading.page + 1} loadingComplete={loading.pages} />
+			</IonPage>
+		)
+	}
+
+	if (isError) {
+		return (
+			<IonPage>
+				<FullpageInfo text="An error occurred when loading information." />
 			</IonPage>
 		)
 	}

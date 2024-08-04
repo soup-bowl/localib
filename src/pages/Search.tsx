@@ -40,7 +40,7 @@ const SearchPage: React.FC = () => {
 		)
 	}
 
-	const { data, isLoading } = useQuery<IReleases[]>({
+	const { data, isLoading, isError } = useQuery<IReleases[]>({
 		queryKey: ["collection"],
 		queryFn: () => getCollectionReleases(username, password),
 		staleTime: 1000 * 60 * 60 * 24, // 24 hours
@@ -63,6 +63,14 @@ const SearchPage: React.FC = () => {
 		return (
 			<IonPage>
 				<FullpageLoading />
+			</IonPage>
+		)
+	}
+
+	if (isError) {
+		return (
+			<IonPage>
+				<FullpageInfo text="An error occurred when loading information." />
 			</IonPage>
 		)
 	}

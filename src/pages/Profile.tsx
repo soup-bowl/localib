@@ -19,7 +19,7 @@ const ProfilePage: React.FC = () => {
 
 	const { username, password } = userContext
 
-	const { data, isLoading } = useQuery<IProfile>({
+	const { data, isLoading, isError } = useQuery<IProfile>({
 		queryKey: ["profile"],
 		queryFn: () => getProfile(username, password),
 		staleTime: 1000 * 60 * 60 * 24, // 24 hours
@@ -56,6 +56,29 @@ const ProfilePage: React.FC = () => {
 		return (
 			<IonPage>
 				<FullpageLoading />
+			</IonPage>
+		)
+	}
+
+	if (isError) {
+		return (
+			<IonPage>
+				<IonContent fullscreen>
+					<IonHeader translucent>
+						<IonToolbar>
+							<IonButton fill="clear" size="large" slot="end" onClick={() => setOpenSettingsDialog(true)}>
+								<IonIcon icon={cogOutline}></IonIcon>
+							</IonButton>
+						</IonToolbar>
+					</IonHeader>
+					<FullpageInfo text="An error occurred when loading information." />
+				</IonContent>
+
+				<Settings
+					open={openSettingsDialog}
+					onClose={() => setOpenSettingsDialog(false)}
+					onSave={() => setOpenSettingsDialog(false)}
+				/>
 			</IonPage>
 		)
 	}
