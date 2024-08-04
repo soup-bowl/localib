@@ -13,6 +13,7 @@ import {
 	IonList,
 	IonInputPasswordToggle,
 } from "@ionic/react"
+import { useQueryClient } from "@tanstack/react-query"
 import { UserContext } from "../context/UserContext"
 
 interface Props {
@@ -22,6 +23,7 @@ interface Props {
 }
 
 const Settings: React.FC<Props> = ({ open, onClose, onSave }) => {
+	const queryClient = useQueryClient()
 	const userContext = useContext(UserContext)
 
 	if (!userContext) {
@@ -36,6 +38,7 @@ const Settings: React.FC<Props> = ({ open, onClose, onSave }) => {
 		console.log("Save", newUsername, newPassword, username, password)
 		setUsername(newUsername)
 		setPassword(newPassword)
+		queryClient.invalidateQueries()
 		onSave()
 	}
 
