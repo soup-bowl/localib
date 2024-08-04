@@ -19,7 +19,7 @@ const AlbumGrid: React.FC<Props> = ({ data, onClickAlbum }) => {
 							</div>
 							<strong style={{ margin: 0 }}>{album.basic_information.title}</strong>
 							<br />
-							<IonText>{album.basic_information.artists[0].name}</IonText>
+							<IonText>{album.basic_information.artists.map((artist) => artist.name).join(", ")}</IonText>
 						</IonCol>
 					))}
 				</IonRow>

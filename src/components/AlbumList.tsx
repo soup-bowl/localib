@@ -17,7 +17,7 @@ const AlbumList: React.FC<Props> = ({ data, onClickAlbum }) => {
 					<IonLabel>
 						<strong>{album.basic_information.title}</strong>
 						<br />
-						<IonText>{album.basic_information.artists[0].name}</IonText>
+						<IonText>{album.basic_information.artists.map((artist) => artist.name).join(", ")}</IonText>
 					</IonLabel>
 				</IonItem>
 			))}
