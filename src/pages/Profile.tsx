@@ -73,7 +73,7 @@ const ProfilePage: React.FC = () => {
 	return (
 		<IonPage>
 			<IonContent fullscreen>
-				<div className="avatarBackground" style={{ backgroundImage: `url(${data?.banner_url})` }}>
+				<div className="avatar-background" style={{ backgroundImage: `url(${data?.banner_url})` }}>
 					<IonHeader translucent>
 						<IonToolbar>
 							<IonButton fill="clear" size="large" slot="end" onClick={() => setOpenSettingsDialog(true)}>
@@ -81,7 +81,7 @@ const ProfilePage: React.FC = () => {
 							</IonButton>
 						</IonToolbar>
 					</IonHeader>
-					<div className="profileColumn">
+					<div className="profile-column">
 						<IonAvatar>
 							<img src={data?.avatar_url} />
 						</IonAvatar>
