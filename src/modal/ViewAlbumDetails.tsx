@@ -8,6 +8,7 @@ import {
 	IonContent,
 	IonItem,
 	IonLabel,
+	IonList,
 } from "@ionic/react"
 import { IReleases } from "../api"
 
@@ -31,41 +32,45 @@ const ViewAlbumDetails: React.FC<DisplayProps> = ({ album, open, onClose }) => {
 				</IonToolbar>
 			</IonHeader>
 			<IonContent className="ion-padding">
-				<img src={album.basic_information.thumb} />
-				<IonItem>
-					<IonLabel>
-						<h2>Title</h2>
-						<p>{album.basic_information.title}</p>
-					</IonLabel>
-				</IonItem>
-				<IonItem>
-					<IonLabel>
-						<h2>Artist</h2>
-						<p>{album.basic_information.artists.map((artist) => artist.name).join(", ")}</p>
-					</IonLabel>
-				</IonItem>
-				<IonItem>
-					<IonLabel>
-						<h2>Genre</h2>
-						<p>{album.basic_information.genres.map((genre) => genre).join(", ")}</p>
-					</IonLabel>
-				</IonItem>
-				<IonItem>
-					<IonLabel>
-						<h2>Label</h2>
-						<p>{album.basic_information.labels.map((label) => label.name).join(", ")}</p>
-					</IonLabel>
-				</IonItem>
-				<IonItem>
-					<IonLabel>
-						<h2>Owned Formats</h2>
-						<p>
-							{album.basic_information.formats
-								.map((format) => `${format.name} (${format.qty})`)
-								.join(", ")}
-						</p>
-					</IonLabel>
-				</IonItem>
+				<div style={{ display: "flex", justifyContent: "center" }}>
+					<img src={album.basic_information.thumb} alt="" />
+				</div>
+				<IonList inset>
+					<IonItem>
+						<IonLabel>
+							<h2>Title</h2>
+							<p>{album.basic_information.title}</p>
+						</IonLabel>
+					</IonItem>
+					<IonItem>
+						<IonLabel>
+							<h2>Artist</h2>
+							<p>{album.basic_information.artists.map((artist) => artist.name).join(", ")}</p>
+						</IonLabel>
+					</IonItem>
+					<IonItem>
+						<IonLabel>
+							<h2>Genre</h2>
+							<p>{album.basic_information.genres.map((genre) => genre).join(", ")}</p>
+						</IonLabel>
+					</IonItem>
+					<IonItem>
+						<IonLabel>
+							<h2>Label</h2>
+							<p>{album.basic_information.labels.map((label) => label.name).join(", ")}</p>
+						</IonLabel>
+					</IonItem>
+					<IonItem>
+						<IonLabel>
+							<h2>Owned Formats</h2>
+							<p>
+								{album.basic_information.formats
+									.map((format) => `${format.name} (${format.qty})`)
+									.join(", ")}
+							</p>
+						</IonLabel>
+					</IonItem>
+				</IonList>
 			</IonContent>
 		</IonModal>
 	)
