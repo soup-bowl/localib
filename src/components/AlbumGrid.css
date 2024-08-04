@@ -14,7 +14,7 @@
 }
 
 .album-art-container img {
-	background-image: url('/album-placeholder.png');
+	background-image: url("/album-placeholder.png");
 	background-size: cover;
 	background-position: center;
 }

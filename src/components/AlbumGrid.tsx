@@ -15,10 +15,10 @@ const AlbumGrid: React.FC<Props> = ({ data, onClickAlbum }) => {
 					{data.map((album, index) => (
 						<IonCol size="6" sizeMd="4" sizeLg="3" key={index}>
 							<div className="album-art-container" onClick={() => onClickAlbum(album)}>
-								<img src={album.basic_information.thumb} className="album-art" alt={`Album ${index}`} />
+								<img src={album.basic_information.thumb} className="album-art" alt="" />
 							</div>
 							<strong style={{ margin: 0 }}>{album.basic_information.title}</strong>
-							<br/>
+							<br />
 							<IonText>{album.basic_information.artists[0].name}</IonText>
 						</IonCol>
 					))}

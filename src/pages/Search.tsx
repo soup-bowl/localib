@@ -14,7 +14,7 @@ import {
 } from "@ionic/react"
 import { useQuery } from "@tanstack/react-query"
 import { IReleases, getCollectionReleases } from "../api"
-import { FullpageInfo, FullpageLoading } from "../components"
+import { AlbumList, FullpageInfo, FullpageLoading } from "../components"
 import { ViewAlbumDetails } from "../modal"
 import { UserContext } from "../context/UserContext"
 
@@ -89,22 +89,7 @@ const SearchPage: React.FC = () => {
 				</IonToolbar>
 			</IonHeader>
 			<IonContent fullscreen>
-				{filterData.length > 0 && (
-					<IonList lines="full">
-						{filterData.map((album, index) => (
-							<IonItem key={index} onClick={() => setModalInfo(album)}>
-								<IonAvatar aria-hidden="true" slot="start">
-									<img alt="" src={album.basic_information.thumb} />
-								</IonAvatar>
-								<IonLabel>
-									<strong>{album.basic_information.title}</strong>
-									<br />
-									<IonText>{album.basic_information.artists[0].name}</IonText>
-								</IonLabel>
-							</IonItem>
-						))}
-					</IonList>
-				)}
+				{filterData.length > 0 && <AlbumList data={filterData} onClickAlbum={(album) => setModalInfo(album)} />}
 
 				{modalInfo && (
 					<ViewAlbumDetails
