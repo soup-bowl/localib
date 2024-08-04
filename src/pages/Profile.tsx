@@ -1,5 +1,17 @@
 import { useState } from "react"
-import { IonAvatar, IonButton, IonContent, IonHeader, IonIcon, IonPage, IonToolbar } from "@ionic/react"
+import {
+	IonAvatar,
+	IonButton,
+	IonCard,
+	IonCardHeader,
+	IonCardSubtitle,
+	IonCardTitle,
+	IonContent,
+	IonHeader,
+	IonIcon,
+	IonPage,
+	IonToolbar,
+} from "@ionic/react"
 import { useQuery } from "@tanstack/react-query"
 import { cogOutline, eye, hourglass, library } from "ionicons/icons"
 import { FullpageInfo, FullpageLoading, StatDisplay } from "../components"
@@ -23,7 +35,7 @@ const ProfilePage: React.FC = () => {
 		console.log("Profile", data)
 	}
 
-	if (!username) {
+	if (!username || isError) {
 		return (
 			<IonPage>
 				<IonContent fullscreen>
@@ -34,7 +46,9 @@ const ProfilePage: React.FC = () => {
 							</IonButton>
 						</IonToolbar>
 					</IonHeader>
-					<FullpageInfo text="You are not logged in." />
+					<FullpageInfo
+						text={isError ? "An error occurred when loading information." : "You are not logged in."}
+					/>
 				</IonContent>
 
 				<Settings
@@ -50,29 +64,6 @@ const ProfilePage: React.FC = () => {
 		return (
 			<IonPage>
 				<FullpageLoading />
-			</IonPage>
-		)
-	}
-
-	if (isError) {
-		return (
-			<IonPage>
-				<IonContent fullscreen>
-					<IonHeader translucent>
-						<IonToolbar>
-							<IonButton fill="clear" size="large" slot="end" onClick={() => setOpenSettingsDialog(true)}>
-								<IonIcon icon={cogOutline}></IonIcon>
-							</IonButton>
-						</IonToolbar>
-					</IonHeader>
-					<FullpageInfo text="An error occurred when loading information." />
-				</IonContent>
-
-				<Settings
-					open={openSettingsDialog}
-					onClose={() => setOpenSettingsDialog(false)}
-					onSave={() => setOpenSettingsDialog(false)}
-				/>
 			</IonPage>
 		)
 	}
@@ -95,10 +86,13 @@ const ProfilePage: React.FC = () => {
 							<img src={data?.avatar_url} />
 						</IonAvatar>
 					</div>
-				</div>
-				<div style={{ textAlign: "center" }}>
-					<h1>{data?.username}</h1>
-					<p style={{}}>{data?.name}</p>
+					<IonCard style={{ textAlign: "center", marginBottom: 50 }}>
+						<IonCardHeader>
+							<IonCardTitle>{data?.username}</IonCardTitle>
+							<IonCardSubtitle>{data?.name}</IonCardSubtitle>
+						</IonCardHeader>
+					</IonCard>
+					<br />
 				</div>
 				<div>
 					<StatDisplay
