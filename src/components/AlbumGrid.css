@@ -13,6 +13,12 @@
 	position: relative;
 }
 
+.album-art-container img {
+	background-image: url('/album-placeholder.png');
+	background-size: cover;
+	background-position: center;
+}
+
 .album-art {
 	position: absolute;
 	top: 0;
