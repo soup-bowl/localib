@@ -1,17 +1,17 @@
 import { useContext, useState } from "react"
 import {
+	IonButton,
+	IonButtons,
 	IonContent,
 	IonHeader,
-	IonItem,
-	IonList,
+	IonIcon,
 	IonPage,
 	IonRefresher,
 	IonRefresherContent,
-	IonSelect,
-	IonSelectOption,
 	IonTitle,
 	IonToolbar,
 	RefresherEventDetail,
+	useIonActionSheet,
 } from "@ionic/react"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { IReleases, getCollectionReleases } from "../api"
@@ -19,13 +19,36 @@ import { FullpageLoading, AlbumGrid, FullpageInfo } from "../components"
 import { ViewAlbumDetails } from "../modal"
 import { UserContext } from "../context/UserContext"
 import { splitRecordsByYear } from "../utils"
-import "./Collection.css"
+import { filter as filterIcon } from "ionicons/icons"
+
+const filterActionButtons = [
+	{
+		text: "None",
+		data: {
+			action: "none",
+		},
+	},
+	{
+		text: "Year Collected",
+		data: {
+			action: "release",
+		},
+	},
+	{
+		text: "Cancel",
+		role: "cancel",
+		data: {
+			action: "cancel",
+		},
+	},
+]
 
 const CollectionPage: React.FC = () => {
 	const queryClient = useQueryClient()
+	const [present] = useIonActionSheet()
+	const [filter, setFilter] = useState<"none" | "release">("none")
 	const [modalInfo, setModalInfo] = useState<IReleases | undefined>(undefined)
 	const [loading, setLoading] = useState<{ page: number; pages: number }>({ page: 0, pages: 0 })
-	const [sort, setSort] = useState<"artists" | "albums" | "labels">("albums")
 
 	const userContext = useContext(UserContext)
 
@@ -79,33 +102,33 @@ const CollectionPage: React.FC = () => {
 
 	return (
 		<IonPage>
-			<div className="fancy-header">
-				<IonHeader translucent>
-					<IonToolbar>
-						<IonTitle>
-							<IonList>
-								<IonItem>
-									<IonSelect
-										aria-label="SortType"
-										interface="popover"
-										value={sort}
-										onChange={(e) => setSort(e.currentTarget.value)}
-									>
-										<IonSelectOption value="artists">Artists</IonSelectOption>
-										<IonSelectOption value="albums">Albums</IonSelectOption>
-										<IonSelectOption value="labels">Labels</IonSelectOption>
-									</IonSelect>
-								</IonItem>
-							</IonList>
-						</IonTitle>
-					</IonToolbar>
-				</IonHeader>
-			</div>
+			<IonHeader translucent>
+				<IonToolbar>
+					<IonButtons slot="primary">
+						<IonButton
+							onClick={() =>
+								present({
+									header: "Sorting",
+									buttons: filterActionButtons,
+									onDidDismiss: ({ detail }) => {
+										if (detail.data.action !== "cancel") {
+											setFilter(detail.data.action)
+										}
+									},
+								})
+							}
+						>
+							<IonIcon slot="icon-only" md={filterIcon}></IonIcon>
+						</IonButton>
+					</IonButtons>
+					<IonTitle>Collection</IonTitle>
+				</IonToolbar>
+			</IonHeader>
 			<IonContent fullscreen>
 				<IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
 					<IonRefresherContent></IonRefresherContent>
 				</IonRefresher>
-				{data && <AlbumGrid data={data} sort="release" onClickAlbum={(album) => setModalInfo(album)} />}
+				{data && <AlbumGrid data={data} sort={filter} onClickAlbum={(album) => setModalInfo(album)} />}
 
 				{modalInfo && (
 					<ViewAlbumDetails
