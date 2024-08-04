@@ -14,7 +14,7 @@ const ProfilePage: React.FC = () => {
 	const [{ username, token }, saveAuth, clearAuth] = useAuth()
 
 	const { data, isLoading, isError } = useQuery<IProfile>({
-		queryKey: ["profile"],
+		queryKey: [`${username}profile`],
 		queryFn: () => getProfile(username ?? "", token ?? ""),
 		staleTime: 1000 * 60 * 60 * 24, // 24 hours
 	})

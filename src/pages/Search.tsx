@@ -23,7 +23,7 @@ const SearchPage: React.FC = () => {
 	}
 
 	const { data, isLoading, isError } = useQuery<IReleases[]>({
-		queryKey: ["collection"],
+		queryKey: [`${username}collection`],
 		queryFn: () => getCollectionReleases(username ?? "", token ?? ""),
 		staleTime: 1000 * 60 * 60 * 24, // 24 hours
 	})

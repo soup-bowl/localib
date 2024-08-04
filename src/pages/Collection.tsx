@@ -63,14 +63,14 @@ const CollectionPage: React.FC = () => {
 	}
 
 	const { data, isLoading, isError } = useQuery<IReleases[]>({
-		queryKey: ["collection"],
+		queryKey: [`${username}collection`],
 		queryFn: () =>
 			getCollectionReleases(username, token ?? "", (page, pages) => setLoading({ page: page, pages: pages })),
 		staleTime: 1000 * 60 * 60 * 24, // 24 hours
 	})
 
 	const handleRefresh = async (event: CustomEvent<RefresherEventDetail>) => {
-		await queryClient.invalidateQueries({ queryKey: ["collection"] })
+		await queryClient.invalidateQueries({ queryKey: [`${username}collection`] })
 		event.detail.complete()
 	}
 
