@@ -45,12 +45,12 @@ const AlbumGrid: React.FC<CollectionProps> = ({ data, sort = "none", onClickAlbu
 	return (
 		<>
 			{displayData.map((options, index) => (
-				<div className="album-art-div">
+				<div key={index} className="album-art-div">
 					<h2>{labelText + options[0]}</h2>
 					<IonGrid>
 						<IonRow>
 							{options[1].map((album, index) => (
-								<AlbumGridEntry album={album} index={index} onClickAlbum={onClickAlbum} />
+								<AlbumGridEntry key={index} album={album} index={index} onClickAlbum={onClickAlbum} />
 							))}
 						</IonRow>
 					</IonGrid>
