@@ -2,6 +2,9 @@
 
 A mobile PWA designed to retain your Discogs library offline, so you can check your library while collecting without worrying about mobile reception.
 
+> [!IMPORTANT]  
+> This is not production ready, and undergoing pre-alpha changes - **USAGE IS RISKY AT THIS POINT** and PRs will not be accepted at this time.
+
 ## Installing
 
 [Please see the Mozilla documentation](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Installing), which covers installing PWAs on all platforms. 
