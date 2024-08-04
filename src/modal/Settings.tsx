@@ -1,5 +1,4 @@
-import { useContext, useState } from "react"
-import { useHistory } from "react-router-dom"
+import { useState } from "react"
 import {
 	IonModal,
 	IonHeader,
@@ -15,7 +14,7 @@ import {
 	IonInputPasswordToggle,
 } from "@ionic/react"
 import { useQueryClient } from "@tanstack/react-query"
-import { UserContext } from "../context/UserContext"
+import { useAuth } from "../hooks"
 
 interface Props {
 	open: boolean
@@ -25,21 +24,14 @@ interface Props {
 
 const Settings: React.FC<Props> = ({ open, onClose, onSave }) => {
 	const queryClient = useQueryClient()
-	const userContext = useContext(UserContext)
-	const history = useHistory()
-
-	if (!userContext) {
-		throw new Error("SettingsPanel must be used within a UserProvider")
-	}
-
-	const { username, setUsername, password, setPassword } = userContext
-	const [newUsername, setNewUsername] = useState<string>(username)
-	const [newPassword, setNewPassword] = useState<string>(password)
+	const [{ username, token }, saveAuth, clearAuth] = useAuth()
+	const [newUsername, setNewUsername] = useState<string>(username ?? "")
+	const [newPassword, setNewPassword] = useState<string>(token ?? "")
 
 	const handleSave = () => {
-		console.log("Save", newUsername, newPassword, username, password)
-		setUsername(newUsername)
-		setPassword(newPassword)
+		console.log("Save", newUsername, newPassword, username, token)
+		saveAuth(newUsername, newPassword)
+		queryClient.invalidateQueries()
 		onSave()
 	}
 

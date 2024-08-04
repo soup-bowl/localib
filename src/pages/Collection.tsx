@@ -1,4 +1,4 @@
-import { useContext, useState } from "react"
+import { useState } from "react"
 import {
 	IonButton,
 	IonButtons,
@@ -14,12 +14,12 @@ import {
 	useIonActionSheet,
 } from "@ionic/react"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
+import { filter as filterIcon } from "ionicons/icons"
 import { IReleases, getCollectionReleases } from "../api"
 import { FullpageLoading, AlbumGrid, FullpageInfo } from "../components"
 import { ViewAlbumDetails } from "../modal"
-import { UserContext } from "../context/UserContext"
 import { splitRecordsByYear } from "../utils"
-import { filter as filterIcon } from "ionicons/icons"
+import { useAuth } from "../hooks"
 
 const filterActionButtons = [
 	{
@@ -50,13 +50,7 @@ const CollectionPage: React.FC = () => {
 	const [modalInfo, setModalInfo] = useState<IReleases | undefined>(undefined)
 	const [loading, setLoading] = useState<{ page: number; pages: number }>({ page: 0, pages: 0 })
 
-	const userContext = useContext(UserContext)
-
-	if (!userContext) {
-		throw new Error("useApi must be used within a UserProvider")
-	}
-
-	const { username, password } = userContext
+	const [{ username, token }, saveAuth, clearAuth] = useAuth()
 
 	if (!username) {
 		return (
@@ -71,7 +65,7 @@ const CollectionPage: React.FC = () => {
 	const { data, isLoading, isError } = useQuery<IReleases[]>({
 		queryKey: ["collection"],
 		queryFn: () =>
-			getCollectionReleases(username, password, (page, pages) => setLoading({ page: page, pages: pages })),
+			getCollectionReleases(username, token ?? "", (page, pages) => setLoading({ page: page, pages: pages })),
 		staleTime: 1000 * 60 * 60 * 24, // 24 hours
 	})
 

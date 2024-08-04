@@ -1,34 +1,16 @@
-import { useContext, useState } from "react"
-import {
-	IonAvatar,
-	IonContent,
-	IonHeader,
-	IonItem,
-	IonLabel,
-	IonList,
-	IonPage,
-	IonSearchbar,
-	IonText,
-	IonTitle,
-	IonToolbar,
-} from "@ionic/react"
+import { useState } from "react"
+import { IonContent, IonHeader, IonPage, IonSearchbar, IonTitle, IonToolbar } from "@ionic/react"
 import { useQuery } from "@tanstack/react-query"
 import { IReleases, getCollectionReleases } from "../api"
 import { AlbumList, FullpageInfo, FullpageLoading } from "../components"
 import { ViewAlbumDetails } from "../modal"
-import { UserContext } from "../context/UserContext"
+import { useAuth } from "../hooks"
 
 const SearchPage: React.FC = () => {
 	const [modalInfo, setModalInfo] = useState<IReleases | undefined>(undefined)
 	const [filterData, setFilterData] = useState<IReleases[]>([])
 
-	const userContext = useContext(UserContext)
-
-	if (!userContext) {
-		throw new Error("useApi must be used within a UserProvider")
-	}
-
-	const { username, password } = userContext
+	const [{ username, token }, saveAuth, clearAuth] = useAuth()
 
 	if (!username) {
 		return (
@@ -42,7 +24,7 @@ const SearchPage: React.FC = () => {
 
 	const { data, isLoading, isError } = useQuery<IReleases[]>({
 		queryKey: ["collection"],
-		queryFn: () => getCollectionReleases(username, password),
+		queryFn: () => getCollectionReleases(username ?? "", token ?? ""),
 		staleTime: 1000 * 60 * 60 * 24, // 24 hours
 	})
 
