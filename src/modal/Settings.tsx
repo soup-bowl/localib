@@ -41,7 +41,7 @@ const Settings: React.FC<Props> = ({ open, onClose, onSave }) => {
 		setUsername(newUsername)
 		setPassword(newPassword)
 		queryClient.invalidateQueries()
-		history.push("/profile")
+		onSave()
 	}
 
 	return (
