@@ -40,7 +40,6 @@ const Settings: React.FC<Props> = ({ open, onClose, onSave }) => {
 		console.log("Save", newUsername, newPassword, username, password)
 		setUsername(newUsername)
 		setPassword(newPassword)
-		queryClient.invalidateQueries()
 		onSave()
 	}
 
