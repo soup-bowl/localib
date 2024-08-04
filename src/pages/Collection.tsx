@@ -14,7 +14,7 @@ import {
 	useIonActionSheet,
 } from "@ionic/react"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { filter as filterIcon } from "ionicons/icons"
+import { filter as filterIcon, person, pricetag, time } from "ionicons/icons"
 import { IReleases, getCollectionReleases } from "../api"
 import { FullpageLoading, AlbumGrid, FullpageInfo } from "../components"
 import { ViewAlbumDetails } from "../modal"
@@ -62,6 +62,20 @@ const CollectionPage: React.FC = () => {
 	const [loading, setLoading] = useState<{ page: number; pages: number }>({ page: 0, pages: 0 })
 
 	const [{ username, token }, saveAuth, clearAuth] = useAuth()
+
+	const getFilterIcon = (filter: string) => {
+		switch (filter) {
+			default:
+			case "none":
+				return filterIcon
+			case "label":
+				return pricetag
+			case "artist":
+				return person
+			case "release":
+				return time
+		}
+	}
 
 	if (!username) {
 		return (
@@ -119,7 +133,7 @@ const CollectionPage: React.FC = () => {
 								})
 							}
 						>
-							<IonIcon slot="icon-only" md={filterIcon}></IonIcon>
+							<IonIcon slot="icon-only" md={getFilterIcon(filter)}></IonIcon>
 						</IonButton>
 					</IonButtons>
 					<IonTitle>Collection</IonTitle>
