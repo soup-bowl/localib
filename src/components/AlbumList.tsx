@@ -1,4 +1,5 @@
-import { IonAvatar, IonItem, IonLabel, IonList, IonText } from "@ionic/react"
+import { IonAvatar, IonChip, IonIcon, IonItem, IonLabel, IonList, IonText } from "@ionic/react"
+import { disc } from "ionicons/icons"
 import { IReleases } from "../api"
 import "./AlbumList.css"
 
@@ -20,6 +21,10 @@ const AlbumList: React.FC<Props> = ({ data, onClickAlbum }) => {
 						<br />
 						<IonText>{album.basic_information.artists.map((artist) => artist.name).join(", ")}</IonText>
 					</IonLabel>
+					<IonChip slot="end">
+						<IonIcon icon={disc} />
+						<IonLabel>{album.basic_information.formats[0].name}</IonLabel>
+					</IonChip>
 				</IonItem>
 			))}
 		</IonList>

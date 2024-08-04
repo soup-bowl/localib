@@ -70,7 +70,7 @@ const Settings: React.FC<Props> = ({ open, onClose, onSave }) => {
 						</IonInput>
 					</IonItem>
 				</IonList>
-				<IonNote color="medium" class="ion-margin-horizontal" style={{ "display": "block" }}>
+				<IonNote color="medium" class="ion-margin-horizontal" style={{ display: "block" }}>
 					Until OAuth is implemented, we currently use Access Token for authentication. To get your token,{" "}
 					<a href="https://www.discogs.com/settings/developers">visit the Developer page</a> and copy your
 					token, or click Generate if you do not have one.
