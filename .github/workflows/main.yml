@@ -4,6 +4,13 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'index.html'
+      - 'package-lock.json'
+      - 'tsconfig*'
+      - 'vite.config.ts'
   release:
     types:
       - published
