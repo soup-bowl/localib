@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="512"
+   height="512"
+   viewBox="0 0 135.46666 135.46667"
+   version="1.1"
+   id="svg5"
+   xml:space="preserve"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   sodipodi:docname="icon.svg"
+   inkscape:export-filename="icon-192.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="0.5"
+     inkscape:cx="246"
+     inkscape:cy="412"
+     inkscape:window-width="1444"
+     inkscape:window-height="991"
+     inkscape:window-x="26"
+     inkscape:window-y="23"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1" /><defs
+     id="defs2"><linearGradient
+       inkscape:collect="always"
+       id="linearGradient1022"><stop
+         style="stop-color:#0f0f0f;stop-opacity:1;"
+         offset="0"
+         id="stop1018" /><stop
+         style="stop-color:#353535;stop-opacity:1;"
+         offset="1"
+         id="stop1020" /></linearGradient><linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient1022"
+       id="linearGradient1024"
+       x1="70.288208"
+       y1="134.33598"
+       x2="70.288208"
+       y2="0.71519858"
+       gradientUnits="userSpaceOnUse" /></defs><g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"><rect
+       style="fill:url(#linearGradient1024);fill-opacity:1;stroke-width:0.669431"
+       id="rect993"
+       width="135.46666"
+       height="135.46666"
+       x="0"
+       y="0" /><g
+       style="fill:#ffffff;fill-opacity:1"
+       id="g259"
+       transform="matrix(0.12398216,0,0,0.12398216,35.993901,35.993901)"><path
+         d="M 33.736434,25.79845 Q 35.72093,47.627907 57.550388,49.612403 H 454.44961 v 0 Q 476.27907,47.627907 478.26357,25.79845 476.27907,3.9689922 454.44961,1.9844961 H 57.550388 v 0 Q 35.72093,3.9689922 33.736434,25.79845 Z m 15.875969,134.94574 q -21.829457,0 -35.72093,15.87597 Q 0,193.48837 1.9844961,214.32558 L 33.736434,468.34109 v 0 q 2.976744,17.86046 15.875969,29.76744 12.899225,11.90697 31.751938,11.90697 H 430.63566 v 0 q 18.85271,0 31.75194,-11.90697 12.89922,-11.90698 15.87597,-29.76744 L 510.0155,214.32558 v 0 Q 512,193.48837 498.10853,176.62016 484.21705,160.74419 462.3876,160.74419 Z M 438.57364,343.31783 q -1.98449,57.55039 -53.58139,95.25581 v 0 0 Q 333.39535,477.27132 256,478.26357 178.60465,477.27132 127.00775,438.57364 75.410853,400.86822 73.426357,343.31783 75.410853,285.76744 127.00775,248.06202 178.60465,209.36434 256,208.37209 q 77.39535,0.99225 128.99225,39.68993 51.5969,37.70542 53.58139,95.25581 z M 256,375.06977 q 13.89147,0 22.82171,-6.94574 v 0 0 q 8.93023,-6.94574 8.93023,-16.86822 0,-9.92248 -8.93023,-16.86821 -8.93024,-6.94574 -22.82171,-6.94574 -13.89147,0 -22.82171,6.94574 -8.93023,6.94573 -8.93023,16.86821 0,9.92248 8.93023,16.86822 8.93024,6.94574 22.82171,6.94574 z M 41.674419,81.364341 q -21.829458,1.984496 -23.813954,23.813949 1.984496,21.82946 23.813954,23.81396 H 470.32558 v 0 q 21.82946,-1.9845 23.81395,-23.81396 -1.98449,-21.829453 -23.81395,-23.813949 z"
+         id="path249"
+         style="fill:#ffffff;fill-opacity:1" /></g></g><style
+     id="style132">
+    path { fill: black; }
+    @media (prefers-color-scheme: dark) {
+      path { fill: white; }
+    }
+  </style><style
+     id="style247">
+    path { fill: black; }
+    @media (prefers-color-scheme: dark) {
+      path { fill: white; }
+    }
+  </style></svg>
