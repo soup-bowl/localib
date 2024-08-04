@@ -31,10 +31,6 @@ const ProfilePage: React.FC = () => {
 		staleTime: 1000 * 60 * 60 * 24, // 24 hours
 	})
 
-	if (data) {
-		console.log("Profile", data)
-	}
-
 	if (!username || isError) {
 		return (
 			<IonPage>

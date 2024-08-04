@@ -31,7 +31,7 @@ interface CollectionProps {
 const AlbumGrid: React.FC<CollectionProps> = ({ data, sort = "none", onClickAlbum }) => {
 	let displayData: [string, IReleases[]][] = []
 	let labelText = ""
-	console.log("HOTDOG", sort)
+
 	switch (sort) {
 		default:
 		case "none":

@@ -85,10 +85,6 @@ const CollectionPage: React.FC = () => {
 		event.detail.complete()
 	}
 
-	if (data) {
-		console.log("Collection Data", data)
-	}
-
 	if (isLoading) {
 		return (
 			<IonPage>

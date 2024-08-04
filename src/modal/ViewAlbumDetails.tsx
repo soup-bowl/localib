@@ -19,8 +19,6 @@ interface DisplayProps {
 }
 
 const ViewAlbumDetails: React.FC<DisplayProps> = ({ album, open, onClose }) => {
-	console.log("Selected Album", album)
-
 	return (
 		<IonModal isOpen={open}>
 			<IonHeader>

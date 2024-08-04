@@ -29,7 +29,6 @@ const Settings: React.FC<Props> = ({ open, onClose, onSave }) => {
 	const [newPassword, setNewPassword] = useState<string>(token ?? "")
 
 	const handleSave = () => {
-		console.log("Save", newUsername, newPassword, username, token)
 		saveAuth(newUsername, newPassword)
 		queryClient.invalidateQueries()
 		onSave()
