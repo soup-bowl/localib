@@ -1,4 +1,5 @@
 import { useContext, useState } from "react"
+import { useHistory } from "react-router-dom"
 import {
 	IonModal,
 	IonHeader,
@@ -25,6 +26,7 @@ interface Props {
 const Settings: React.FC<Props> = ({ open, onClose, onSave }) => {
 	const queryClient = useQueryClient()
 	const userContext = useContext(UserContext)
+	const history = useHistory()
 
 	if (!userContext) {
 		throw new Error("SettingsPanel must be used within a UserProvider")
@@ -39,7 +41,7 @@ const Settings: React.FC<Props> = ({ open, onClose, onSave }) => {
 		setUsername(newUsername)
 		setPassword(newPassword)
 		queryClient.invalidateQueries()
-		onSave()
+		history.push("/profile")
 	}
 
 	return (
