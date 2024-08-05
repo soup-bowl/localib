@@ -70,7 +70,7 @@ const SearchPage: React.FC = () => {
 					/>
 				</IonToolbar>
 			</IonHeader>
-			<IonContent>
+			<IonContent fullscreen>
 				{filterData.length > 0 && <AlbumList data={filterData} onClickAlbum={(album) => setModalInfo(album)} />}
 
 				{modalInfo && (
