@@ -61,7 +61,7 @@ const Settings: React.FC<Props> = ({ open, onClose, onSave }) => {
 					<IonItem>
 						<IonInput
 							type="password"
-							label="Password"
+							label="Token"
 							value={newPassword}
 							onIonChange={(e) => setNewPassword(`${e.target.value}`)}
 						>

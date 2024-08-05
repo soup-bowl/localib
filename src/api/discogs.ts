@@ -34,7 +34,7 @@ export const getCollectionReleases = async (
 	onProgress?: (page: number, pages: number) => void
 ): Promise<IReleases[]> => {
 	let allReleases: IReleases[] = []
-	let url: string | undefined = `${API_URL}/users/${username}/collection/folders/0/releases?sort=added&per_page=100`
+	let url: string | undefined = `${API_URL}/users/${username}/collection/folders/0/releases?per_page=100`
 
 	while (url) {
 		const response = await fetch(url, {
