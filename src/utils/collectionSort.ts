@@ -1,8 +1,8 @@
 import { IReleases } from "../api"
-import { RecordsByYear } from "../types"
+import { IReleasesSort } from "../types"
 
 export const splitRecordsByYear = (records: IReleases[]): [string, IReleases[]][] => {
-	const recordsByYear = records.reduce<RecordsByYear>((acc, record) => {
+	const recordsByYear = records.reduce<IReleasesSort>((acc, record) => {
 		const year = new Date(record.date_added).getFullYear().toString()
 		if (!acc[year]) {
 			acc[year] = []
@@ -15,7 +15,7 @@ export const splitRecordsByYear = (records: IReleases[]): [string, IReleases[]][
 }
 
 export const splitRecordsByArtist = (records: IReleases[]): [string, IReleases[]][] => {
-	const recordsByArtist = records.reduce<RecordsByYear>((acc, record) => {
+	const recordsByArtist = records.reduce<IReleasesSort>((acc, record) => {
 		const artists = record.basic_information.artists.map((artist) => artist.name)
 		artists.forEach((artist) => {
 			if (!acc[artist]) {
@@ -34,7 +34,7 @@ export const splitRecordsByArtist = (records: IReleases[]): [string, IReleases[]
 }
 
 export const splitRecordsByLabel = (records: IReleases[]): [string, IReleases[]][] => {
-	const recordsByLabel = records.reduce<RecordsByYear>((acc, record) => {
+	const recordsByLabel = records.reduce<IReleasesSort>((acc, record) => {
 		const labels = record.basic_information.labels.map((label) => label.name)
 		labels.forEach((label) => {
 			if (!acc[label]) {

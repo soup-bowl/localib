@@ -14,7 +14,7 @@ import {
 	useIonActionSheet,
 } from "@ionic/react"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { filter as filterIcon, person, pricetag, time } from "ionicons/icons"
+import { filterOutline, personOutline, pricetagOutline, timeOutline } from "ionicons/icons"
 import { IReleases, getCollectionReleases } from "../api"
 import { FullpageLoading, AlbumGrid, FullpageInfo } from "../components"
 import { ViewAlbumDetails } from "../modal"
@@ -67,13 +67,13 @@ const CollectionPage: React.FC = () => {
 		switch (filter) {
 			default:
 			case "none":
-				return filterIcon
+				return filterOutline
 			case "label":
-				return pricetag
+				return pricetagOutline
 			case "artist":
-				return person
+				return personOutline
 			case "release":
-				return time
+				return timeOutline
 		}
 	}
 
