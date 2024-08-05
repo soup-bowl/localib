@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { IonCol, IonGrid, IonRow, IonText } from "@ionic/react"
 import { IReleases } from "../api"
 import { splitRecordsByArtist, splitRecordsByLabel, splitRecordsByYear } from "../utils"
@@ -12,8 +12,9 @@ interface AlbumProps {
 }
 
 const AlbumGridEntry: React.FC<AlbumProps> = ({ album, index, onClickAlbum }) => {
-	const { getImage } = useIndexedDBImages()
+	const { getImage, saveImage } = useIndexedDBImages()
 	const [displayedImage, setDisplayedImage] = useState<string | undefined>(undefined)
+	const imageRef = useRef<HTMLImageElement>(null);
 
 	const handleGetImage = async () => {
 		const base64Image = await getImage(`${album.id}`)
@@ -24,7 +25,29 @@ const AlbumGridEntry: React.FC<AlbumProps> = ({ album, index, onClickAlbum }) =>
 	return (
 		<IonCol size="6" sizeMd="4" sizeLg="3" key={index}>
 			<div className="album-art-container" onClick={() => onClickAlbum(album)}>
-				<img src={displayedImage ?? album.basic_information.thumb} className="album-art" alt="" />
+				{displayedImage ? (
+					<img src={displayedImage} className="album-art" alt="" />
+				) : (
+					<img
+						src={album.basic_information.thumb}
+						className="album-art"
+						alt=""
+						ref={imageRef}
+						onLoad={(e) => {
+							if (imageRef.current) {
+								const canvas = document.createElement('canvas');
+								const ctx = canvas.getContext('2d');
+								if (ctx) {
+									canvas.width = imageRef.current.width;
+									canvas.height = imageRef.current.height;
+									ctx.drawImage(imageRef.current, 0, 0);
+									const dataURL = canvas.toDataURL('image/jpeg');
+									console.log("HOTDOG", dataURL);
+								}
+							}
+						}}
+					/>
+				)}
 			</div>
 			<strong style={{ margin: 0 }}>{album.basic_information.title}</strong>
 			<br />
