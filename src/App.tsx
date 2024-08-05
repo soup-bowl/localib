@@ -1,7 +1,6 @@
 import { Redirect, Route } from "react-router-dom"
 import { QueryClient } from "@tanstack/react-query"
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client"
-import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister"
 import {
 	IonApp,
 	IonIcon,
@@ -15,6 +14,7 @@ import {
 import { IonReactRouter } from "@ionic/react-router"
 import { discOutline, searchOutline, personOutline } from "ionicons/icons"
 import { CollectionPage, ProfilePage, SearchPage } from "./pages"
+import { createIDBPersister } from "./persister"
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css"
@@ -58,9 +58,7 @@ const queryClient = new QueryClient({
 	},
 })
 
-const persister = createSyncStoragePersister({
-	storage: window.localStorage,
-})
+const persister = createIDBPersister()
 
 const App: React.FC = () => (
 	<PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
