@@ -11,6 +11,10 @@ export const splitRecordsByYear = (records: IReleases[]): [string, IReleases[]][
 		return acc
 	}, {})
 
+	for (const year in recordsByYear) {
+		recordsByYear[year].sort((a, b) => new Date(b.date_added).getTime() - new Date(a.date_added).getTime())
+	}
+
 	return Object.entries(recordsByYear).sort((a, b) => parseInt(b[0]) - parseInt(a[0]))
 }
 
