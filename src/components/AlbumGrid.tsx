@@ -1,6 +1,8 @@
+import { useState } from "react"
 import { IonCol, IonGrid, IonRow, IonText } from "@ionic/react"
 import { IReleases } from "../api"
 import { splitRecordsByArtist, splitRecordsByLabel, splitRecordsByYear } from "../utils"
+import { useIndexedDBImages } from "../hooks"
 import "./AlbumGrid.css"
 
 interface AlbumProps {
@@ -10,10 +12,19 @@ interface AlbumProps {
 }
 
 const AlbumGridEntry: React.FC<AlbumProps> = ({ album, index, onClickAlbum }) => {
+	const { getImage } = useIndexedDBImages()
+	const [displayedImage, setDisplayedImage] = useState<string | undefined>(undefined)
+
+	const handleGetImage = async () => {
+		const base64Image = await getImage(`${album.id}`)
+		setDisplayedImage(base64Image)
+	}
+	handleGetImage()
+
 	return (
 		<IonCol size="6" sizeMd="4" sizeLg="3" key={index}>
 			<div className="album-art-container" onClick={() => onClickAlbum(album)}>
-				<img src={album.basic_information.thumb} className="album-art" alt="" />
+				<img src={displayedImage ?? album.basic_information.thumb} className="album-art" alt="" />
 			</div>
 			<strong style={{ margin: 0 }}>{album.basic_information.title}</strong>
 			<br />
