@@ -41,7 +41,7 @@ jobs:
                   node-version: 20.x
 
             - name: 📦 Build Site
-              run: npm ci && npm run build
+              run: npm ci && npm run build:ion
 
             - name: 🚛 Publish Site
               uses: cloudflare/pages-action@v1
