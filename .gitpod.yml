@@ -1,5 +1,6 @@
 tasks:
-    - before: |
+    - before: cd app
+      init: |
           npm i -g @ionic/cli
           npm ci
       command: |
