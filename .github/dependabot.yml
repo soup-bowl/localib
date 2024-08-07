@@ -11,8 +11,8 @@ updates:
           interval: "monthly"
       ignore:
           # Issues with Ionic Framework 
-          - package: "react-router"
-          - package: "react-router-dom"
+          - dependency-name: "react-router"
+          - dependency-name: "react-router-dom"
       groups:
           dev-dependencies:
               patterns:
