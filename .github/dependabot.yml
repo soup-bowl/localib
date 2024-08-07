@@ -9,6 +9,10 @@ updates:
       directory: "/app"
       schedule:
           interval: "monthly"
+      ignore:
+          # Issues with Ionic Framework 
+          - package: "react-router"
+          - package: "react-router-dom"
       groups:
           dev-dependencies:
               patterns:
