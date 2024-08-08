@@ -43,7 +43,7 @@ public class Worker : BackgroundService
                 {
                     try
                     {
-                        HttpResponseMessage response = await _httpClient.GetAsync($"releases/{queueItem.RecordID}", stoppingToken);
+                        HttpResponseMessage response = await GetApiResponseWithRetryAsync($"releases/{queueItem.RecordID}", 3, 1000, stoppingToken);
                         response.EnsureSuccessStatusCode();
 
                         DiscogsRelease? releaseData = await response.Content.ReadFromJsonAsync<DiscogsRelease>();
@@ -51,7 +51,7 @@ public class Worker : BackgroundService
                         if (releaseData?.Thumb != null)
                         {
                             string imageUrl = releaseData.Thumb;
-                            byte[] imageBytes = await _httpClient.GetByteArrayAsync(imageUrl);
+                            byte[] imageBytes = await GetApiResponseWithRetryAsync(imageUrl, 3, 1000, stoppingToken).Result.Content.ReadAsByteArrayAsync(stoppingToken);
 
                             string filePath = Path.Combine("Images", $"{queueItem.RecordID}.jpg");
                             await File.WriteAllBytesAsync(filePath, imageBytes, stoppingToken);
@@ -86,5 +86,27 @@ public class Worker : BackgroundService
             }
             await Task.Delay(1000, stoppingToken);
         }
+    }
+
+    private async Task<HttpResponseMessage> GetApiResponseWithRetryAsync(string requestUri, int maxRetries, int delayMilliseconds, CancellationToken stoppingToken)
+    {
+        int retryCount = 0;
+        while (retryCount < maxRetries)
+        {
+            HttpResponseMessage response = await _httpClient.GetAsync(requestUri, stoppingToken);
+            if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+            {
+                _logger.LogWarning("Received 429 Too Many Requests. Retrying after delay...");
+                await Task.Delay(delayMilliseconds);
+                retryCount++;
+                delayMilliseconds += 1000; // Exponential backoff
+            }
+            else
+            {
+                response.EnsureSuccessStatusCode();
+                return response;
+            }
+        }
+        throw new HttpRequestException("Maximum retry attempts exceeded.");
     }
 }
