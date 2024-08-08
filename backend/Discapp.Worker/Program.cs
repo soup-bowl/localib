@@ -1,10 +1,6 @@
 using Discapp.Worker;
-using DiscappAPI.Data;
+using Discapp.Worker.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using MySql.Data.MySqlClient;
 
 var builder = Host.CreateApplicationBuilder(args);
 

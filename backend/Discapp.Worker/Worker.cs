@@ -1,29 +1,9 @@
-using DiscappAPI.Data;
+using Discapp.Worker.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using MySql.Data.MySqlClient;
-using System;
-using System.IO;
-using System.Net.Http;
 using System.Net.Http.Json;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Discapp.Worker;
-
-public class DiscogsRelease
-{
-    public string Thumb { get; set; }
-}
-
-public class DiscogsOptions
-{
-    public string ConsumerKey { get; set; }
-    public string ConsumerSecret { get; set; }
-}
 
 public class Worker : BackgroundService
 {
@@ -63,20 +43,20 @@ public class Worker : BackgroundService
                 {
                     try
                     {
-                        var response = await _httpClient.GetAsync($"releases/{queueItem.RecordID}", stoppingToken);
+                        HttpResponseMessage response = await _httpClient.GetAsync($"releases/{queueItem.RecordID}", stoppingToken);
                         response.EnsureSuccessStatusCode();
 
                         DiscogsRelease? releaseData = await response.Content.ReadFromJsonAsync<DiscogsRelease>();
 
                         if (releaseData?.Thumb != null)
                         {
-                            String imageUrl = releaseData.Thumb;
+                            string imageUrl = releaseData.Thumb;
                             byte[] imageBytes = await _httpClient.GetByteArrayAsync(imageUrl);
 
-                            var filePath = Path.Combine("Images", $"{queueItem.RecordID}.jpg");
+                            string filePath = Path.Combine("Images", $"{queueItem.RecordID}.jpg");
                             await File.WriteAllBytesAsync(filePath, imageBytes, stoppingToken);
 
-                            var newRecord = new Record
+                            Record newRecord = new()
                             {
                                 RecordID = queueItem.RecordID,
                                 FilePath = filePath,

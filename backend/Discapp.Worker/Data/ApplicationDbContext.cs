@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace DiscappAPI.Data
+namespace Discapp.Worker.Data
 {
     public class ApplicationDbContext : DbContext
     {
