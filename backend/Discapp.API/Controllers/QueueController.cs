@@ -2,8 +2,6 @@ using DiscappAPI.Data;
 using DiscappAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace DiscappAPI.Controllers
 {
@@ -27,19 +25,25 @@ namespace DiscappAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<RecordReply>> PostMyEntity(int[] input)
         {
-            RecordReply records = new RecordReply();
+            RecordReply records = new();
 
-            foreach (var recordId in input)
+            foreach (int recordId in input)
             {
-                var record = await _context.Records.FirstOrDefaultAsync(r => r.RecordID == recordId);
+                Record? record = await _context.Records.FirstOrDefaultAsync(r => r.RecordID == recordId);
 
                 if (record != null)
                 {
-                    records.Available.Add(record);
+                    byte[] fileBytes = System.IO.File.ReadAllBytes(record.FilePath);
+                    string base64String = Convert.ToBase64String(fileBytes);
+
+                    records.Available.Add(new() {
+                        RecordID = record.RecordID,
+                        Image = $"data:image/jpeg;base64,{base64String}"
+                    });
                 }
                 else
                 {
-                    var myEntity = new Queue { RecordID = recordId };
+                    Queue myEntity = new() { RecordID = recordId };
                     _context.Queue.Add(myEntity);
                     records.Queued.Add(recordId);
                 }
