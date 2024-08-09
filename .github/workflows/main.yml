@@ -5,7 +5,7 @@ on:
         branches:
             - main
         paths:
-            - "app/**"
+            - "frontend/**"
     release:
         types:
             - published
@@ -36,7 +36,7 @@ jobs:
                   node-version: 20.x
 
             - name: 📦 Build Site
-              run: cd app && npm ci && npm run build:ion
+              run: cd frontend && npm ci && npm run build:ion
 
             - name: 🚛 Publish Site
               uses: cloudflare/pages-action@v1
@@ -44,6 +44,6 @@ jobs:
                   apiToken: ${{ secrets.CF_API_TOKEN }}
                   accountId: ${{ secrets.CF_ACCOUNT_ID }}
                   projectName: discog
-                  directory: ./app/dist
+                  directory: ./frontend/dist
                   gitHubToken: ${{ secrets.GITHUB_TOKEN }}
                   branch: ${{ github.event_name == 'release' && 'main' || 'not-hotdog' }}

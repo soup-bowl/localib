@@ -4,6 +4,7 @@ tasks:
     - name: MySQL Server
       init: docker pull mysql:5
       command: docker run --name mysql-server -e MYSQL_ROOT_PASSWORD=password -p 3306:3306 mysql:5
+      openMode: tab-before
 
     - name: Scraper API
       before: cd backend/Discapp.API
@@ -23,7 +24,7 @@ tasks:
       openMode: split-right
 
     - name: Frontend
-      before: cd app
+      before: cd frontend
       init: |
           npm i -g @ionic/cli
           npm ci
