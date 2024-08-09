@@ -39,7 +39,7 @@ jobs:
             push: true
             tags: ghcr.io/soup-bowl/netscrape:edge
             platforms: >
-              linux/amd64
+              linux/amd64,
               linux/arm64
             context: "{{defaultContext}}:backend"
             cache-from: type=gha
@@ -54,7 +54,7 @@ jobs:
               ghcr.io/soup-bowl/netscrape:${{ github.event.release.tag_name }},
               ghcr.io/soup-bowl/netscrape:latest
             platforms: >
-              linux/amd64
+              linux/amd64,
               linux/arm64
             context: "{{defaultContext}}:backend"
             cache-from: type=gha
