@@ -1,11 +1,14 @@
 image: gitpod/workspace-dotnet:latest
 
-tasks:  
+tasks:
     - name: Scraper API
       before: cd backend/Discapp.API
       init: dotnet restore
       command: dotnet watch run
       openMode: split-left
+
+    - init: docker pull mysql:5
+      command: docker run --name mysql-server -e MYSQL_ROOT_PASSWORD=password -p 3306:3306 -d mysql:5
 
     - name: Scraper Processor
       before: cd backend/Discapp.Worker
