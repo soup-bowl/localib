@@ -10,13 +10,15 @@ public class Worker : BackgroundService
     private readonly ILogger<Worker> _logger;
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly DiscogsOptions _discogsOptions;
+    private readonly PathSettings _pathOptions;
     private readonly HttpClient _httpClient;
 
-    public Worker(ILogger<Worker> logger, IServiceScopeFactory scopeFactory, IOptions<DiscogsOptions> discogsOptions)
+    public Worker(ILogger<Worker> logger, IServiceScopeFactory scopeFactory, IOptions<DiscogsOptions> discogsOptions, IOptions<PathSettings> pathOptions)
     {
         _logger = logger;
         _scopeFactory = scopeFactory;
         _discogsOptions = discogsOptions.Value;
+        _pathOptions = pathOptions.Value;
         _httpClient = new HttpClient
         {
             BaseAddress = new Uri("https://api.discogs.com/")
@@ -53,13 +55,13 @@ public class Worker : BackgroundService
                             string imageUrl = releaseData.Thumb;
                             byte[] imageBytes = await GetApiResponseWithRetryAsync(imageUrl, 3, 1000, stoppingToken).Result.Content.ReadAsByteArrayAsync(stoppingToken);
 
-                            string filePath = Path.Combine("Images", $"{queueItem.RecordID}.jpg");
+                            string filePath = Path.Combine(_pathOptions.ImagePath, queueItem.RecordID.ToString() + ".jpg");
                             await File.WriteAllBytesAsync(filePath, imageBytes, stoppingToken);
 
                             Record newRecord = new()
                             {
                                 RecordID = queueItem.RecordID,
-                                FilePath = filePath,
+                                FilePath = $"{queueItem.RecordID}.jpg",
                                 Recorded = DateTime.Now
                             };
 

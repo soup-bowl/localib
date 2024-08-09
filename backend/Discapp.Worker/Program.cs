@@ -18,6 +18,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 //builder.Services.AddSingleton(new MySqlConnection(connectionString));
 builder.Services.Configure<DiscogsOptions>(configuration.GetSection("Discogs"));
+builder.Services.Configure<PathSettings>(configuration.GetSection("PathSettings"));
 builder.Services.AddHostedService<Worker>();
 
 var host = builder.Build();

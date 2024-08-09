@@ -10,3 +10,8 @@ public class DiscogsOptions
     public string ConsumerKey { get; set; } = "";
     public string ConsumerSecret { get; set; } = "";
 }
+
+public class PathSettings
+{
+    public string ImagePath { get; set; } = "";
+}

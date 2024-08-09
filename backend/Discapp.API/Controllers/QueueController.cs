@@ -10,10 +10,12 @@ namespace DiscappAPI.Controllers
     public class QueueController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly PathSettings _pathSettings;
 
-        public QueueController(ApplicationDbContext context)
+        public QueueController(ApplicationDbContext context, PathSettings pathSettings)
         {
             _context = context;
+            _pathSettings = pathSettings;
         }
 
         [HttpGet]
@@ -33,10 +35,12 @@ namespace DiscappAPI.Controllers
 
                 if (record != null)
                 {
-                    byte[] fileBytes = System.IO.File.ReadAllBytes(record.FilePath);
+                    string fullPath = Path.Combine(_pathSettings.ImagePath, record.FilePath);
+                    byte[] fileBytes = System.IO.File.ReadAllBytes(fullPath);
                     string base64String = Convert.ToBase64String(fileBytes);
 
-                    records.Available.Add(new() {
+                    records.Available.Add(new()
+                    {
                         RecordID = record.RecordID,
                         Image = $"data:image/jpeg;base64,{base64String}"
                     });
