@@ -1,2 +1,11 @@
 export { getCollectionReleases, getMe, getProfile } from "./discogs"
-export type { ICollections, IIdentify, IProfile, IPagination, IReleases } from "./interface"
+export { postVinylQueue } from "./vinyl"
+export type {
+	ICollections,
+	IIdentify,
+	IProfile,
+	IPagination,
+	IReleases,
+	IVinylResponse,
+	IAvailableItem,
+} from "./interface"
