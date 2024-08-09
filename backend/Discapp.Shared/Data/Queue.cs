@@ -1,4 +1,6 @@
-namespace Discapp.Worker.Data
+using Microsoft.EntityFrameworkCore;
+
+namespace Discapp.Shared.Data
 {
     public class Queue
     {

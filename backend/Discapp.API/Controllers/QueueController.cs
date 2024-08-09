@@ -1,9 +1,9 @@
-using DiscappAPI.Data;
-using DiscappAPI.Models;
+using Discapp.Shared.Data;
+using Discapp.API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace DiscappAPI.Controllers
+namespace Discapp.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

@@ -35,4 +35,4 @@ yarn-error.log*
 # -- .NET
 backend/*/bin
 backend/*/obj
-backend/*/Images
+backend/Images/*.jpg

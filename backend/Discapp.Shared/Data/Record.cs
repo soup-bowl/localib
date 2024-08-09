@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace DiscappAPI.Data
+namespace Discapp.Shared.Data
 {
     public class Record
     {

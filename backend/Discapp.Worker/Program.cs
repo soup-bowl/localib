@@ -1,5 +1,5 @@
 using Discapp.Worker;
-using Discapp.Worker.Data;
+using Discapp.Shared.Data;
 using Microsoft.EntityFrameworkCore;
 
 var builder = Host.CreateApplicationBuilder(args);

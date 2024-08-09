@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using DiscappAPI.Data;
-using DiscappAPI.Models;
+using Discapp.Shared.Data;
+using Discapp.API.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 

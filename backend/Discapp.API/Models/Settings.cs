@@ -1,4 +1,4 @@
-namespace DiscappAPI.Models
+namespace Discapp.API.Models
 {
     public class PathSettings
     {

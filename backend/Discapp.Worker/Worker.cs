@@ -1,4 +1,4 @@
-using Discapp.Worker.Data;
+using Discapp.Shared.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Json;

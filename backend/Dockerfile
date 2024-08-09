@@ -1,18 +1,21 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-api
 
 WORKDIR /src
-COPY Discapp.API/*.csproj .
-RUN dotnet restore
-COPY Discapp.API .
-RUN dotnet publish -c Release -o /publish
+COPY Discapp.API/*.csproj Discapp.API/
+COPY Discapp.Shared/*.csproj Discapp.Shared/
+
+RUN dotnet restore "Discapp.API/Discapp.API.csproj"
+COPY . . 
+RUN dotnet publish "Discapp.API/Discapp.API.csproj" -c Release -o /publish
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-worker
 
 WORKDIR /src
-COPY Discapp.Worker/*.csproj .
-RUN dotnet restore
-COPY Discapp.Worker .
-RUN dotnet publish -c Release -o /publish
+COPY Discapp.Worker/*.csproj Discapp.Worker/
+COPY Discapp.Shared/*.csproj Discapp.Shared/
+RUN dotnet restore "Discapp.Worker/Discapp.Worker.csproj"
+COPY . .
+RUN dotnet publish "Discapp.Worker/Discapp.Worker.csproj" -c Release -o /publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 

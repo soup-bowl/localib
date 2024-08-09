@@ -1,10 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk.Worker">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>dotnet-Discapp.Worker-f30c0f33-bd8e-4ac8-9309-173cc0793ce1</UserSecretsId>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,9 +19,5 @@
     <PackageReference Include="MySql.EntityFrameworkCore" Version="8.0.5" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.2" />
     <PackageReference Include="System.Net.Http.Json" Version="8.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Discapp.Shared\Discapp.Shared.csproj" />
   </ItemGroup>
 </Project>

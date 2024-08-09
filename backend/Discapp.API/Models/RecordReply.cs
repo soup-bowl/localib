@@ -1,7 +1,7 @@
-using DiscappAPI.Data;
+using Discapp.Shared.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace DiscappAPI.Models
+namespace Discapp.API.Models
 {
     public class RecordReply
     {
