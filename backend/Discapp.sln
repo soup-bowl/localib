@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Discapp.API", "Discapp.API\Discapp.API.csproj", "{B6730E0E-47BC-4577-A3D7-F17BBF53EAA7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Discapp.Worker", "Discapp.Worker\Discapp.Worker.csproj", "{9D4E0A8E-AD42-4E20-B8BD-709324CF8262}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Discapp.Shared", "Discapp.Shared\Discapp.Shared.csproj", "{E035D032-1F8B-40AA-A06B-186B0A6C4CEA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B6730E0E-47BC-4577-A3D7-F17BBF53EAA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6730E0E-47BC-4577-A3D7-F17BBF53EAA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6730E0E-47BC-4577-A3D7-F17BBF53EAA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6730E0E-47BC-4577-A3D7-F17BBF53EAA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D4E0A8E-AD42-4E20-B8BD-709324CF8262}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D4E0A8E-AD42-4E20-B8BD-709324CF8262}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D4E0A8E-AD42-4E20-B8BD-709324CF8262}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D4E0A8E-AD42-4E20-B8BD-709324CF8262}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E035D032-1F8B-40AA-A06B-186B0A6C4CEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E035D032-1F8B-40AA-A06B-186B0A6C4CEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E035D032-1F8B-40AA-A06B-186B0A6C4CEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E035D032-1F8B-40AA-A06B-186B0A6C4CEA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

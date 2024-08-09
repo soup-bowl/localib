@@ -95,7 +95,7 @@ const CollectionPage: React.FC = () => {
 	})
 
 	const handleRefresh = async (event: CustomEvent<RefresherEventDetail>) => {
-		await queryClient.invalidateQueries({ queryKey: [`${username}collection`] })
+		await queryClient.invalidateQueries({ queryKey: [`${username}collection`, `${username}images`] })
 		event.detail.complete()
 	}
 
@@ -143,11 +143,19 @@ const CollectionPage: React.FC = () => {
 				<IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
 					<IonRefresherContent></IonRefresherContent>
 				</IonRefresher>
-				{data && <AlbumGrid data={data} sort={filter} onClickAlbum={(album) => setModalInfo(album)} />}
+				{data && (
+					<AlbumGrid
+						data={data}
+						sort={filter}
+						username={username}
+						onClickAlbum={(album) => setModalInfo(album)}
+					/>
+				)}
 
 				{modalInfo && (
 					<ViewAlbumDetails
 						album={modalInfo}
+						username={username}
 						open={typeof modalInfo !== undefined}
 						onClose={() => setModalInfo(undefined)}
 					/>

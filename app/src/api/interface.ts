@@ -98,3 +98,13 @@ export interface IProfile {
 	avatar_url: string
 	banner_url: string
 }
+
+export interface IAvailableItem {
+	recordID: number
+	image: string
+}
+
+export interface IVinylResponse {
+	available: IAvailableItem[]
+	queued: number[]
+}

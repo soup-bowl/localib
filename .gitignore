@@ -1,5 +1,7 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+# -- Frontend
+
 # dependencies
 node_modules
 .pnp
@@ -29,3 +31,8 @@ yarn-error.log*
 
 # Optional eslint cache
 .eslintcache
+
+# -- .NET
+backend/*/bin
+backend/*/obj
+backend/Images/*.jpg

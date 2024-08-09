@@ -1,5 +1,29 @@
+image: gitpod/workspace-dotnet:latest
+
 tasks:
-    - before: cd app
+    - name: MySQL Server
+      init: docker pull mysql:5
+      command: docker run --name mysql-server -e MYSQL_ROOT_PASSWORD=password -p 3306:3306 mysql:5
+
+    - name: Scraper API
+      before: cd backend/Discapp.API
+      init: |
+        dotnet tool install --global dotnet-ef
+        dotnet restore
+      command: |
+        export PATH="$PATH:/home/gitpod/.dotnet/tools"
+        dotnet ef database update
+        dotnet watch run
+      openMode: split-left
+
+    - name: Scraper Processor
+      before: cd backend/Discapp.Worker
+      init: dotnet restore
+      command: dotnet watch run
+      openMode: split-right
+
+    - name: Frontend
+      before: cd app
       init: |
           npm i -g @ionic/cli
           npm ci
@@ -10,3 +34,5 @@ tasks:
 ports:
     - name: App
       port: 8100
+    - name: Scraper
+      port: 5132
