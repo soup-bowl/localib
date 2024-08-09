@@ -41,8 +41,8 @@ docker run --rm \
   --name Localib \
   -e ConnectionStrings__DefaultConnection="Server=localhost;Database=disc;User=root;Password=password;" \
   -e PathSettings__ImagePath=/Images \
-  -e Discogs__ConsumerKey=fLOuUbTEJtHqAujRMVbc \
-  -e Discogs__ConsumerSecret=LsUPzXFFAjUJINkkXjBCkUeXcimABtOs \
+  -e Discogs__ConsumerKey=somekeyvalue \
+  -e Discogs__ConsumerSecret=somekeyvalue \
   -v "$(pwd)/Images:/Images" \
   -p 8080:8080 \
   ghcr.io/soup-bowl/netscrape:edge
