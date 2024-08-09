@@ -34,6 +34,20 @@ Configuration is via `appsettings.json` or environment variables:
 * `Discogs__ConsumerKey` - Key value from [Discogs Developer Application][dcd].
 * `Discogs__ConsumerKey` - Key value from [Discogs Developer Application][dcd].
 
+Example:
+
+```bash
+docker run --rm \
+  --name Localib \
+  -e ConnectionStrings__DefaultConnection="Server=localhost;Database=disc;User=root;Password=password;" \
+  -e PathSettings__ImagePath=/Images \
+  -e Discogs__ConsumerKey=fLOuUbTEJtHqAujRMVbc \
+  -e Discogs__ConsumerSecret=LsUPzXFFAjUJINkkXjBCkUeXcimABtOs \
+  -v "$(pwd)/Images:/Images" \
+  -p 8080:8080 \
+  ghcr.io/soup-bowl/netscrape:edge
+```
+
 ## Logo
 
 The temporary logo utilises the **album-collection** icon from [Free icons](https://free-icons.github.io/free-icons/).
