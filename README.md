@@ -1,4 +1,4 @@
-<h1 align="center">Discogs Offline Library (name TBD)</h1>
+<h1 align="center">Localib</h1>
 <p align="center">
   <img src="https://f.subo.dev/i/discogs-app-image.webp" alt="" />
 </p>
