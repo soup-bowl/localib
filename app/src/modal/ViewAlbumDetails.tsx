@@ -22,7 +22,7 @@ interface DisplayProps {
 }
 
 const ViewAlbumDetails: React.FC<DisplayProps> = ({ album, username = "", open, onClose }) => {
-	const imageData = useQuery<IVinylResponse>({
+	const imageData = useQuery<IVinylResponse | undefined>({
 		queryKey: [`${username}images`],
 		staleTime: 1000 * 60 * 60 * 24, // 24 hours
 		enabled: false,

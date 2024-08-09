@@ -12,7 +12,7 @@ interface Props {
 }
 
 const AlbumList: React.FC<Props> = ({ data, username = "", onClickAlbum }) => {
-	const imageData = useQuery<IVinylResponse>({
+	const imageData = useQuery<IVinylResponse | undefined>({
 		queryKey: [`${username}images`],
 		queryFn: () => postVinylQueue(data?.map((item) => item.basic_information.id) ?? []),
 		staleTime: 1000 * 60 * 60 * 24, // 24 hours

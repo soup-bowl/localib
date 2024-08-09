@@ -32,7 +32,7 @@ interface CollectionProps {
 }
 
 const AlbumGrid: React.FC<CollectionProps> = ({ data, sort = "none", username = "", onClickAlbum }) => {
-	const imageData = useQuery<IVinylResponse>({
+	const imageData = useQuery<IVinylResponse | undefined>({
 		queryKey: [`${username}images`],
 		queryFn: () => postVinylQueue(data?.map((item) => item.basic_information.id) ?? []),
 		staleTime: 1000 * 60 * 60 * 24, // 24 hours

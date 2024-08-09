@@ -1,9 +1,13 @@
 import { IVinylResponse } from "./interface"
 
-const VINYL_API_URL = `${import.meta.env.VITE_VINYL_API_URL}/api/queue`
+export const postVinylQueue = async (ids: number[]): Promise<IVinylResponse | undefined> => {
+	const apiURL = import.meta.env.VITE_VINYL_API_URL
 
-export const postVinylQueue = async (ids: number[]): Promise<IVinylResponse> => {
-	const response = await fetch(VINYL_API_URL, {
+	if (apiURL === "" || apiURL === undefined) {
+		return undefined
+	}
+
+	const response = await fetch(`${apiURL}/api/queue`, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
