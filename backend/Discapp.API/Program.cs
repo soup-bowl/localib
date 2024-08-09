@@ -4,14 +4,15 @@ using Discapp.API.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection") 
+var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
                        ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
-var imageStoragePath = Environment.GetEnvironmentVariable("PathSettings__ImagePath") 
+var imageStoragePath = Environment.GetEnvironmentVariable("PathSettings__ImagePath")
                        ?? builder.Configuration["PathSettings:ImagePath"];
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 21))));
+    options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 21)),
+    b => b.MigrationsAssembly("Discapp.API")));
 
 builder.Services.AddSingleton(new PathSettings { ImagePath = imageStoragePath ?? "." });
 
