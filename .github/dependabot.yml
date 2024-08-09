@@ -10,9 +10,17 @@ updates:
       schedule:
           interval: "monthly"
       ignore:
-          # Issues with Ionic Framework 
+          # Issues with Ionic Framework
           - dependency-name: "react-router"
           - dependency-name: "react-router-dom"
+      groups:
+          dev-dependencies:
+              patterns:
+                  - "*"
+    - package-ecosystem: "nuget"
+      directory: "/backend"
+      schedule:
+          interval: "monthly"
       groups:
           dev-dependencies:
               patterns:
