@@ -1,8 +1,9 @@
 import { IonAvatar, IonChip, IonIcon, IonItem, IonLabel, IonList, IonText } from "@ionic/react"
 import { disc } from "ionicons/icons"
-import { IAvailableItem, IReleases, IVinylResponse, postVinylQueue } from "../api"
-import "./AlbumList.css"
 import { useQuery } from "@tanstack/react-query"
+import { IReleases, IVinylResponse, postVinylQueue } from "../api"
+import { findLocalImageById } from "../utils"
+import "./AlbumList.css"
 
 interface Props {
 	data: IReleases[]
@@ -17,11 +18,6 @@ const AlbumList: React.FC<Props> = ({ data, username = "", onClickAlbum }) => {
 		staleTime: 1000 * 60 * 60 * 24, // 24 hours
 		enabled: data !== undefined,
 	})
-
-	const findLocalImageById = (available: IAvailableItem[], id: number): string | undefined => {
-		const item = available.find((item) => item.recordID === id)
-		return item ? item.image : undefined
-	}
 
 	return (
 		<IonList lines="full">

@@ -78,6 +78,7 @@ const SearchPage: React.FC = () => {
 				{modalInfo && (
 					<ViewAlbumDetails
 						album={modalInfo}
+						username={username}
 						open={typeof modalInfo !== undefined}
 						onClose={() => setModalInfo(undefined)}
 					/>

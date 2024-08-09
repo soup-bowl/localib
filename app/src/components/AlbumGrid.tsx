@@ -1,8 +1,8 @@
 import { IonCol, IonGrid, IonRow, IonText } from "@ionic/react"
-import { IAvailableItem, IReleases, IVinylResponse, postVinylQueue } from "../api"
-import { splitRecordsByArtist, splitRecordsByLabel, splitRecordsByYear } from "../utils"
-import "./AlbumGrid.css"
 import { useQuery } from "@tanstack/react-query"
+import { IReleases, IVinylResponse, postVinylQueue } from "../api"
+import { findLocalImageById, splitRecordsByArtist, splitRecordsByLabel, splitRecordsByYear } from "../utils"
+import "./AlbumGrid.css"
 
 interface AlbumProps {
 	album: IReleases
@@ -38,11 +38,6 @@ const AlbumGrid: React.FC<CollectionProps> = ({ data, sort = "none", username = 
 		staleTime: 1000 * 60 * 60 * 24, // 24 hours
 		enabled: data !== undefined,
 	})
-
-	const findLocalImageById = (available: IAvailableItem[], id: number): string | undefined => {
-		const item = available.find((item) => item.recordID === id)
-		return item ? item.image : undefined
-	}
 
 	let displayData: [string, IReleases[]][] = []
 	let labelText = ""
