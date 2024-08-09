@@ -20,6 +20,18 @@ You can access settings by going to **Profile**, then **Settings** (top-right co
 
 For the security-concious: Your details are **only** used for Discogs API communications. You can verify this by [looking at the API file](/src/api/discogs.ts).
 
+### Scraper
+
+The project also contains a Discogs image scraper, built in .NET. This is designed to queue up IDs, then grab images from the Discogs API in a slow enough manner that it doesn't hit the rate limiter. This uses a MySQL database to manage state.
+
+Configuration is via `appsettings.json` or environment variables:
+
+* `ConnectionStrings__DefaultConnection` - Connection to a MySQL database, like `Server=localhost;Database=discoarchive;User=root;Password=password;`
+* `Discogs__ConsumerKey` - Key value from [Discogs Developer Application][dcd].
+* `Discogs__ConsumerKey` - Key value from [Discogs Developer Application][dcd].
+
 ## Logo
 
 The temporary logo utilises the **album-collection** icon from [Free icons](https://free-icons.github.io/free-icons/).
+
+[dcd]: https://www.discogs.com/settings/developers
