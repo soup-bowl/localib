@@ -10,6 +10,34 @@ var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__De
 var imageStoragePath = Environment.GetEnvironmentVariable("PathSettings__ImagePath")
                        ?? builder.Configuration["PathSettings:ImagePath"];
 
+// --- CORS ---
+string? allowedOrigins = Environment.GetEnvironmentVariable("CORS_ALLOWED_ORIGINS");
+if (string.IsNullOrEmpty(allowedOrigins))
+{
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("DefaultPolicy", builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+        });
+    });
+}
+else
+{
+    string[] origins = allowedOrigins.Split(",", StringSplitOptions.RemoveEmptyEntries);
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("DefaultPolicy", builder =>
+        {
+            builder.WithOrigins(origins)
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+        });
+    });
+}
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 21)),
     b => b.MigrationsAssembly("Discapp.API")));
@@ -30,6 +58,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("DefaultPolicy");
 
 app.UseHttpsRedirection();
 
