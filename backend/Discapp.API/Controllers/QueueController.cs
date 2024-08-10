@@ -18,12 +18,6 @@ namespace Discapp.API.Controllers
             _pathSettings = pathSettings;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Queue>>> GetMyEntities()
-        {
-            return await _context.Queue.ToListAsync();
-        }
-
         [HttpPost]
         public async Task<ActionResult<RecordReply>> PostMyEntity(int[] input)
         {
