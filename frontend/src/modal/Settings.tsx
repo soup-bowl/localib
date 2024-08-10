@@ -119,6 +119,10 @@ const Settings: React.FC<Props> = ({ open, hasUpdate, onClose, onSave }) => {
 						</IonLabel>
 					</IonItem>
 				</IonList>
+				<IonNote color="medium" class="ion-margin-horizontal" style={{ display: "block" }}>
+					Made by <a href="https://subo.dev">soup-bowl</a> and{" "}
+					<a href="https://github.com/soup-bowl/Localib">open source</a>.
+				</IonNote>
 			</IonContent>
 		</IonModal>
 	)
