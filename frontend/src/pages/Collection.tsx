@@ -5,9 +5,12 @@ import {
 	IonContent,
 	IonHeader,
 	IonIcon,
+	IonLabel,
 	IonPage,
 	IonRefresher,
 	IonRefresherContent,
+	IonSegment,
+	IonSegmentButton,
 	IonTitle,
 	IonToolbar,
 	RefresherEventDetail,
@@ -15,7 +18,7 @@ import {
 } from "@ionic/react"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { filterOutline, personOutline, pricetagOutline, timeOutline } from "ionicons/icons"
-import { IReleases, getCollectionReleases } from "../api"
+import { IReleases, getCollectionReleases, getCollectionWants } from "../api"
 import { FullpageLoading, AlbumGrid, FullpageInfo } from "../components"
 import { ViewAlbumDetails } from "../modal"
 import { useAuth } from "../hooks"
@@ -60,6 +63,7 @@ const CollectionPage: React.FC = () => {
 	const [filter, setFilter] = useState<"release" | "label" | "artist" | "none">("none")
 	const [modalInfo, setModalInfo] = useState<IReleases | undefined>(undefined)
 	const [loading, setLoading] = useState<{ page: number; pages: number }>({ page: 0, pages: 0 })
+	const [viewState, setViewState] = useState<"collection" | "want">("collection")
 	const betaBanner = import.meta.env.VITE_BETA_BANNER
 
 	const [{ username, token }, saveAuth, clearAuth] = useAuth()
@@ -88,27 +92,41 @@ const CollectionPage: React.FC = () => {
 		)
 	}
 
-	const { data, isLoading, isError } = useQuery<IReleases[]>({
+	const collectionData = useQuery<IReleases[]>({
 		queryKey: [`${username}collection`],
 		queryFn: () =>
 			getCollectionReleases(username, token ?? "", (page, pages) => setLoading({ page: page, pages: pages })),
 		staleTime: 1000 * 60 * 60 * 24, // 24 hours
 	})
 
+	const wantData = useQuery<IReleases[]>({
+		queryKey: [`${username}want`],
+		queryFn: () =>
+			getCollectionWants(username, token ?? "", (page, pages) => setLoading({ page: page, pages: pages })),
+		staleTime: 1000 * 60 * 60 * 24, // 24 hours
+	})
+
 	const handleRefresh = async (event: CustomEvent<RefresherEventDetail>) => {
-		await queryClient.invalidateQueries({ queryKey: [`${username}collection`, `${username}images`] })
+		await queryClient.invalidateQueries({
+			queryKey: [
+				`${username}collection`,
+				`${username}want`,
+				`${username}collectionimages`,
+				`${username}wantimages`,
+			],
+		})
 		event.detail.complete()
 	}
 
-	if (isLoading) {
+	if (collectionData.isLoading || wantData.isLoading) {
 		return (
 			<IonPage>
-				<FullpageLoading loadingProgress={loading.page + 1} loadingComplete={loading.pages} />
+				<FullpageLoading />
 			</IonPage>
 		)
 	}
 
-	if (isError) {
+	if (collectionData.isError || wantData.isError) {
 		return (
 			<IonPage>
 				<FullpageInfo text="An error occurred when loading information." />
@@ -137,7 +155,24 @@ const CollectionPage: React.FC = () => {
 							<IonIcon slot="icon-only" md={getFilterIcon(filter)}></IonIcon>
 						</IonButton>
 					</IonButtons>
-					<IonTitle>Collection</IonTitle>
+					<IonSegment
+						value={viewState}
+						onIonChange={(e) => {
+							const selectedValue = e.detail.value
+							if (selectedValue === "collection" || selectedValue === "want") {
+								setViewState(selectedValue)
+							} else {
+								setViewState("collection")
+							}
+						}}
+					>
+						<IonSegmentButton value="collection">
+							<IonLabel>Collection</IonLabel>
+						</IonSegmentButton>
+						<IonSegmentButton value="want">
+							<IonLabel>Wanted</IonLabel>
+						</IonSegmentButton>
+					</IonSegment>
 				</IonToolbar>
 				{betaBanner && (
 					<IonToolbar className="beta-banner" color="warning">
@@ -149,11 +184,22 @@ const CollectionPage: React.FC = () => {
 				<IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
 					<IonRefresherContent></IonRefresherContent>
 				</IonRefresher>
-				{data && (
+				{viewState === "collection" && collectionData.data && (
 					<AlbumGrid
-						data={data}
+						data={collectionData.data}
 						sort={filter}
 						username={username}
+						type={viewState}
+						onClickAlbum={(album) => setModalInfo(album)}
+					/>
+				)}
+
+				{viewState === "want" && wantData.data && (
+					<AlbumGrid
+						data={wantData.data}
+						sort={filter}
+						username={username}
+						type={viewState}
 						onClickAlbum={(album) => setModalInfo(album)}
 					/>
 				)}
@@ -162,6 +208,7 @@ const CollectionPage: React.FC = () => {
 					<ViewAlbumDetails
 						album={modalInfo}
 						username={username}
+						type={viewState}
 						open={typeof modalInfo !== undefined}
 						onClose={() => setModalInfo(undefined)}
 					/>

@@ -17,13 +17,14 @@ import { findLocalImageById } from "../utils"
 interface DisplayProps {
 	album: IReleases
 	username?: string
+	type: "collection" | "want"
 	open: boolean
 	onClose: () => void
 }
 
-const ViewAlbumDetails: React.FC<DisplayProps> = ({ album, username = "", open, onClose }) => {
+const ViewAlbumDetails: React.FC<DisplayProps> = ({ album, username = "", type, open, onClose }) => {
 	const imageData = useQuery<IVinylResponse | undefined>({
-		queryKey: [`${username}images`],
+		queryKey: [`${username}${type}images`],
 		staleTime: 1000 * 60 * 60 * 24, // 24 hours
 		enabled: false,
 	})

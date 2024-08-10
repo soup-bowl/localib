@@ -1,4 +1,4 @@
-import { IonAvatar, IonChip, IonIcon, IonItem, IonLabel, IonList, IonText } from "@ionic/react"
+import { IonAvatar, IonChip, IonIcon, IonItem, IonLabel, IonList, IonListHeader, IonText } from "@ionic/react"
 import { disc } from "ionicons/icons"
 import { useQuery } from "@tanstack/react-query"
 import { IReleases, IVinylResponse, postVinylQueue } from "../api"
@@ -8,12 +8,14 @@ import "./AlbumList.css"
 interface Props {
 	data: IReleases[]
 	username?: string
+	title?: string
+	type: "collection" | "want"
 	onClickAlbum: (album: IReleases) => void
 }
 
-const AlbumList: React.FC<Props> = ({ data, username = "", onClickAlbum }) => {
+const AlbumList: React.FC<Props> = ({ data, username = "", title = undefined, type, onClickAlbum }) => {
 	const imageData = useQuery<IVinylResponse | undefined>({
-		queryKey: [`${username}images`],
+		queryKey: [`${username}${type}images`],
 		queryFn: () => postVinylQueue(data?.map((item) => item.basic_information.id) ?? []),
 		staleTime: 1000 * 60 * 60 * 24, // 24 hours
 		enabled: data !== undefined,
@@ -21,6 +23,11 @@ const AlbumList: React.FC<Props> = ({ data, username = "", onClickAlbum }) => {
 
 	return (
 		<IonList lines="full">
+			{title && (
+				<IonListHeader>
+					<IonLabel>{title}</IonLabel>
+				</IonListHeader>
+			)}
 			{data.map((album, index) => {
 				let image = undefined
 				if (imageData.data) {

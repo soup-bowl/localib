@@ -64,6 +64,11 @@ export interface ICollections {
 	releases: IReleases[]
 }
 
+export interface IWants {
+	pagination: IPagination
+	wants: IReleases[]
+}
+
 export interface IIdentify {
 	id: number
 	username: string

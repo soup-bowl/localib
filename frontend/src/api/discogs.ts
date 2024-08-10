@@ -28,6 +28,48 @@ export const getProfile = async (username: string, password: string): Promise<IP
 	return response.json()
 }
 
+export const getCollectionWants = async (
+	username: string,
+	password: string,
+	onProgress?: (page: number, pages: number) => void
+): Promise<IReleases[]> => {
+	let allReleases: IReleases[] = []
+	let url: string | undefined = `${API_URL}/users/${username}/wants?per_page=100`
+
+	while (url) {
+		const response = await fetch(url, {
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: `Discogs token=${password}`,
+			},
+		})
+
+		if (!response.ok) {
+			throw new Error("Network response was not ok")
+		}
+
+		const data: ICollections = await response.json()
+
+		// Cheating a bit - converting the reference to keep the same models.
+		const transformedData = {
+			...data,
+			// @ts-expect-error
+			releases: data.wants,
+		}
+
+		allReleases = [...allReleases, ...transformedData.releases]
+
+		if (onProgress) {
+			onProgress(data.pagination.page, data.pagination.pages)
+		}
+
+		// Set the url to the next page, or undefined if there are no more pages
+		url = data.pagination.urls.next
+	}
+
+	return allReleases
+}
+
 export const getCollectionReleases = async (
 	username: string,
 	password: string,
