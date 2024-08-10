@@ -21,7 +21,7 @@ This application currently uses your **Personal Access Token**, until **OAuth** 
 
 You can access settings by going to **Profile**, then **Settings** (top-right cog), and putting your username and token in the relevant fields.
 
-For the security-concious: Your details are **only** used for Discogs API communications. You can verify this by [looking at the API file](/src/api/discogs.ts).
+For the security-concious: Your details are **only** used for Discogs API communications. You can verify this by [looking at the API file](/frontend/src/api/discogs.ts).
 
 ### Scraper
 
