@@ -17,6 +17,7 @@ import {
 import { useQueryClient } from "@tanstack/react-query"
 import { useAuth } from "../hooks"
 import { formatBytes } from "../utils"
+import packageJson from "../../package.json"
 
 interface Props {
 	open: boolean
@@ -88,6 +89,10 @@ const Settings: React.FC<Props> = ({ open, onClose, onSave }) => {
 					token, or click Generate if you do not have one.
 				</IonNote>
 				<IonList inset={true}>
+					<IonItem>
+						<IonLabel>App Version</IonLabel>
+						<IonLabel slot="end">{packageJson.version}</IonLabel>
+					</IonItem>
 					<IonItem>
 						<IonLabel>Storage Used</IonLabel>
 						<IonLabel slot="end">
