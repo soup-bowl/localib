@@ -78,13 +78,19 @@ const SearchPage: React.FC = () => {
 			</IonHeader>
 			<IonContent fullscreen>
 				{filterData.length > 0 && (
-					<AlbumList data={filterData} username={username} onClickAlbum={(album) => setModalInfo(album)} />
+					<AlbumList
+						data={filterData}
+						username={username}
+						type="collection"
+						onClickAlbum={(album) => setModalInfo(album)}
+					/>
 				)}
 
 				{modalInfo && (
 					<ViewAlbumDetails
 						album={modalInfo}
 						username={username}
+						type="collection"
 						open={typeof modalInfo !== undefined}
 						onClose={() => setModalInfo(undefined)}
 					/>

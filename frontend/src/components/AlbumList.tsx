@@ -8,12 +8,13 @@ import "./AlbumList.css"
 interface Props {
 	data: IReleases[]
 	username?: string
+	type: "collection" | "want"
 	onClickAlbum: (album: IReleases) => void
 }
 
-const AlbumList: React.FC<Props> = ({ data, username = "", onClickAlbum }) => {
+const AlbumList: React.FC<Props> = ({ data, username = "", type, onClickAlbum }) => {
 	const imageData = useQuery<IVinylResponse | undefined>({
-		queryKey: [`${username}images`],
+		queryKey: [`${username}${type}images`],
 		queryFn: () => postVinylQueue(data?.map((item) => item.basic_information.id) ?? []),
 		staleTime: 1000 * 60 * 60 * 24, // 24 hours
 		enabled: data !== undefined,

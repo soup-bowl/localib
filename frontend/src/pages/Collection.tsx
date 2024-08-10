@@ -107,7 +107,14 @@ const CollectionPage: React.FC = () => {
 	})
 
 	const handleRefresh = async (event: CustomEvent<RefresherEventDetail>) => {
-		await queryClient.invalidateQueries({ queryKey: [`${username}collection`, `${username}images`] })
+		await queryClient.invalidateQueries({
+			queryKey: [
+				`${username}collection`,
+				`${username}want`,
+				`${username}collectionimages`,
+				`${username}wantimages`,
+			],
+		})
 		event.detail.complete()
 	}
 
@@ -184,6 +191,7 @@ const CollectionPage: React.FC = () => {
 						data={collectionData.data}
 						sort={filter}
 						username={username}
+						type={viewState}
 						onClickAlbum={(album) => setModalInfo(album)}
 					/>
 				)}
@@ -193,6 +201,7 @@ const CollectionPage: React.FC = () => {
 						data={wantData.data}
 						sort={filter}
 						username={username}
+						type={viewState}
 						onClickAlbum={(album) => setModalInfo(album)}
 					/>
 				)}
@@ -201,6 +210,7 @@ const CollectionPage: React.FC = () => {
 					<ViewAlbumDetails
 						album={modalInfo}
 						username={username}
+						type={viewState}
 						open={typeof modalInfo !== undefined}
 						onClose={() => setModalInfo(undefined)}
 					/>

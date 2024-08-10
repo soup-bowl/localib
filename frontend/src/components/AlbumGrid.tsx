@@ -27,13 +27,14 @@ const AlbumGridEntry: React.FC<AlbumProps> = ({ album, index, staticImage = unde
 interface CollectionProps {
 	data: IReleases[]
 	sort?: "release" | "label" | "artist" | "none"
+	type: "collection" | "want"
 	username?: string
 	onClickAlbum: (album: IReleases) => void
 }
 
-const AlbumGrid: React.FC<CollectionProps> = ({ data, sort = "none", username = "", onClickAlbum }) => {
+const AlbumGrid: React.FC<CollectionProps> = ({ data, sort = "none", type, username = "", onClickAlbum }) => {
 	const imageData = useQuery<IVinylResponse | undefined>({
-		queryKey: [`${username}images`],
+		queryKey: [`${username}${type}images`],
 		queryFn: () => postVinylQueue(data?.map((item) => item.basic_information.id) ?? []),
 		staleTime: 1000 * 60 * 60 * 24, // 24 hours
 		enabled: data !== undefined,
