@@ -50,10 +50,9 @@ export const getCollectionWants = async (
 
 		const data: ICollections = await response.json()
 
-		// Cheating a bit - converting the reference to keep the same models.
 		const transformedData = {
 			...data,
-			// @ts-expect-error
+			// @ts-expect-error Cheating a bit - converting the reference to keep the same models.
 			releases: data.wants,
 		}
 

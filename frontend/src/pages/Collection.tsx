@@ -209,7 +209,7 @@ const CollectionPage: React.FC = () => {
 						album={modalInfo}
 						username={username}
 						type={viewState}
-						open={typeof modalInfo !== undefined}
+						open={typeof modalInfo !== "undefined"}
 						onClose={() => setModalInfo(undefined)}
 					/>
 				)}
