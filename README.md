@@ -48,6 +48,15 @@ docker run --rm \
   ghcr.io/soup-bowl/netscrape:edge
 ```
 
+### Testing Offline Capabilities
+
+If you want to test the PWA functionality locally, you can add the following to the `VitePWA()` segment in `vite.config.ts`:
+
+```js
+devOptions: { enabled: true },
+```
+
+
 ## Logo
 
 The temporary logo utilises the **album-collection** icon from [Free icons](https://free-icons.github.io/free-icons/).
