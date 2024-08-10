@@ -21,7 +21,7 @@ import { Settings } from "../modal"
 import { useAuth } from "../hooks"
 import "./Profile.css"
 
-const ProfilePage: React.FC = () => {
+const ProfilePage: React.FC<{ hasUpdate: boolean }> = ({ hasUpdate }) => {
 	const [openSettingsDialog, setOpenSettingsDialog] = useState<boolean>(false)
 	const betaBanner = import.meta.env.VITE_BETA_BANNER
 
@@ -51,6 +51,7 @@ const ProfilePage: React.FC = () => {
 
 				<Settings
 					open={openSettingsDialog}
+					hasUpdate={hasUpdate}
 					onClose={() => setOpenSettingsDialog(false)}
 					onSave={() => setOpenSettingsDialog(false)}
 				/>
@@ -110,6 +111,7 @@ const ProfilePage: React.FC = () => {
 
 			<Settings
 				open={openSettingsDialog}
+				hasUpdate={hasUpdate}
 				onClose={() => setOpenSettingsDialog(false)}
 				onSave={() => setOpenSettingsDialog(false)}
 			/>

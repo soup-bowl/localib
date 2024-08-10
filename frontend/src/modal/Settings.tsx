@@ -21,11 +21,12 @@ import packageJson from "../../package.json"
 
 interface Props {
 	open: boolean
+	hasUpdate: boolean
 	onClose: () => void
 	onSave: () => void
 }
 
-const Settings: React.FC<Props> = ({ open, onClose, onSave }) => {
+const Settings: React.FC<Props> = ({ open, hasUpdate, onClose, onSave }) => {
 	const queryClient = useQueryClient()
 	const [{ username, token }, saveAuth, clearAuth] = useAuth()
 	const [newUsername, setNewUsername] = useState<string>(username ?? "")
@@ -46,6 +47,12 @@ const Settings: React.FC<Props> = ({ open, onClose, onSave }) => {
 		saveAuth(newUsername, newPassword)
 		queryClient.invalidateQueries()
 		onSave()
+	}
+
+	const handleUpdate = () => {
+		if (window.location.reload) {
+			window.location.reload()
+		}
 	}
 
 	return (
@@ -86,12 +93,24 @@ const Settings: React.FC<Props> = ({ open, onClose, onSave }) => {
 				<IonNote color="medium" class="ion-margin-horizontal" style={{ display: "block" }}>
 					Until OAuth is implemented, we currently use Access Token for authentication. To get your token,{" "}
 					<a href="https://www.discogs.com/settings/developers">visit the Developer page</a> and copy your
-					token, or click Generate if you do not have one.
+					token, or click Generate if you do not have one.ssss
 				</IonNote>
 				<IonList inset={true}>
 					<IonItem>
 						<IonLabel>App Version</IonLabel>
-						<IonLabel slot="end">{packageJson.version}</IonLabel>
+						<IonLabel slot="end">
+							{packageJson.version}
+							{hasUpdate && (
+								<IonButton
+									onClick={handleUpdate}
+									color="primary"
+									size="small"
+									style={{ marginLeft: "10px" }}
+								>
+									Update
+								</IonButton>
+							)}
+						</IonLabel>
 					</IonItem>
 					<IonItem>
 						<IonLabel>Storage Used</IonLabel>

@@ -1,4 +1,6 @@
+import { useState, useEffect } from "react"
 import { Redirect, Route } from "react-router-dom"
+import { registerSW } from "virtual:pwa-register"
 import { QueryClient } from "@tanstack/react-query"
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client"
 import {
@@ -60,43 +62,57 @@ const queryClient = new QueryClient({
 
 const persister = createIDBPersister()
 
-const App: React.FC = () => (
-	<PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
-		<IonApp>
-			<IonReactRouter>
-				<IonTabs>
-					<IonRouterOutlet>
-						<Route exact path="/collection">
-							<CollectionPage />
-						</Route>
-						<Route exact path="/profile">
-							<ProfilePage />
-						</Route>
-						<Route path="/search">
-							<SearchPage />
-						</Route>
-						<Route exact path="/">
-							<Redirect to="/collection" />
-						</Route>
-					</IonRouterOutlet>
-					<IonTabBar slot="bottom" translucent>
-						<IonTabButton tab="collection" href="/collection">
-							<IonIcon aria-hidden="true" icon={discOutline} />
-							<IonLabel>Collection</IonLabel>
-						</IonTabButton>
-						<IonTabButton tab="profile" href="/profile">
-							<IonIcon aria-hidden="true" icon={personOutline} />
-							<IonLabel>Profile</IonLabel>
-						</IonTabButton>
-						<IonTabButton tab="search" href="/search">
-							<IonIcon aria-hidden="true" icon={searchOutline} />
-							<IonLabel>Search</IonLabel>
-						</IonTabButton>
-					</IonTabBar>
-				</IonTabs>
-			</IonReactRouter>
-		</IonApp>
-	</PersistQueryClientProvider>
-)
+const App: React.FC = () => {
+	const [updateAvailable, setUpdateAvailable] = useState<boolean>(false)
+
+	useEffect(() => {
+		const updateSW = registerSW({
+			onNeedRefresh() {
+				setUpdateAvailable(true)
+			},
+			onOfflineReady() {
+				console.log("The app is ready to work offline.")
+			},
+		})
+	}, [])
+	return (
+		<PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
+			<IonApp>
+				<IonReactRouter>
+					<IonTabs>
+						<IonRouterOutlet>
+							<Route exact path="/collection">
+								<CollectionPage />
+							</Route>
+							<Route exact path="/profile">
+								<ProfilePage hasUpdate={updateAvailable} />
+							</Route>
+							<Route path="/search">
+								<SearchPage />
+							</Route>
+							<Route exact path="/">
+								<Redirect to="/collection" />
+							</Route>
+						</IonRouterOutlet>
+						<IonTabBar slot="bottom" translucent>
+							<IonTabButton tab="collection" href="/collection">
+								<IonIcon aria-hidden="true" icon={discOutline} />
+								<IonLabel>Collection</IonLabel>
+							</IonTabButton>
+							<IonTabButton tab="profile" href="/profile">
+								<IonIcon aria-hidden="true" icon={personOutline} />
+								<IonLabel>Profile</IonLabel>
+							</IonTabButton>
+							<IonTabButton tab="search" href="/search">
+								<IonIcon aria-hidden="true" icon={searchOutline} />
+								<IonLabel>Search</IonLabel>
+							</IonTabButton>
+						</IonTabBar>
+					</IonTabs>
+				</IonReactRouter>
+			</IonApp>
+		</PersistQueryClientProvider>
+	)
+}
 
 export default App
