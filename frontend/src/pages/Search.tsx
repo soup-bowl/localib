@@ -9,6 +9,7 @@ import { useAuth } from "../hooks"
 const SearchPage: React.FC = () => {
 	const [modalInfo, setModalInfo] = useState<IReleases | undefined>(undefined)
 	const [filterData, setFilterData] = useState<IReleases[]>([])
+	const betaBanner = import.meta.env.VITE_BETA_BANNER
 
 	const [{ username, token }, saveAuth, clearAuth] = useAuth()
 
@@ -69,6 +70,11 @@ const SearchPage: React.FC = () => {
 						onIonInput={(ev) => searchData(data ?? [], ev.target.value?.toLowerCase() ?? "")}
 					/>
 				</IonToolbar>
+				{betaBanner && (
+					<IonToolbar className="beta-banner" color="warning">
+						<IonTitle>{betaBanner}</IonTitle>
+					</IonToolbar>
+				)}
 			</IonHeader>
 			<IonContent fullscreen>
 				{filterData.length > 0 && (

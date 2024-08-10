@@ -1,2 +1,12 @@
 /* For information on how to create your own theme, please see:
 http://ionicframework.com/docs/theming/ */
+
+.beta-banner {
+	--min-height: 25px;
+	--padding-top: 5px;
+	--padding-bottom: 5px;
+}
+
+.beta-banner ion-title {
+	font-size: 12px;
+}

@@ -60,6 +60,7 @@ const CollectionPage: React.FC = () => {
 	const [filter, setFilter] = useState<"release" | "label" | "artist" | "none">("none")
 	const [modalInfo, setModalInfo] = useState<IReleases | undefined>(undefined)
 	const [loading, setLoading] = useState<{ page: number; pages: number }>({ page: 0, pages: 0 })
+	const betaBanner = import.meta.env.VITE_BETA_BANNER
 
 	const [{ username, token }, saveAuth, clearAuth] = useAuth()
 
@@ -138,6 +139,11 @@ const CollectionPage: React.FC = () => {
 					</IonButtons>
 					<IonTitle>Collection</IonTitle>
 				</IonToolbar>
+				{betaBanner && (
+					<IonToolbar className="beta-banner" color="warning">
+						<IonTitle>{betaBanner}</IonTitle>
+					</IonToolbar>
+				)}
 			</IonHeader>
 			<IonContent fullscreen>
 				<IonRefresher slot="fixed" onIonRefresh={handleRefresh}>

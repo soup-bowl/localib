@@ -10,6 +10,7 @@ import {
 	IonHeader,
 	IonIcon,
 	IonPage,
+	IonTitle,
 	IonToolbar,
 } from "@ionic/react"
 import { useQuery } from "@tanstack/react-query"
@@ -22,6 +23,7 @@ import "./Profile.css"
 
 const ProfilePage: React.FC = () => {
 	const [openSettingsDialog, setOpenSettingsDialog] = useState<boolean>(false)
+	const betaBanner = import.meta.env.VITE_BETA_BANNER
 
 	const [{ username, token }, saveAuth, clearAuth] = useAuth()
 
@@ -76,6 +78,11 @@ const ProfilePage: React.FC = () => {
 								<IonIcon icon={cogOutline}></IonIcon>
 							</IonButton>
 						</IonToolbar>
+						{betaBanner && (
+							<IonToolbar className="beta-banner" color="warning">
+								<IonTitle>{betaBanner}</IonTitle>
+							</IonToolbar>
+						)}
 					</IonHeader>
 					<div className="profile-column">
 						<IonAvatar>
