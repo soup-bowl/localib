@@ -1,14 +1,19 @@
 import { useState } from "react"
 import { IonContent, IonHeader, IonPage, IonSearchbar, IonTitle, IonToolbar } from "@ionic/react"
 import { useQuery } from "@tanstack/react-query"
-import { IReleases, getCollectionReleases } from "../api"
+import { IReleases, getCollectionReleases, getCollectionWants } from "../api"
 import { AlbumList, FullpageInfo, FullpageLoading } from "../components"
 import { ViewAlbumDetails } from "../modal"
 import { useAuth } from "../hooks"
 
+interface IReleaseCollective {
+	collection: IReleases[]
+	want: IReleases[]
+}
+
 const SearchPage: React.FC = () => {
-	const [modalInfo, setModalInfo] = useState<IReleases | undefined>(undefined)
-	const [filterData, setFilterData] = useState<IReleases[]>([])
+	const [modalInfo, setModalInfo] = useState<{ data: IReleases; type: "collection" | "want" } | undefined>(undefined)
+	const [filterData, setFilterData] = useState<IReleaseCollective>({ collection: [], want: [] })
 	const betaBanner = import.meta.env.VITE_BETA_BANNER
 
 	const [{ username, token }, saveAuth, clearAuth] = useAuth()
@@ -23,26 +28,37 @@ const SearchPage: React.FC = () => {
 		)
 	}
 
-	const { data, isLoading, isError } = useQuery<IReleases[]>({
+	const collectionData = useQuery<IReleases[]>({
 		queryKey: [`${username}collection`],
-		queryFn: () => getCollectionReleases(username ?? "", token ?? ""),
+		queryFn: () => getCollectionReleases(username, token ?? ""),
 		staleTime: 1000 * 60 * 60 * 24, // 24 hours
 	})
 
-	const searchData = (data: IReleases[], search: string) => {
+	const wantData = useQuery<IReleases[]>({
+		queryKey: [`${username}want`],
+		queryFn: () => getCollectionWants(username, token ?? ""),
+		staleTime: 1000 * 60 * 60 * 24, // 24 hours
+	})
+
+	const searchData = (search: string) => {
 		const lowerCaseSearchTerm = search.toLowerCase()
-		setFilterData(
-			data.filter(
+
+		const filterItems = (data: typeof collectionData.data | undefined) =>
+			data?.filter(
 				(item) =>
 					item.basic_information.title.toLowerCase().includes(lowerCaseSearchTerm) ||
 					item.basic_information.artists.some((artist) =>
 						artist.name.toLowerCase().includes(lowerCaseSearchTerm)
 					)
-			)
-		)
+			) ?? []
+
+		setFilterData({
+			collection: filterItems(collectionData.data),
+			want: filterItems(wantData.data),
+		})
 	}
 
-	if (isLoading) {
+	if (collectionData.isLoading || wantData.isLoading) {
 		return (
 			<IonPage>
 				<FullpageLoading />
@@ -50,7 +66,7 @@ const SearchPage: React.FC = () => {
 		)
 	}
 
-	if (isError) {
+	if (collectionData.isError || wantData.isError) {
 		return (
 			<IonPage>
 				<FullpageInfo text="An error occurred when loading information." />
@@ -67,7 +83,7 @@ const SearchPage: React.FC = () => {
 				<IonToolbar>
 					<IonSearchbar
 						debounce={1000}
-						onIonInput={(ev) => searchData(data ?? [], ev.target.value?.toLowerCase() ?? "")}
+						onIonInput={(ev) => searchData(ev.target.value?.toLowerCase() ?? "")}
 					/>
 				</IonToolbar>
 				{betaBanner && (
@@ -77,20 +93,41 @@ const SearchPage: React.FC = () => {
 				)}
 			</IonHeader>
 			<IonContent fullscreen>
-				{filterData.length > 0 && (
+				{filterData.collection.length > 0 && (
 					<AlbumList
-						data={filterData}
+						data={filterData.collection}
 						username={username}
+						title="Collected"
 						type="collection"
-						onClickAlbum={(album) => setModalInfo(album)}
+						onClickAlbum={(album) =>
+							setModalInfo({
+								data: album,
+								type: "collection",
+							})
+						}
+					/>
+				)}
+
+				{filterData.want.length > 0 && (
+					<AlbumList
+						data={filterData.want}
+						username={username}
+						title="Wanted"
+						type="want"
+						onClickAlbum={(album) =>
+							setModalInfo({
+								data: album,
+								type: "want",
+							})
+						}
 					/>
 				)}
 
 				{modalInfo && (
 					<ViewAlbumDetails
-						album={modalInfo}
+						album={modalInfo.data}
 						username={username}
-						type="collection"
+						type={modalInfo.type}
 						open={typeof modalInfo !== undefined}
 						onClose={() => setModalInfo(undefined)}
 					/>
