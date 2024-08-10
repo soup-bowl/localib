@@ -1,8 +1,8 @@
 {
-	"name": "cheese",
-	"description": "Collects your Discogs library for low-data usage",
+	"name": "localib",
+	"description": "Collects your Discogs library for offline usage",
 	"private": true,
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"type": "module",
 	"scripts": {
 		"dev": "vite",
