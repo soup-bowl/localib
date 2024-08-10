@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import {
 	IonModal,
 	IonHeader,
@@ -12,9 +12,11 @@ import {
 	IonNote,
 	IonList,
 	IonInputPasswordToggle,
+	IonLabel,
 } from "@ionic/react"
 import { useQueryClient } from "@tanstack/react-query"
 import { useAuth } from "../hooks"
+import { formatBytes } from "../utils"
 
 interface Props {
 	open: boolean
@@ -27,6 +29,17 @@ const Settings: React.FC<Props> = ({ open, onClose, onSave }) => {
 	const [{ username, token }, saveAuth, clearAuth] = useAuth()
 	const [newUsername, setNewUsername] = useState<string>(username ?? "")
 	const [newPassword, setNewPassword] = useState<string>(token ?? "")
+	const [storageInfo, setStorageInfo] = useState<{ usage: string; quota: string } | undefined>()
+
+	useEffect(() => {
+		if ("storage" in navigator && "estimate" in navigator.storage) {
+			navigator.storage.estimate().then(({ usage, quota }) => {
+				if (usage && quota) {
+					setStorageInfo({ usage: formatBytes(usage), quota: formatBytes(quota) })
+				}
+			})
+		}
+	}, [])
 
 	const handleSave = () => {
 		saveAuth(newUsername, newPassword)
@@ -74,6 +87,14 @@ const Settings: React.FC<Props> = ({ open, onClose, onSave }) => {
 					<a href="https://www.discogs.com/settings/developers">visit the Developer page</a> and copy your
 					token, or click Generate if you do not have one.
 				</IonNote>
+				<IonList inset={true}>
+					<IonItem>
+						<IonLabel>Storage Used</IonLabel>
+						<IonLabel slot="end">
+							{storageInfo?.usage ?? "Unknown"} of {storageInfo?.quota ?? "Unknown"}
+						</IonLabel>
+					</IonItem>
+				</IonList>
 			</IonContent>
 		</IonModal>
 	)
