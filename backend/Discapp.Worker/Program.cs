@@ -1,4 +1,5 @@
 using Discapp.Worker;
+using Discapp.Worker.Models;
 using Discapp.Shared.Data;
 using Microsoft.EntityFrameworkCore;
 

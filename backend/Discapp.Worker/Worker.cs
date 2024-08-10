@@ -1,3 +1,4 @@
+using Discapp.Worker.Models;
 using Discapp.Shared.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -120,7 +121,7 @@ public class Worker : BackgroundService
             .Where(r => r.Recorded < decay)
             .ToListAsync(stoppingToken);
 
-        if (oldRecords.Any())
+        if (oldRecords.Count > 0)
         {
             foreach (Record oldRecord in oldRecords)
             {
