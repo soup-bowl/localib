@@ -17,7 +17,6 @@ import {
 import { useQueryClient } from "@tanstack/react-query"
 import { useAuth } from "../hooks"
 import { formatBytes } from "../utils"
-import packageJson from "../../package.json"
 
 interface Props {
 	open: boolean
@@ -32,6 +31,7 @@ const Settings: React.FC<Props> = ({ open, hasUpdate, onClose, onSave }) => {
 	const [newUsername, setNewUsername] = useState<string>(username ?? "")
 	const [newPassword, setNewPassword] = useState<string>(token ?? "")
 	const [storageInfo, setStorageInfo] = useState<{ usage: string; quota: string } | undefined>()
+	const appVersion = import.meta.env.VITE_VER ?? "Unknown"
 
 	useEffect(() => {
 		if ("storage" in navigator && "estimate" in navigator.storage) {
@@ -99,7 +99,7 @@ const Settings: React.FC<Props> = ({ open, hasUpdate, onClose, onSave }) => {
 					<IonItem>
 						<IonLabel>App Version</IonLabel>
 						<IonLabel slot="end">
-							{packageJson.version}
+							{appVersion}
 							{hasUpdate && (
 								<IonButton
 									onClick={handleUpdate}
