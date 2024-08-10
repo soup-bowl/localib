@@ -19,8 +19,8 @@ export default defineConfig({
 				cleanupOutdatedCaches: true,
 			},
 			manifest: {
-				short_name: "Offline Collection",
-				name: "Offline Collection",
+				short_name: "Localib",
+				name: "Localib",
 				icons: [
 					{
 						src: "favicon.ico",
