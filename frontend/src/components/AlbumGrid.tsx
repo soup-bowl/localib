@@ -50,7 +50,7 @@ const AlbumGrid: React.FC<CollectionProps> = ({ data, sort = "none", type, usern
 			break
 		case "release":
 			displayData = splitRecordsByYear(data)
-			labelText = "Collected in "
+			labelText = `${type === "collection" ? "Collected" : "Wanted"} in `
 			break
 		case "label":
 			displayData = splitRecordsByLabel(data)

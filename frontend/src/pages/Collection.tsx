@@ -138,25 +138,23 @@ const CollectionPage: React.FC = () => {
 		<IonPage>
 			<IonHeader translucent>
 				<IonToolbar>
-					{viewState === "collection" && (
-						<IonButtons slot="primary">
-							<IonButton
-								onClick={() =>
-									present({
-										header: "Sorting",
-										buttons: filterActionButtons,
-										onDidDismiss: ({ detail }) => {
-											if (detail.data.action !== "cancel") {
-												setFilter(detail.data.action)
-											}
-										},
-									})
-								}
-							>
-								<IonIcon slot="icon-only" md={getFilterIcon(filter)}></IonIcon>
-							</IonButton>
-						</IonButtons>
-					)}
+					<IonButtons slot="primary">
+						<IonButton
+							onClick={() =>
+								present({
+									header: "Sorting",
+									buttons: filterActionButtons,
+									onDidDismiss: ({ detail }) => {
+										if (detail.data.action !== "cancel") {
+											setFilter(detail.data.action)
+										}
+									},
+								})
+							}
+						>
+							<IonIcon slot="icon-only" md={getFilterIcon(filter)}></IonIcon>
+						</IonButton>
+					</IonButtons>
 					<IonSegment
 						value={viewState}
 						onIonChange={(e) => {
@@ -172,7 +170,7 @@ const CollectionPage: React.FC = () => {
 							<IonLabel>Collection</IonLabel>
 						</IonSegmentButton>
 						<IonSegmentButton value="want">
-							<IonLabel>Wants</IonLabel>
+							<IonLabel>Wanted</IonLabel>
 						</IonSegmentButton>
 					</IonSegment>
 				</IonToolbar>
