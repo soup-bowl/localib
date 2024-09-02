@@ -35,8 +35,8 @@ Configuration is via `appsettings.json` or environment variables:
 
 * `ConnectionStrings__DefaultConnection` - Connection to a MySQL database, like `Server=localhost;Database=discoarchive;User=root;Password=password;`
 * `PathSettings__ImagePath` - Path where the Worker stores to, and the API serves images from.
-* `Discogs__ConsumerKey` - Key value from [Discogs Developer Application][dcd].
-* `Discogs__ConsumerKey` - Key value from [Discogs Developer Application][dcd].
+* `Discogs__ConsumerKey` - Consumer Key from [Discogs Developer Application][dcd].
+* `Discogs__ConsumerSecret` - Consumer Secret from [Discogs Developer Application][dcd].
 
 Example:
 
