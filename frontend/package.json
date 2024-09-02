@@ -38,10 +38,6 @@
 		"@capacitor/cli": "^6.1.2",
 		"@ionic/cli": "^7.2.0",
 		"@tanstack/eslint-plugin-query": "^5.51.15",
-		"@testing-library/dom": ">=7.21.4",
-		"@testing-library/jest-dom": "^6.5.0",
-		"@testing-library/react": "^16.0.1",
-		"@testing-library/user-event": "^14.4.3",
 		"@types/react": "^18.0.27",
 		"@types/react-dom": "^18.0.10",
 		"@vitejs/plugin-legacy": "^5.0.0",
@@ -52,7 +48,6 @@
 		"prettier": "^3.3.3",
 		"typescript": "^5.1.6",
 		"vite": "^5.3.5",
-		"vite-plugin-pwa": "^0.20.1",
-		"vitest": "^2.0.5"
+		"vite-plugin-pwa": "^0.20.1"
 	}
 }
