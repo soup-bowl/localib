@@ -10,8 +10,18 @@
 		{
 			"src": "logo-mask-192.png",
 			"type": "image/png",
+			"sizes": "192x192"
+		},
+		{
+			"src": "logo-mask-192.png",
+			"type": "image/png",
 			"sizes": "192x192",
 			"purpose": "maskable"
+		},
+		{
+			"src": "logo-mask-512.png",
+			"type": "image/png",
+			"sizes": "512x512",
 		},
 		{
 			"src": "logo-mask-512.png",
