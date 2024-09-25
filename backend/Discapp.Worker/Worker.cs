@@ -69,6 +69,11 @@ public class Worker : BackgroundService
                     string filePath = Path.Combine(_pathOptions.ImagePath, queueItem.RecordID.ToString() + ".jpg");
                     await File.WriteAllBytesAsync(filePath, imageBytes, stoppingToken);
 
+                    string recordBarcode = releaseData.Identifiers
+                        .Where(id => id.Type == "Barcode")
+                        .Select(id => id.Value.Replace(" ", ""))
+                        .FirstOrDefault() ?? "";
+
                     Record? existingRecord = await dbContext.Records
                         .FirstOrDefaultAsync(r => r.RecordID == queueItem.RecordID, stoppingToken);
 
@@ -84,6 +89,7 @@ public class Worker : BackgroundService
                         {
                             RecordID = queueItem.RecordID,
                             FilePath = $"{queueItem.RecordID.ToString()}.jpg",
+                            Barcode = recordBarcode,
                             Recorded = DateTime.Now
                         };
                         dbContext.Records.Add(newRecord);

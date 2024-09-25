@@ -36,7 +36,8 @@ namespace Discapp.API.Controllers
                     records.Available.Add(new()
                     {
                         RecordID = record.RecordID,
-                        Image = $"data:image/jpeg;base64,{base64String}"
+                        Image = $"data:image/jpeg;base64,{base64String}",
+                        Barcode = record.Barcode
                     });
                 }
                 else
