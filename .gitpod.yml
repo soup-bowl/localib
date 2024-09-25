@@ -40,17 +40,19 @@ tasks:
           sleep 3
         done
         dotnet watch run
+      openMode: split-right
 
     - name: Frontend
       before: cd frontend
       init: |
-          npm i -g @ionic/cli
-          npm ci
+        npm i -g @ionic/cli
+        npm ci
       command: |
-          echo "VITE_VINYL_API_URL=$(gp url 5132)" > .env.local
-          echo "VITE_BETA_BANNER=\"Development mode inside Gitpod\"" >> .env.local
-          npm i -g @ionic/cli
-          ionic serve
+        echo "VITE_VINYL_API_URL=$(gp url 5132)" > .env.local
+        echo "VITE_BETA_BANNER=\"Development mode inside Gitpod\"" >> .env.local
+        npm i -g @ionic/cli
+        ionic serve
+      openMode: tab-after
 
 ports:
     - name: App
