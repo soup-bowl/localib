@@ -1,27 +1,45 @@
 image: gitpod/workspace-dotnet:latest
 
 tasks:
-    - name: MySQL Server
+    - name: MySQL
       init: docker pull mysql:5
-      command: docker run --name mysql-server -e MYSQL_ROOT_PASSWORD=password -p 3306:3306 mysql:5
-      openMode: tab-before
+      command: |
+        if [ $(docker ps -a -q -f name=mysql-server) ]; then
+          echo "Starting existing MySQL container..."
+          docker start mysql-server
+        else
+          echo "Creating and starting a new MySQL container..."
+          docker run --name mysql-server -e MYSQL_ROOT_PASSWORD=password -p 3306:3306 \
+          --health-cmd='mysqladmin ping --silent' \
+          --health-interval=10s \
+          --health-timeout=5s \
+          --health-retries=5 \
+          mysql:5
+        fi
 
-    - name: Scraper API
+    - name: API
       before: cd backend/Discapp.API
       init: |
         dotnet tool install --global dotnet-ef
         dotnet restore
       command: |
+        while ! docker inspect --format='{{.State.Health.Status}}' mysql-server | grep -q healthy; do
+          echo "Waiting for MySQL to be healthy..."
+          sleep 3
+        done
         export PATH="$PATH:/home/gitpod/.dotnet/tools"
         dotnet ef database update
         dotnet watch run
-      openMode: split-left
 
-    - name: Scraper Processor
+    - name: Worker
       before: cd backend/Discapp.Worker
       init: dotnet restore
-      command: dotnet watch run
-      openMode: split-right
+      command: |
+        while ! docker inspect --format='{{.State.Health.Status}}' mysql-server | grep -q healthy; do
+          echo "Waiting for MySQL to be healthy..."
+          sleep 3
+        done
+        dotnet watch run
 
     - name: Frontend
       before: cd frontend
@@ -29,6 +47,8 @@ tasks:
           npm i -g @ionic/cli
           npm ci
       command: |
+          echo "VITE_VINYL_API_URL=$(gp url 5132)" > .env.local
+          echo "VITE_BETA_BANNER=\"Development mode inside Gitpod\"" >> .env.local
           npm i -g @ionic/cli
           ionic serve
 
