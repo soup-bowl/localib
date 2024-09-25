@@ -57,5 +57,7 @@ tasks:
 ports:
     - name: App
       port: 8100
+      visibility: public
     - name: Scraper
       port: 5132
+      visibility: public
