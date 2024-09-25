@@ -10,9 +10,7 @@ import {
 	IonLabel,
 	IonList,
 } from "@ionic/react"
-import { useQuery } from "@tanstack/react-query"
-import { IReleases, IVinylResponse } from "../api"
-import { findLocalImageById } from "../utils"
+import { IReleases } from "../api"
 
 interface DisplayProps {
 	album: IReleases
@@ -23,17 +21,6 @@ interface DisplayProps {
 }
 
 const ViewAlbumDetails: React.FC<DisplayProps> = ({ album, username = "", type, open, onClose }) => {
-	const imageData = useQuery<IVinylResponse | undefined>({
-		queryKey: [`${username}${type}images`],
-		staleTime: 1000 * 60 * 60 * 24, // 24 hours
-		enabled: false,
-	})
-
-	let image = undefined
-	if (imageData.data) {
-		image = findLocalImageById(imageData.data?.available, album.basic_information.id)
-	}
-
 	return (
 		<IonModal isOpen={open}>
 			<IonHeader>
@@ -46,7 +33,7 @@ const ViewAlbumDetails: React.FC<DisplayProps> = ({ album, username = "", type, 
 			</IonHeader>
 			<IonContent className="ion-padding">
 				<div style={{ display: "flex", justifyContent: "center" }}>
-					<img src={image ? image : album.basic_information.thumb} alt="" />
+					<img src={album.image_base64 ? album.image_base64 : album.basic_information.thumb} alt="" />
 				</div>
 				<IonList inset>
 					<IonItem>

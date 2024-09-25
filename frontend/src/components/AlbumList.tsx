@@ -1,8 +1,6 @@
 import { IonAvatar, IonChip, IonIcon, IonItem, IonLabel, IonList, IonListHeader, IonText } from "@ionic/react"
 import { disc } from "ionicons/icons"
-import { useQuery } from "@tanstack/react-query"
-import { IReleases, IVinylResponse, postVinylQueue } from "../api"
-import { findLocalImageById } from "../utils"
+import { IReleases } from "../api"
 import "./AlbumList.css"
 
 interface Props {
@@ -14,13 +12,6 @@ interface Props {
 }
 
 const AlbumList: React.FC<Props> = ({ data, username = "", title = undefined, type, onClickAlbum }) => {
-	const imageData = useQuery<IVinylResponse | undefined>({
-		queryKey: [`${username}${type}images`],
-		queryFn: () => postVinylQueue(data?.map((item) => item.basic_information.id) ?? []),
-		staleTime: 1000 * 60 * 60 * 24, // 24 hours
-		enabled: data !== undefined,
-	})
-
 	return (
 		<IonList lines="full">
 			{title && (
@@ -29,15 +20,10 @@ const AlbumList: React.FC<Props> = ({ data, username = "", title = undefined, ty
 				</IonListHeader>
 			)}
 			{data.map((album, index) => {
-				let image = undefined
-				if (imageData.data) {
-					image = findLocalImageById(imageData.data?.available, album.basic_information.id)
-				}
-
 				return (
 					<IonItem key={index} className="album-list-item" onClick={() => onClickAlbum(album)}>
 						<IonAvatar aria-hidden="true" slot="start">
-							<img alt="" src={image ? image : album.basic_information.thumb} />
+							<img alt="" src={album.image_base64 ? album.image_base64 : album.basic_information.thumb} />
 						</IonAvatar>
 						<IonLabel>
 							<strong>{album.basic_information.title}</strong>

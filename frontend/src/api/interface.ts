@@ -57,6 +57,8 @@ export interface IReleases {
 		genres: string[]
 		styles: string[]
 	}
+	image_base64?: string
+	barcode?: string
 }
 
 export interface ICollections {
@@ -112,4 +114,9 @@ export interface IAvailableItem {
 export interface IVinylResponse {
 	available: IAvailableItem[]
 	queued: number[]
+}
+
+export interface VinylAPIImageMap {
+	image?: string
+	barcode?: string
 }

@@ -1,7 +1,6 @@
 import { IonCol, IonGrid, IonRow, IonText } from "@ionic/react"
-import { useQuery } from "@tanstack/react-query"
-import { IReleases, IVinylResponse, postVinylQueue } from "../api"
-import { findLocalImageById, splitRecordsByArtist, splitRecordsByLabel, splitRecordsByYear } from "../utils"
+import { IReleases } from "../api"
+import { splitRecordsByArtist, splitRecordsByLabel, splitRecordsByYear } from "../utils"
 import "./AlbumGrid.css"
 
 interface AlbumProps {
@@ -33,13 +32,6 @@ interface CollectionProps {
 }
 
 const AlbumGrid: React.FC<CollectionProps> = ({ data, sort = "none", type, username = "", onClickAlbum }) => {
-	const imageData = useQuery<IVinylResponse | undefined>({
-		queryKey: [`${username}${type}images`],
-		queryFn: () => postVinylQueue(data?.map((item) => item.basic_information.id) ?? []),
-		staleTime: 1000 * 60 * 60 * 24, // 24 hours
-		enabled: data !== undefined,
-	})
-
 	let displayData: [string, IReleases[]][] = []
 	let labelText = ""
 
@@ -60,10 +52,6 @@ const AlbumGrid: React.FC<CollectionProps> = ({ data, sort = "none", type, usern
 			break
 	}
 
-	if (imageData.isLoading) {
-		return <></>
-	}
-
 	return (
 		<>
 			{displayData.map((options, index) => (
@@ -72,16 +60,11 @@ const AlbumGrid: React.FC<CollectionProps> = ({ data, sort = "none", type, usern
 					<IonGrid>
 						<IonRow>
 							{options[1].map((album, index) => {
-								let image = undefined
-								if (imageData.data) {
-									image = findLocalImageById(imageData.data?.available, album.basic_information.id)
-								}
-
 								return (
 									<AlbumGridEntry
 										key={index}
 										album={album}
-										staticImage={image}
+										staticImage={album.image_base64}
 										index={index}
 										onClickAlbum={onClickAlbum}
 									/>
