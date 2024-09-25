@@ -61,7 +61,7 @@ public class Worker : BackgroundService
 
                 DiscogsRelease? releaseData = await response.Content.ReadFromJsonAsync<DiscogsRelease>();
 
-                if (releaseData?.Thumb != null)
+                if (!string.IsNullOrEmpty(releaseData?.Thumb))
                 {
                     string imageUrl = releaseData.Thumb;
                     byte[] imageBytes = await GetApiResponseWithRetryAsync(imageUrl, 3, 1000, stoppingToken).Result.Content.ReadAsByteArrayAsync(stoppingToken);
