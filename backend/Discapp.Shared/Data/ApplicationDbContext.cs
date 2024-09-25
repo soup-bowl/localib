@@ -2,14 +2,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Discapp.Shared.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
     {
-        public DbSet<Queue> Queue { get; set; }
-        public DbSet<Record> Records { get; set; }
-
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options)
-        {
-        }
-    }
+        public DbSet<Queue> Queue { get; set; } = null!;
+        public DbSet<Record> Records { get; set; } = null!;
+	}
 }
