@@ -1,6 +1,7 @@
-import { IonCol, IonGrid, IonRow, IonText } from "@ionic/react"
+import { IonCol, IonGrid, IonIcon, IonRow, IonText } from "@ionic/react"
 import { IReleases } from "../api"
 import { splitRecordsByArtist, splitRecordsByLabel, splitRecordsByYear } from "../utils"
+import { cloudOfflineOutline } from "ionicons/icons"
 import "./AlbumGrid.css"
 
 interface AlbumProps {
@@ -14,6 +15,7 @@ const AlbumGridEntry: React.FC<AlbumProps> = ({ album, index, staticImage = unde
 	<IonCol size="6" sizeMd="4" sizeLg="3" key={index}>
 		<div className="album-art-container" onClick={() => onClickAlbum(album)}>
 			<img src={staticImage ? staticImage : album.basic_information.thumb} className="album-art" alt="" />
+			{!staticImage && <IonIcon className="nodl" aria-hidden="true" icon={cloudOfflineOutline} size="large" />}
 		</div>
 		<strong style={{ margin: 0 }}>{album.basic_information.title}</strong>
 		<br />

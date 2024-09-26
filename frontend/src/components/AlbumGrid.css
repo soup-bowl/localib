@@ -19,6 +19,12 @@
 	background-position: center;
 }
 
+.album-art-container .nodl {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+}
+
 .album-art {
 	position: absolute;
 	top: 0;

@@ -9,7 +9,10 @@ import {
 	IonItem,
 	IonLabel,
 	IonList,
+	IonIcon,
+	IonPopover,
 } from "@ionic/react"
+import { cloudOfflineOutline } from "ionicons/icons"
 import { IReleases } from "../api"
 
 interface DisplayProps {
@@ -25,6 +28,18 @@ const ViewAlbumDetails: React.FC<DisplayProps> = ({ album, open, onClose }) => (
 				<IonButtons slot="start">
 					<IonButton onClick={() => onClose()}>Close</IonButton>
 				</IonButtons>
+				{!album.image_base64 && (
+					<IonButtons slot="end">
+						<IonButton id="not-downloaded-notice" color="dark">
+							<IonIcon slot="icon-only" icon={cloudOfflineOutline}></IonIcon>
+						</IonButton>
+						<IonPopover trigger="not-downloaded-notice" triggerAction="click">
+							<IonContent class="ion-padding">
+								Image and additional details are still being collected, please reload a few hours later.
+							</IonContent>
+						</IonPopover>
+					</IonButtons>
+				)}
 				<IonTitle>{album.basic_information.title}</IonTitle>
 			</IonToolbar>
 		</IonHeader>
