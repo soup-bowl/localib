@@ -36,7 +36,7 @@ const BarcodeScanDialog: React.FC<DisplayProps> = ({ open, onClose, onSuccess })
 			<BarcodeScanner
 				onCapture={(barcode: DetectedBarcode) => onSuccess(barcode.rawValue)}
 				options={{
-					formats: ['code_39', 'code_93', 'code_128', 'ean_8', 'ean_13', 'upc_a', 'upc_e']
+					formats: ["code_39", "code_93", "code_128", "ean_8", "ean_13", "upc_a", "upc_e"],
 				}}
 			/>
 		</IonContent>
