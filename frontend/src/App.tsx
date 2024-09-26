@@ -16,6 +16,7 @@ import {
 import { IonReactRouter } from "@ionic/react-router"
 import { discOutline, searchOutline, personOutline } from "ionicons/icons"
 import { CollectionPage, ProfilePage, SearchPage } from "./pages"
+import { Settings } from "./modal"
 import { createIDBPersister } from "./persister"
 
 /* Core CSS required for Ionic components to work properly */
@@ -63,6 +64,7 @@ const queryClient = new QueryClient({
 const persister = createIDBPersister()
 
 const App: React.FC = () => {
+	const [openSettingsDialog, setOpenSettingsDialog] = useState<boolean>(false)
 	const [updateAvailable, setUpdateAvailable] = useState<boolean>(false)
 
 	useEffect(() => {
@@ -85,7 +87,7 @@ const App: React.FC = () => {
 								<CollectionPage />
 							</Route>
 							<Route exact path="/profile">
-								<ProfilePage hasUpdate={updateAvailable} />
+								<ProfilePage openSettings={setOpenSettingsDialog} />
 							</Route>
 							<Route path="/search">
 								<SearchPage />
@@ -110,6 +112,12 @@ const App: React.FC = () => {
 						</IonTabBar>
 					</IonTabs>
 				</IonReactRouter>
+				<Settings
+					open={openSettingsDialog}
+					hasUpdate={updateAvailable}
+					onClose={() => setOpenSettingsDialog(false)}
+					onSave={() => setOpenSettingsDialog(false)}
+				/>
 			</IonApp>
 		</PersistQueryClientProvider>
 	)

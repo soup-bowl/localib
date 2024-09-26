@@ -1,4 +1,3 @@
-import { useState } from "react"
 import {
 	IonAvatar,
 	IonButton,
@@ -17,12 +16,14 @@ import { useQuery } from "@tanstack/react-query"
 import { cogOutline, eye, hourglass, library } from "ionicons/icons"
 import { FullpageInfo, FullpageLoading, StatDisplay } from "../components"
 import { getProfile, IProfile } from "../api"
-import { Settings } from "../modal"
 import { useAuth } from "../hooks"
 import "./Profile.css"
 
-const ProfilePage: React.FC<{ hasUpdate: boolean }> = ({ hasUpdate }) => {
-	const [openSettingsDialog, setOpenSettingsDialog] = useState<boolean>(false)
+interface Props {
+	openSettings: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+const ProfilePage: React.FC<Props> = ({ openSettings }) => {
 	const betaBanner = import.meta.env.VITE_BETA_BANNER
 
 	const [{ username, token }, saveAuth, clearAuth] = useAuth()
@@ -39,7 +40,7 @@ const ProfilePage: React.FC<{ hasUpdate: boolean }> = ({ hasUpdate }) => {
 				<IonContent fullscreen>
 					<IonHeader translucent>
 						<IonToolbar>
-							<IonButton fill="clear" size="large" slot="end" onClick={() => setOpenSettingsDialog(true)}>
+							<IonButton fill="clear" size="large" slot="end" onClick={() => openSettings(true)}>
 								<IonIcon icon={cogOutline}></IonIcon>
 							</IonButton>
 						</IonToolbar>
@@ -48,13 +49,6 @@ const ProfilePage: React.FC<{ hasUpdate: boolean }> = ({ hasUpdate }) => {
 						text={isError ? "An error occurred when loading information." : "You are not logged in."}
 					/>
 				</IonContent>
-
-				<Settings
-					open={openSettingsDialog}
-					hasUpdate={hasUpdate}
-					onClose={() => setOpenSettingsDialog(false)}
-					onSave={() => setOpenSettingsDialog(false)}
-				/>
 			</IonPage>
 		)
 	}
@@ -75,7 +69,7 @@ const ProfilePage: React.FC<{ hasUpdate: boolean }> = ({ hasUpdate }) => {
 				<div className="avatar-background" style={{ backgroundImage: `url(${data?.banner_url})` }}>
 					<IonHeader translucent>
 						<IonToolbar>
-							<IonButton fill="clear" size="large" slot="end" onClick={() => setOpenSettingsDialog(true)}>
+							<IonButton fill="clear" size="large" slot="end" onClick={() => openSettings(true)}>
 								<IonIcon icon={cogOutline}></IonIcon>
 							</IonButton>
 						</IonToolbar>
@@ -108,13 +102,6 @@ const ProfilePage: React.FC<{ hasUpdate: boolean }> = ({ hasUpdate }) => {
 					/>
 				</div>
 			</IonContent>
-
-			<Settings
-				open={openSettingsDialog}
-				hasUpdate={hasUpdate}
-				onClose={() => setOpenSettingsDialog(false)}
-				onSave={() => setOpenSettingsDialog(false)}
-			/>
 		</IonPage>
 	)
 }
