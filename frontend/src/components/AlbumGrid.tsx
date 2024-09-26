@@ -10,18 +10,16 @@ interface AlbumProps {
 	onClickAlbum: (album: IReleases) => void
 }
 
-const AlbumGridEntry: React.FC<AlbumProps> = ({ album, index, staticImage = undefined, onClickAlbum }) => {
-	return (
-		<IonCol size="6" sizeMd="4" sizeLg="3" key={index}>
-			<div className="album-art-container" onClick={() => onClickAlbum(album)}>
-				<img src={staticImage ? staticImage : album.basic_information.thumb} className="album-art" alt="" />
-			</div>
-			<strong style={{ margin: 0 }}>{album.basic_information.title}</strong>
-			<br />
-			<IonText>{album.basic_information.artists.map((artist) => artist.name).join(", ")}</IonText>
-		</IonCol>
-	)
-}
+const AlbumGridEntry: React.FC<AlbumProps> = ({ album, index, staticImage = undefined, onClickAlbum }) => (
+	<IonCol size="6" sizeMd="4" sizeLg="3" key={index}>
+		<div className="album-art-container" onClick={() => onClickAlbum(album)}>
+			<img src={staticImage ? staticImage : album.basic_information.thumb} className="album-art" alt="" />
+		</div>
+		<strong style={{ margin: 0 }}>{album.basic_information.title}</strong>
+		<br />
+		<IonText>{album.basic_information.artists.map((artist) => artist.name).join(", ")}</IonText>
+	</IonCol>
+)
 
 interface CollectionProps {
 	data: IReleases[]
