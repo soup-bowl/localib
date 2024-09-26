@@ -6,16 +6,21 @@ import "./AlbumGrid.css"
 
 interface AlbumProps {
 	album: IReleases
-	staticImage?: string
 	index: number
 	onClickAlbum: (album: IReleases) => void
 }
 
-const AlbumGridEntry: React.FC<AlbumProps> = ({ album, index, staticImage = undefined, onClickAlbum }) => (
+const AlbumGridEntry: React.FC<AlbumProps> = ({ album, index, onClickAlbum }) => (
 	<IonCol size="6" sizeMd="4" sizeLg="3" key={index}>
 		<div className="album-art-container" onClick={() => onClickAlbum(album)}>
-			<img src={staticImage ? staticImage : album.basic_information.thumb} className="album-art" alt="" />
-			{!staticImage && <IonIcon className="nodl" aria-hidden="true" icon={cloudOfflineOutline} size="large" />}
+			<img
+				src={album.image_base64 ? album.image_base64 : album.basic_information.thumb}
+				className="album-art"
+				alt=""
+			/>
+			{!album.image_base64 && (
+				<IonIcon className="nodl" aria-hidden="true" icon={cloudOfflineOutline} size="large" />
+			)}
 		</div>
 		<strong style={{ margin: 0 }}>{album.basic_information.title}</strong>
 		<br />
@@ -63,7 +68,6 @@ const AlbumGrid: React.FC<CollectionProps> = ({ data, sort = "none", type, onCli
 									<AlbumGridEntry
 										key={index}
 										album={album}
-										staticImage={album.image_base64}
 										index={index}
 										onClickAlbum={onClickAlbum}
 									/>
