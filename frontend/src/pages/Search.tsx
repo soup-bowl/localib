@@ -1,10 +1,21 @@
 import { useState } from "react"
-import { IonContent, IonHeader, IonPage, IonSearchbar, IonTitle, IonToolbar } from "@ionic/react"
+import {
+	IonButton,
+	IonButtons,
+	IonContent,
+	IonHeader,
+	IonIcon,
+	IonPage,
+	IonSearchbar,
+	IonTitle,
+	IonToolbar,
+} from "@ionic/react"
 import { useQuery } from "@tanstack/react-query"
 import { IReleases, getCollectionReleases, getCollectionWants } from "../api"
 import { AlbumList, FullpageInfo, FullpageLoading } from "../components"
-import { ViewAlbumDetails } from "../modal"
+import { BarcodeScanDialog, ViewAlbumDetails } from "../modal"
 import { useAuth } from "../hooks"
+import { barcodeOutline } from "ionicons/icons"
 
 interface IReleaseCollective {
 	collection: IReleases[]
@@ -14,6 +25,7 @@ interface IReleaseCollective {
 const SearchPage: React.FC = () => {
 	const [modalInfo, setModalInfo] = useState<{ data: IReleases; type: "collection" | "want" } | undefined>(undefined)
 	const [filterData, setFilterData] = useState<IReleaseCollective>({ collection: [], want: [] })
+	const [openScanner, setOpenScanner] = useState<boolean>(false)
 	const betaBanner = import.meta.env.VITE_BETA_BANNER
 
 	const [{ username, token }, saveAuth, clearAuth] = useAuth()
@@ -79,6 +91,11 @@ const SearchPage: React.FC = () => {
 			<IonHeader>
 				<IonToolbar>
 					<IonTitle>Search</IonTitle>
+					<IonButtons slot="end">
+						<IonButton onClick={() => setOpenScanner(true)}>
+							<IonIcon slot="icon-only" icon={barcodeOutline}></IonIcon>
+						</IonButton>
+					</IonButtons>
 				</IonToolbar>
 				<IonToolbar>
 					<IonSearchbar
@@ -127,6 +144,15 @@ const SearchPage: React.FC = () => {
 					/>
 				)}
 			</IonContent>
+			<BarcodeScanDialog
+				open={openScanner}
+				onClose={() => setOpenScanner(false)}
+				onSuccess={(value) => {
+					window.alert(value)
+					searchData(value)
+					setOpenScanner(false)
+				}}
+			/>
 		</IonPage>
 	)
 }
