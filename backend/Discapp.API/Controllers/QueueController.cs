@@ -29,7 +29,7 @@ namespace Discapp.API.Controllers
 
                 if (record != null)
                 {
-                    string fullPath = Path.Combine(_pathSettings.ImagePath, record.FilePath);
+                    string fullPath = Path.Combine(_pathSettings.ImagePath, record.RecordID.ToString() + "_thumb.jpg");
                     byte[] fileBytes = System.IO.File.ReadAllBytes(fullPath);
                     string base64String = Convert.ToBase64String(fileBytes);
 

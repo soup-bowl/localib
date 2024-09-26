@@ -66,7 +66,7 @@ public class Worker : BackgroundService
                     string imageUrl = releaseData.Thumb;
                     byte[] imageBytes = await GetApiResponseWithRetryAsync(imageUrl, 3, 1000, stoppingToken).Result.Content.ReadAsByteArrayAsync(stoppingToken);
 
-                    string filePath = Path.Combine(_pathOptions.ImagePath, queueItem.RecordID.ToString() + ".jpg");
+                    string filePath = Path.Combine(_pathOptions.ImagePath, queueItem.RecordID.ToString() + "_thumb.jpg");
                     await File.WriteAllBytesAsync(filePath, imageBytes, stoppingToken);
 
                     string recordBarcode = releaseData.Identifiers
@@ -79,7 +79,6 @@ public class Worker : BackgroundService
 
                     if (existingRecord != null)
                     {
-                        existingRecord.FilePath = $"{queueItem.RecordID.ToString()}.jpg";
                         existingRecord.Recorded = DateTime.Now;
                         dbContext.Records.Update(existingRecord);
                     }
@@ -88,7 +87,6 @@ public class Worker : BackgroundService
                         Record newRecord = new()
                         {
                             RecordID = queueItem.RecordID,
-                            FilePath = $"{queueItem.RecordID.ToString()}.jpg",
                             Barcode = recordBarcode,
                             Recorded = DateTime.Now
                         };
