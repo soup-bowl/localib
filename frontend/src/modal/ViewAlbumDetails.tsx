@@ -67,6 +67,12 @@ const ViewAlbumDetails: React.FC<DisplayProps> = ({ album, open, onClose }) => (
 						</p>
 					</IonLabel>
 				</IonItem>
+				<IonItem>
+					<IonLabel>
+						<h2>Barcode</h2>
+						<p>{album.barcode ?? ""}&nbsp;</p>
+					</IonLabel>
+				</IonItem>
 			</IonList>
 		</IonContent>
 	</IonModal>
