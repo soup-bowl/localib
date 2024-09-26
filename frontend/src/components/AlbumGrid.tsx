@@ -27,11 +27,10 @@ interface CollectionProps {
 	data: IReleases[]
 	sort?: "release" | "label" | "artist" | "none"
 	type: "collection" | "want"
-	username?: string
 	onClickAlbum: (album: IReleases) => void
 }
 
-const AlbumGrid: React.FC<CollectionProps> = ({ data, sort = "none", type, username = "", onClickAlbum }) => {
+const AlbumGrid: React.FC<CollectionProps> = ({ data, sort = "none", type, onClickAlbum }) => {
 	let displayData: [string, IReleases[]][] = []
 	let labelText = ""
 

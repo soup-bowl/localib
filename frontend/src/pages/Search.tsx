@@ -96,9 +96,7 @@ const SearchPage: React.FC = () => {
 				{filterData.collection.length > 0 && (
 					<AlbumList
 						data={filterData.collection}
-						username={username}
 						title="Collected"
-						type="collection"
 						onClickAlbum={(album) =>
 							setModalInfo({
 								data: album,
@@ -111,9 +109,7 @@ const SearchPage: React.FC = () => {
 				{filterData.want.length > 0 && (
 					<AlbumList
 						data={filterData.want}
-						username={username}
 						title="Wanted"
-						type="want"
 						onClickAlbum={(album) =>
 							setModalInfo({
 								data: album,

@@ -5,13 +5,11 @@ import "./AlbumList.css"
 
 interface Props {
 	data: IReleases[]
-	username?: string
 	title?: string
-	type: "collection" | "want"
 	onClickAlbum: (album: IReleases) => void
 }
 
-const AlbumList: React.FC<Props> = ({ data, username = "", title = undefined, type, onClickAlbum }) => (
+const AlbumList: React.FC<Props> = ({ data, title = undefined, onClickAlbum }) => (
 	<IonList lines="full">
 		{title && (
 			<IonListHeader>
