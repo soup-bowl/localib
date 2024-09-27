@@ -13,10 +13,12 @@ import {
 	IonList,
 	IonInputPasswordToggle,
 	IonLabel,
+	IonPopover,
 } from "@ionic/react"
 import { useQueryClient } from "@tanstack/react-query"
 import { useAuth } from "../hooks"
 import { formatBytes } from "../utils"
+import { IReleases } from "../api"
 
 interface Props {
 	open: boolean
@@ -53,6 +55,20 @@ const Settings: React.FC<Props> = ({ open, hasUpdate, onClose, onSave }) => {
 		if (window.location.reload) {
 			window.location.reload()
 		}
+	}
+
+	const collection = queryClient.getQueryData<IReleases[]>([`${username}collection`])
+	const wanted = queryClient.getQueryData<IReleases[]>([`${username}want`])
+	const collectionMissing = collection?.filter((obj) => obj.image_base64 === undefined).length ?? 0
+	const wantedMissing = wanted?.filter((obj) => obj.image_base64 === undefined).length ?? 0
+
+	const inStorageInfo = {
+		collectionCount: collection?.length ?? 0,
+		collectionMissing: collectionMissing,
+		wantedCount: wanted?.length ?? 0,
+		wantedMissing: wantedMissing,
+		totalCount: (collection?.length ?? 0) + (wanted?.length ?? 0),
+		totalMissing: collectionMissing + wantedMissing,
 	}
 
 	return (
@@ -97,7 +113,7 @@ const Settings: React.FC<Props> = ({ open, hasUpdate, onClose, onSave }) => {
 				</IonNote>
 				<IonList inset={true}>
 					<IonItem>
-						<IonLabel>App Version</IonLabel>
+						<IonLabel>App version</IonLabel>
 						<IonLabel slot="end">
 							{appVersion}
 							{hasUpdate && (
@@ -113,13 +129,40 @@ const Settings: React.FC<Props> = ({ open, hasUpdate, onClose, onSave }) => {
 						</IonLabel>
 					</IonItem>
 					<IonItem>
-						<IonLabel>Storage Used</IonLabel>
+						<IonLabel>Storage used</IonLabel>
 						<IonLabel slot="end">
 							{storageInfo?.usage ?? "Unknown"} of {storageInfo?.quota ?? "Unknown"}
 						</IonLabel>
 					</IonItem>
+					<IonItem>
+						<IonLabel>Records stored</IonLabel>
+						<IonLabel id="reccount-tooltip" slot="end">
+							{inStorageInfo.totalCount}
+						</IonLabel>
+					</IonItem>
+					<IonItem>
+						<IonLabel>Records unsynced</IonLabel>
+						<IonLabel id="missing-tooltip" slot="end">
+							{inStorageInfo.totalMissing}
+						</IonLabel>
+					</IonItem>
 				</IonList>
+				<IonPopover trigger="reccount-tooltip" triggerAction="click">
+					<IonContent class="ion-padding">
+						{inStorageInfo.collectionCount} collected, {inStorageInfo.wantedCount} wanted
+					</IonContent>
+				</IonPopover>
+				<IonPopover trigger="missing-tooltip" triggerAction="click">
+					<IonContent class="ion-padding">
+						{inStorageInfo.collectionMissing} collected, {inStorageInfo.wantedMissing} wanted
+					</IonContent>
+				</IonPopover>
 				<IonNote color="medium" class="ion-margin-horizontal" style={{ display: "block" }}>
+					For some records, we need to collect further information from the Discogs system.
+					This can take some time, so try reloading in a few hours to see it change.
+				</IonNote>
+				<br/>
+				<IonNote color="medium" class="ion-margin-horizontal" style={{ display: "block", textAlign: "center" }}>
 					Made by <a href="https://subo.dev">soup-bowl</a> and{" "}
 					<a href="https://github.com/soup-bowl/Localib">open source</a>.
 				</IonNote>
