@@ -31,6 +31,7 @@ export const getProfile = async (username: string, password: string): Promise<IP
 export const getCollectionWants = async (
 	username: string,
 	password: string,
+	imageQuality: boolean,
 	onProgress?: (page: number, pages: number) => void
 ): Promise<IReleases[]> => {
 	let allReleases: IReleases[] = []
@@ -67,7 +68,7 @@ export const getCollectionWants = async (
 					const imageData = await secondaryResponse.json()
 
 					imageMap = imageData.available.reduce((acc: Record<number, VinylAPIImageMap>, record: any) => {
-						acc[record.recordID] = { image: record.image, barcode: record.barcode }
+						acc[record.recordID] = { image: record.image, imageHigh: record.imageHigh, barcode: record.barcode }
 						return acc
 					}, {})
 				} else {
@@ -80,10 +81,10 @@ export const getCollectionWants = async (
 
 		// @ts-expect-error Cheating a bit - converting the reference to keep the same models.
 		const releasesExtraData = data.wants.map((release) => {
-			const imageRecord = imageMap[release.basic_information.id] || { image: null, barcode: null }
+			const imageRecord = imageMap[release.basic_information.id] || { image: null, imageHigh: null, barcode: null }
 			return {
 				...release,
-				image_base64: imageRecord.image,
+				image_base64: (imageQuality) ? (imageRecord.imageHigh !== null ? imageRecord.imageHigh : imageRecord.image) : imageRecord.image,
 				barcode: imageRecord.barcode,
 			}
 		})
@@ -104,6 +105,7 @@ export const getCollectionWants = async (
 export const getCollectionReleases = async (
 	username: string,
 	password: string,
+	imageQuality: boolean,
 	onProgress?: (page: number, pages: number) => void
 ): Promise<IReleases[]> => {
 	let allReleases: IReleases[] = []
@@ -139,7 +141,7 @@ export const getCollectionReleases = async (
 					const imageData = await secondaryResponse.json()
 
 					imageMap = imageData.available.reduce((acc: Record<number, VinylAPIImageMap>, record: any) => {
-						acc[record.recordID] = { image: record.image, barcode: record.barcode }
+						acc[record.recordID] = { image: record.image, imageHigh: record.imageHigh, barcode: record.barcode }
 						return acc
 					}, {})
 				} else {
@@ -151,10 +153,10 @@ export const getCollectionReleases = async (
 		}
 
 		const releasesExtraData = data.releases.map((release) => {
-			const imageRecord = imageMap[release.basic_information.id] || { image: null, barcode: null }
+			const imageRecord = imageMap[release.basic_information.id] || { image: null, imageHigh: null, barcode: null }
 			return {
 				...release,
-				image_base64: imageRecord.image,
+				image_base64: (imageQuality) ? (imageRecord.imageHigh !== null ? imageRecord.imageHigh : imageRecord.image) : imageRecord.image,
 				barcode: imageRecord.barcode,
 			}
 		})
