@@ -1,7 +1,7 @@
 import { IReleases } from "../api"
-import { IReleasesSort } from "../types"
+import { IReleasesSort, IReleaseTuple } from "../types"
 
-export const splitRecordsByYear = (records: IReleases[]): [string, IReleases[]][] => {
+export const splitRecordsByYear = (records: IReleases[]): IReleaseTuple => {
 	const recordsByYear = records.reduce<IReleasesSort>((acc, record) => {
 		const year = new Date(record.date_added).getFullYear().toString()
 		if (!acc[year]) {
@@ -18,7 +18,7 @@ export const splitRecordsByYear = (records: IReleases[]): [string, IReleases[]][
 	return Object.entries(recordsByYear).sort((a, b) => parseInt(b[0]) - parseInt(a[0]))
 }
 
-export const splitRecordsByArtist = (records: IReleases[]): [string, IReleases[]][] => {
+export const splitRecordsByArtist = (records: IReleases[]): IReleaseTuple => {
 	const recordsByArtist = records.reduce<IReleasesSort>((acc, record) => {
 		const artists = record.basic_information.artists.map((artist) => artist.name)
 		artists.forEach((artist) => {
@@ -37,7 +37,7 @@ export const splitRecordsByArtist = (records: IReleases[]): [string, IReleases[]
 	return Object.entries(recordsByArtist).sort((a, b) => a[0].localeCompare(b[0]))
 }
 
-export const splitRecordsByLabel = (records: IReleases[]): [string, IReleases[]][] => {
+export const splitRecordsByLabel = (records: IReleases[]): IReleaseTuple => {
 	const recordsByLabel = records.reduce<IReleasesSort>((acc, record) => {
 		const labels = record.basic_information.labels.map((label) => label.name)
 		labels.forEach((label) => {
@@ -56,10 +56,7 @@ export const splitRecordsByLabel = (records: IReleases[]): [string, IReleases[]]
 	return Object.entries(recordsByLabel).sort((a, b) => a[0].localeCompare(b[0]))
 }
 
-export const masterSort = (
-	sort: "release" | "label" | "artist" | "none",
-	records: IReleases[]
-): [string, IReleases[]][] => {
+export const masterSort = (sort: "release" | "label" | "artist" | "none", records: IReleases[]): IReleaseTuple => {
 	switch (sort) {
 		default:
 		case "none":

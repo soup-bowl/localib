@@ -23,6 +23,7 @@ import { FullpageLoading, AlbumGrid, FullpageInfo, AlbumListGroups } from "../co
 import { ViewAlbumDetails } from "../modal"
 import { useAuth } from "../hooks"
 import { masterSort } from "../utils"
+import { IReleaseTuple } from "../types"
 
 const filterActionButtons = [
 	{
@@ -67,8 +68,8 @@ const CollectionPage: React.FC = () => {
 	const [loading, setLoading] = useState<{ page: number; pages: number }>({ page: 0, pages: 0 })
 	const [viewState, setViewState] = useState<"collection" | "want">("collection")
 	const [dataSorted, setDataSorted] = useState<{
-		collected: [string, IReleases[]][]
-		wanted: [string, IReleases[]][]
+		collected: IReleaseTuple
+		wanted: IReleaseTuple
 	}>()
 	const betaBanner = import.meta.env.VITE_BETA_BANNER
 

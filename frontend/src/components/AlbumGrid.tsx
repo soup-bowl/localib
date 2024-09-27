@@ -1,5 +1,6 @@
 import { IonCol, IonGrid, IonIcon, IonRow, IonText } from "@ionic/react"
 import { IReleases } from "../api"
+import { IReleaseTuple } from "../types"
 import { cloudOfflineOutline } from "ionicons/icons"
 import "./AlbumGrid.css"
 
@@ -28,7 +29,7 @@ const AlbumGridEntry: React.FC<AlbumProps> = ({ album, index, onClickAlbum }) =>
 )
 
 interface CollectionProps {
-	data: [string, IReleases[]][]
+	data: IReleaseTuple
 	onClickAlbum: (album: IReleases) => void
 }
 

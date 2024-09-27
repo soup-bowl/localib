@@ -12,6 +12,7 @@ import {
 } from "@ionic/react"
 import { disc } from "ionicons/icons"
 import { IReleases } from "../api"
+import { IReleaseTuple } from "../types"
 import "./AlbumList.css"
 
 const AlbumListItem: React.FC<{
@@ -35,7 +36,7 @@ const AlbumListItem: React.FC<{
 )
 
 export const AlbumListGroups: React.FC<{
-	data: [string, IReleases[]][]
+	data: IReleaseTuple
 	onClickAlbum: (album: IReleases) => void
 }> = ({ data, onClickAlbum }) => (
 	<>

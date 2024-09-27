@@ -4,6 +4,8 @@ export type IReleasesSort = {
 	[group: string]: IReleases[]
 }
 
+export type IReleaseTuple = [string, IReleases[]][]
+
 export type IStatDisplay = {
 	icon: string
 	value?: number
