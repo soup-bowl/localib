@@ -17,9 +17,9 @@ import {
 	useIonActionSheet,
 } from "@ionic/react"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { filterOutline, personOutline, pricetagOutline, timeOutline } from "ionicons/icons"
+import { filterOutline, personOutline, pricetagOutline, timeOutline, listOutline, gridOutline } from "ionicons/icons"
 import { IReleases, getCollectionReleases, getCollectionWants } from "../api"
-import { FullpageLoading, AlbumGrid, FullpageInfo } from "../components"
+import { FullpageLoading, AlbumGrid, FullpageInfo, AlbumListGroups } from "../components"
 import { ViewAlbumDetails } from "../modal"
 import { useAuth } from "../hooks"
 import { masterSort } from "../utils"
@@ -62,6 +62,7 @@ const CollectionPage: React.FC = () => {
 	const queryClient = useQueryClient()
 	const [present] = useIonActionSheet()
 	const [filter, setFilter] = useState<"release" | "label" | "artist" | "none">("none")
+	const [layout, setLayout] = useState<"grid" | "list">("grid")
 	const [modalInfo, setModalInfo] = useState<IReleases | undefined>(undefined)
 	const [loading, setLoading] = useState<{ page: number; pages: number }>({ page: 0, pages: 0 })
 	const [viewState, setViewState] = useState<"collection" | "want">("collection")
@@ -81,6 +82,16 @@ const CollectionPage: React.FC = () => {
 				return personOutline
 			case "release":
 				return timeOutline
+		}
+	}
+
+	const getLayoutIcon = (item: string) => {
+		switch (item) {
+			default:
+			case "grid":
+				return gridOutline
+			case "list":
+				return listOutline
 		}
 	}
 
@@ -144,6 +155,17 @@ const CollectionPage: React.FC = () => {
 				<IonToolbar>
 					<IonButtons slot="primary">
 						<IonButton
+							onClick={() => {
+								if (layout === "grid") {
+									setLayout("list")
+								} else {
+									setLayout("grid")
+								}
+							}}
+						>
+							<IonIcon slot="icon-only" md={getLayoutIcon(layout)}></IonIcon>
+						</IonButton>
+						<IonButton
 							onClick={() =>
 								present({
 									header: "Sorting",
@@ -189,11 +211,26 @@ const CollectionPage: React.FC = () => {
 					<IonRefresherContent></IonRefresherContent>
 				</IonRefresher>
 				{viewState === "collection" && collectionData.data && (
-					<AlbumGrid data={dataSorted?.collected} onClickAlbum={(album) => setModalInfo(album)} />
+					<>
+						{layout === "grid" ? (
+							<AlbumGrid data={dataSorted?.collected} onClickAlbum={(album) => setModalInfo(album)} />
+						) : (
+							<AlbumListGroups
+								data={dataSorted?.collected}
+								onClickAlbum={(album) => setModalInfo(album)}
+							/>
+						)}
+					</>
 				)}
 
 				{viewState === "want" && wantData.data && (
-					<AlbumGrid data={dataSorted?.wanted} onClickAlbum={(album) => setModalInfo(album)} />
+					<>
+						{layout === "grid" ? (
+							<AlbumGrid data={dataSorted?.wanted} onClickAlbum={(album) => setModalInfo(album)} />
+						) : (
+							<AlbumListGroups data={dataSorted?.wanted} onClickAlbum={(album) => setModalInfo(album)} />
+						)}
+					</>
 				)}
 
 				{modalInfo && (
