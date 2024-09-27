@@ -1,3 +1,4 @@
+import { isNullOrBlank } from "../utils"
 import { ICollections, IIdentify, IProfile, IReleases, VinylAPIImageMap } from "./interface"
 
 const API_URL = "https://api.discogs.com"
@@ -93,7 +94,7 @@ export const getCollectionWants = async (
 			return {
 				...release,
 				image_base64: imageQuality
-					? imageRecord.imageHigh !== null
+					? !isNullOrBlank(imageRecord.imageHigh)
 						? imageRecord.imageHigh
 						: imageRecord.image
 					: imageRecord.image,
@@ -177,7 +178,7 @@ export const getCollectionReleases = async (
 			return {
 				...release,
 				image_base64: imageQuality
-					? imageRecord.imageHigh !== null
+					? !isNullOrBlank(imageRecord.imageHigh)
 						? imageRecord.imageHigh
 						: imageRecord.image
 					: imageRecord.image,

@@ -24,3 +24,7 @@ export const formatBytes = (bytes: number, decimals: number = 2): string => {
 
 	return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i]
 }
+
+export const isNullOrBlank = (str: string | null | undefined): boolean => {
+	return !str || str.trim() === ""
+}
