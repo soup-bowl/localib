@@ -32,30 +32,23 @@ interface CollectionProps {
 	onClickAlbum: (album: IReleases) => void
 }
 
-const AlbumGrid: React.FC<CollectionProps> = ({ data, onClickAlbum }) => {
-	return (
-		<>
-			{data.map((options, index) => (
-				<div key={index} className="album-art-div">
-					<h2>{options[0]}</h2>
-					<IonGrid>
-						<IonRow>
-							{options[1].map((album, index) => {
-								return (
-									<AlbumGridEntry
-										key={index}
-										album={album}
-										index={index}
-										onClickAlbum={onClickAlbum}
-									/>
-								)
-							})}
-						</IonRow>
-					</IonGrid>
-				</div>
-			))}
-		</>
-	)
-}
+const AlbumGrid: React.FC<CollectionProps> = ({ data, onClickAlbum }) => (
+	<>
+		{data.map((options, index) => (
+			<div key={index} className="album-art-div">
+				<h2>{options[0]}</h2>
+				<IonGrid>
+					<IonRow>
+						{options[1].map((album, index) => {
+							return (
+								<AlbumGridEntry key={index} album={album} index={index} onClickAlbum={onClickAlbum} />
+							)
+						})}
+					</IonRow>
+				</IonGrid>
+			</div>
+		))}
+	</>
+)
 
 export default AlbumGrid
