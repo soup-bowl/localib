@@ -1,6 +1,5 @@
 import { IonCol, IonGrid, IonIcon, IonRow, IonText } from "@ionic/react"
 import { IReleases } from "../api"
-import { masterSort } from "../utils"
 import { cloudOfflineOutline } from "ionicons/icons"
 import "./AlbumGrid.css"
 
@@ -29,17 +28,14 @@ const AlbumGridEntry: React.FC<AlbumProps> = ({ album, index, onClickAlbum }) =>
 )
 
 interface CollectionProps {
-	data: IReleases[]
-	sort?: "release" | "label" | "artist" | "none"
+	data: [string, IReleases[]][]
 	onClickAlbum: (album: IReleases) => void
 }
 
-const AlbumGrid: React.FC<CollectionProps> = ({ data, sort = "none", onClickAlbum }) => {
-	let displayData: [string, IReleases[]][] = masterSort(sort, data)
-
+const AlbumGrid: React.FC<CollectionProps> = ({ data, onClickAlbum }) => {
 	return (
 		<>
-			{displayData.map((options, index) => (
+			{data.map((options, index) => (
 				<div key={index} className="album-art-div">
 					<h2>{options[0]}</h2>
 					<IonGrid>

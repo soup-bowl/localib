@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import {
 	IonButton,
 	IonButtons,
@@ -22,6 +22,7 @@ import { IReleases, getCollectionReleases, getCollectionWants } from "../api"
 import { FullpageLoading, AlbumGrid, FullpageInfo } from "../components"
 import { ViewAlbumDetails } from "../modal"
 import { useAuth } from "../hooks"
+import { masterSort } from "../utils"
 
 const filterActionButtons = [
 	{
@@ -64,6 +65,7 @@ const CollectionPage: React.FC = () => {
 	const [modalInfo, setModalInfo] = useState<IReleases | undefined>(undefined)
 	const [loading, setLoading] = useState<{ page: number; pages: number }>({ page: 0, pages: 0 })
 	const [viewState, setViewState] = useState<"collection" | "want">("collection")
+	const [dataSorted, setDataSorted] = useState<{ collected: any; wanted: any }>()
 	const betaBanner = import.meta.env.VITE_BETA_BANNER
 
 	const [{ username, token }, saveAuth, clearAuth] = useAuth()
@@ -92,6 +94,13 @@ const CollectionPage: React.FC = () => {
 		)
 	}
 
+	const handleRefresh = async (event: CustomEvent<RefresherEventDetail>) => {
+		await queryClient.invalidateQueries({
+			queryKey: [`${username}collection`, `${username}want`],
+		})
+		event.detail.complete()
+	}
+
 	const collectionData = useQuery<IReleases[]>({
 		queryKey: [`${username}collection`],
 		queryFn: () =>
@@ -106,12 +115,12 @@ const CollectionPage: React.FC = () => {
 		staleTime: 1000 * 60 * 60 * 24, // 24 hours
 	})
 
-	const handleRefresh = async (event: CustomEvent<RefresherEventDetail>) => {
-		await queryClient.invalidateQueries({
-			queryKey: [`${username}collection`, `${username}want`],
+	useEffect(() => {
+		setDataSorted({
+			collected: masterSort(filter, collectionData.data ?? []),
+			wanted: masterSort(filter, wantData.data ?? []),
 		})
-		event.detail.complete()
-	}
+	}, [filter, collectionData.data, wantData.data])
 
 	if (collectionData.isLoading || wantData.isLoading) {
 		return (
@@ -180,11 +189,11 @@ const CollectionPage: React.FC = () => {
 					<IonRefresherContent></IonRefresherContent>
 				</IonRefresher>
 				{viewState === "collection" && collectionData.data && (
-					<AlbumGrid data={collectionData.data} sort={filter} onClickAlbum={(album) => setModalInfo(album)} />
+					<AlbumGrid data={dataSorted?.collected} onClickAlbum={(album) => setModalInfo(album)} />
 				)}
 
 				{viewState === "want" && wantData.data && (
-					<AlbumGrid data={wantData.data} sort={filter} onClickAlbum={(album) => setModalInfo(album)} />
+					<AlbumGrid data={dataSorted?.wanted} onClickAlbum={(album) => setModalInfo(album)} />
 				)}
 
 				{modalInfo && (
