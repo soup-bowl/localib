@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import {
 	IonButton,
 	IonButtons,
@@ -23,6 +23,7 @@ interface IReleaseCollective {
 }
 
 const SearchPage: React.FC = () => {
+	const [searchTerm, setSearchTerm] = useState<string>("")
 	const [modalInfo, setModalInfo] = useState<{ data: IReleases; type: "collection" | "want" } | undefined>(undefined)
 	const [filterData, setFilterData] = useState<IReleaseCollective>({ collection: [], want: [] })
 	const [openScanner, setOpenScanner] = useState<boolean>(false)
@@ -53,12 +54,18 @@ const SearchPage: React.FC = () => {
 	})
 
 	const searchData = (search: string) => {
+		if (search.length === 0) {
+			setFilterData({ collection: [], want: [] })
+			return
+		}
+
 		const lowerCaseSearchTerm = search.toLowerCase()
 
 		const filterItems = (data: typeof collectionData.data | undefined) =>
 			data?.filter(
 				(item) =>
 					item.basic_information.title.toLowerCase().includes(lowerCaseSearchTerm) ||
+					item.barcode?.includes(lowerCaseSearchTerm) ||
 					item.basic_information.artists.some((artist) =>
 						artist.name.toLowerCase().includes(lowerCaseSearchTerm)
 					)
@@ -86,6 +93,10 @@ const SearchPage: React.FC = () => {
 		)
 	}
 
+	useEffect(() => {
+		searchData(searchTerm)
+	}, [searchTerm])
+
 	return (
 		<IonPage>
 			<IonHeader>
@@ -99,8 +110,9 @@ const SearchPage: React.FC = () => {
 				</IonToolbar>
 				<IonToolbar>
 					<IonSearchbar
+						value={searchTerm}
 						debounce={1000}
-						onIonInput={(ev) => searchData(ev.target.value?.toLowerCase() ?? "")}
+						onIonInput={(ev) => setSearchTerm(ev.target.value?.toLowerCase() ?? "")}
 					/>
 				</IonToolbar>
 				{betaBanner && (
@@ -148,8 +160,7 @@ const SearchPage: React.FC = () => {
 				open={openScanner}
 				onClose={() => setOpenScanner(false)}
 				onSuccess={(value) => {
-					window.alert(value)
-					searchData(value)
+					setSearchTerm(value)
 					setOpenScanner(false)
 				}}
 			/>

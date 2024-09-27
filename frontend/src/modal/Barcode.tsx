@@ -1,18 +1,4 @@
-import {
-	IonModal,
-	IonHeader,
-	IonToolbar,
-	IonButtons,
-	IonButton,
-	IonTitle,
-	IonContent,
-	IonItem,
-	IonLabel,
-	IonList,
-	IonIcon,
-	IonPopover,
-} from "@ionic/react"
-import { cloudOfflineOutline } from "ionicons/icons"
+import { IonModal, IonHeader, IonToolbar, IonButtons, IonButton, IonTitle, IonContent } from "@ionic/react"
 import { BarcodeScanner, DetectedBarcode } from "react-barcode-scanner"
 import "react-barcode-scanner/polyfill"
 
