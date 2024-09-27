@@ -140,7 +140,7 @@ const CollectionPage: React.FC = () => {
 
 	return (
 		<IonPage>
-			<IonHeader translucent>
+			<IonHeader>
 				<IonToolbar>
 					<IonButtons slot="primary">
 						<IonButton
