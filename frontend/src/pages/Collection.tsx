@@ -66,7 +66,10 @@ const CollectionPage: React.FC = () => {
 	const [modalInfo, setModalInfo] = useState<IReleases | undefined>(undefined)
 	const [loading, setLoading] = useState<{ page: number; pages: number }>({ page: 0, pages: 0 })
 	const [viewState, setViewState] = useState<"collection" | "want">("collection")
-	const [dataSorted, setDataSorted] = useState<{ collected: any; wanted: any }>()
+	const [dataSorted, setDataSorted] = useState<{
+		collected: [string, IReleases[]][]
+		wanted: [string, IReleases[]][]
+	}>()
 	const betaBanner = import.meta.env.VITE_BETA_BANNER
 
 	const [{ username, token }, saveAuth, clearAuth] = useAuth()
@@ -210,7 +213,7 @@ const CollectionPage: React.FC = () => {
 				<IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
 					<IonRefresherContent></IonRefresherContent>
 				</IonRefresher>
-				{viewState === "collection" && collectionData.data && (
+				{viewState === "collection" && collectionData.data && dataSorted && (
 					<>
 						{layout === "grid" ? (
 							<AlbumGrid data={dataSorted?.collected} onClickAlbum={(album) => setModalInfo(album)} />
@@ -223,7 +226,7 @@ const CollectionPage: React.FC = () => {
 					</>
 				)}
 
-				{viewState === "want" && wantData.data && (
+				{viewState === "want" && wantData.data && dataSorted && (
 					<>
 						{layout === "grid" ? (
 							<AlbumGrid data={dataSorted?.wanted} onClickAlbum={(album) => setModalInfo(album)} />
