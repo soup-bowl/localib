@@ -180,21 +180,11 @@ const CollectionPage: React.FC = () => {
 					<IonRefresherContent></IonRefresherContent>
 				</IonRefresher>
 				{viewState === "collection" && collectionData.data && (
-					<AlbumGrid
-						data={collectionData.data}
-						sort={filter}
-						type={viewState}
-						onClickAlbum={(album) => setModalInfo(album)}
-					/>
+					<AlbumGrid data={collectionData.data} sort={filter} onClickAlbum={(album) => setModalInfo(album)} />
 				)}
 
 				{viewState === "want" && wantData.data && (
-					<AlbumGrid
-						data={wantData.data}
-						sort={filter}
-						type={viewState}
-						onClickAlbum={(album) => setModalInfo(album)}
-					/>
+					<AlbumGrid data={wantData.data} sort={filter} onClickAlbum={(album) => setModalInfo(album)} />
 				)}
 
 				{modalInfo && (

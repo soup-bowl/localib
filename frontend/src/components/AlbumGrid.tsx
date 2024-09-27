@@ -1,6 +1,6 @@
 import { IonCol, IonGrid, IonIcon, IonRow, IonText } from "@ionic/react"
 import { IReleases } from "../api"
-import { splitRecordsByArtist, splitRecordsByLabel, splitRecordsByYear } from "../utils"
+import { masterSort } from "../utils"
 import { cloudOfflineOutline } from "ionicons/icons"
 import "./AlbumGrid.css"
 
@@ -31,36 +31,17 @@ const AlbumGridEntry: React.FC<AlbumProps> = ({ album, index, onClickAlbum }) =>
 interface CollectionProps {
 	data: IReleases[]
 	sort?: "release" | "label" | "artist" | "none"
-	type: "collection" | "want"
 	onClickAlbum: (album: IReleases) => void
 }
 
-const AlbumGrid: React.FC<CollectionProps> = ({ data, sort = "none", type, onClickAlbum }) => {
-	let displayData: [string, IReleases[]][] = []
-	let labelText = ""
-
-	switch (sort) {
-		default:
-		case "none":
-			displayData = [["", data]]
-			break
-		case "release":
-			displayData = splitRecordsByYear(data)
-			labelText = `${type === "collection" ? "Collected" : "Wanted"} in `
-			break
-		case "label":
-			displayData = splitRecordsByLabel(data)
-			break
-		case "artist":
-			displayData = splitRecordsByArtist(data)
-			break
-	}
+const AlbumGrid: React.FC<CollectionProps> = ({ data, sort = "none", onClickAlbum }) => {
+	let displayData: [string, IReleases[]][] = masterSort(sort, data)
 
 	return (
 		<>
 			{displayData.map((options, index) => (
 				<div key={index} className="album-art-div">
-					<h2>{labelText + options[0]}</h2>
+					<h2>{options[0]}</h2>
 					<IonGrid>
 						<IonRow>
 							{options[1].map((album, index) => {

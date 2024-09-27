@@ -1,4 +1,4 @@
-export { splitRecordsByYear, splitRecordsByLabel, splitRecordsByArtist } from "./collectionSort"
+export { splitRecordsByYear, splitRecordsByLabel, splitRecordsByArtist, masterSort } from "./collectionSort"
 
 /**
  * Formats a number of bytes as a human-readable string, with the size unit automatically selected based on the size of the number.

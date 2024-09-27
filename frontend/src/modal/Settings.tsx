@@ -158,10 +158,10 @@ const Settings: React.FC<Props> = ({ open, hasUpdate, onClose, onSave }) => {
 					</IonContent>
 				</IonPopover>
 				<IonNote color="medium" class="ion-margin-horizontal" style={{ display: "block" }}>
-					For some records, we need to collect further information from the Discogs system.
-					This can take some time, so try reloading in a few hours to see it change.
+					For some records, we need to collect further information from the Discogs system. This can take some
+					time, so try reloading in a few hours to see it change.
 				</IonNote>
-				<br/>
+				<br />
 				<IonNote color="medium" class="ion-margin-horizontal" style={{ display: "block", textAlign: "center" }}>
 					Made by <a href="https://subo.dev">soup-bowl</a> and{" "}
 					<a href="https://github.com/soup-bowl/Localib">open source</a>.

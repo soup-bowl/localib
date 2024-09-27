@@ -55,3 +55,20 @@ export const splitRecordsByLabel = (records: IReleases[]): [string, IReleases[]]
 
 	return Object.entries(recordsByLabel).sort((a, b) => a[0].localeCompare(b[0]))
 }
+
+export const masterSort = (
+	sort: "release" | "label" | "artist" | "none",
+	records: IReleases[]
+): [string, IReleases[]][] => {
+	switch (sort) {
+		default:
+		case "none":
+			return [["", records]]
+		case "release":
+			return splitRecordsByYear(records)
+		case "label":
+			return splitRecordsByLabel(records)
+		case "artist":
+			return splitRecordsByArtist(records)
+	}
+}
