@@ -14,6 +14,10 @@ import {
 	IonInputPasswordToggle,
 	IonLabel,
 	IonPopover,
+	IonCol,
+	IonGrid,
+	IonRow,
+	IonAlert,
 } from "@ionic/react"
 import { useQueryClient } from "@tanstack/react-query"
 import { useAuth } from "../hooks"
@@ -47,7 +51,7 @@ const Settings: React.FC<Props> = ({ open, hasUpdate, onClose, onSave }) => {
 
 	const handleSave = () => {
 		saveAuth(newUsername, newPassword)
-		queryClient.invalidateQueries()
+		queryClient.clear()
 		onSave()
 	}
 
@@ -55,6 +59,12 @@ const Settings: React.FC<Props> = ({ open, hasUpdate, onClose, onSave }) => {
 		if (window.location.reload) {
 			window.location.reload()
 		}
+	}
+
+	const deleteData = () => {
+		saveAuth("", "")
+		queryClient.clear()
+		window.location.reload()
 	}
 
 	const collection = queryClient.getQueryData<IReleases[]>([`${username}collection`])
@@ -161,6 +171,35 @@ const Settings: React.FC<Props> = ({ open, hasUpdate, onClose, onSave }) => {
 					For some records, we need to collect further information from the Discogs system. This can take some
 					time, so try reloading in a few hours to see it change.
 				</IonNote>
+				<IonGrid>
+					<IonRow class="ion-justify-content-center">
+						<IonCol size="auto">
+							<IonButton onClick={handleUpdate} color="primary">
+								Reload app
+							</IonButton>
+						</IonCol>
+						<IonCol size="auto">
+							<IonButton id="present-alert" color="danger">
+								Remove data
+							</IonButton>
+						</IonCol>
+					</IonRow>
+				</IonGrid>
+				<IonAlert
+					header="This will remove your account and stored data. Are you sure?"
+					trigger="present-alert"
+					buttons={[
+						{
+							text: "Cancel",
+							role: "cancel",
+						},
+						{
+							text: "Delete",
+							role: "confirm",
+							handler: deleteData,
+						},
+					]}
+				/>
 				<br />
 				<IonNote color="medium" class="ion-margin-horizontal" style={{ display: "block", textAlign: "center" }}>
 					Made by <a href="https://subo.dev">soup-bowl</a> and{" "}
