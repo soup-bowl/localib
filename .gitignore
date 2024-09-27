@@ -36,3 +36,4 @@ yarn-error.log*
 backend/*/bin
 backend/*/obj
 backend/Images/*.jpg
+backend/Images/*.webp

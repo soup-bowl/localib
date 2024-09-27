@@ -14,7 +14,7 @@ import { useQuery } from "@tanstack/react-query"
 import { IReleases, getCollectionReleases, getCollectionWants } from "../api"
 import { AlbumList, FullpageInfo, FullpageLoading } from "../components"
 import { BarcodeScanDialog, ViewAlbumDetails } from "../modal"
-import { useAuth } from "../hooks"
+import { useAuth, useSettings } from "../hooks"
 import { barcodeOutline } from "ionicons/icons"
 
 interface IReleaseCollective {
@@ -23,6 +23,7 @@ interface IReleaseCollective {
 }
 
 const SearchPage: React.FC = () => {
+	const [imageQuality, setImageQuality, clearImagequality] = useSettings<boolean>("ImagesAreHQ", false)
 	const [searchTerm, setSearchTerm] = useState<string>("")
 	const [modalInfo, setModalInfo] = useState<{ data: IReleases; type: "collection" | "want" } | undefined>(undefined)
 	const [filterData, setFilterData] = useState<IReleaseCollective>({ collection: [], want: [] })
@@ -43,13 +44,13 @@ const SearchPage: React.FC = () => {
 
 	const collectionData = useQuery<IReleases[]>({
 		queryKey: [`${username}collection`],
-		queryFn: () => getCollectionReleases(username, token ?? ""),
+		queryFn: () => getCollectionReleases(username, token ?? "", imageQuality),
 		staleTime: 1000 * 60 * 60 * 24, // 24 hours
 	})
 
 	const wantData = useQuery<IReleases[]>({
 		queryKey: [`${username}want`],
-		queryFn: () => getCollectionWants(username, token ?? ""),
+		queryFn: () => getCollectionWants(username, token ?? "", imageQuality),
 		staleTime: 1000 * 60 * 60 * 24, // 24 hours
 	})
 
