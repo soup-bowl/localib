@@ -23,7 +23,7 @@ interface IReleaseCollective {
 }
 
 const SearchPage: React.FC = () => {
-	const [imageQuality, setImageQuality, clearImagequality] = useSettings<boolean>('ImagesAreHQ', false)
+	const [imageQuality, setImageQuality, clearImagequality] = useSettings<boolean>("ImagesAreHQ", false)
 	const [searchTerm, setSearchTerm] = useState<string>("")
 	const [modalInfo, setModalInfo] = useState<{ data: IReleases; type: "collection" | "want" } | undefined>(undefined)
 	const [filterData, setFilterData] = useState<IReleaseCollective>({ collection: [], want: [] })

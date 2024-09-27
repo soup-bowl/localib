@@ -62,7 +62,7 @@ const filterActionButtons = [
 const CollectionPage: React.FC = () => {
 	const queryClient = useQueryClient()
 	const [present] = useIonActionSheet()
-	const [imageQuality, setImageQuality, clearImagequality] = useSettings<boolean>('ImagesAreHQ', false)
+	const [imageQuality, setImageQuality, clearImagequality] = useSettings<boolean>("ImagesAreHQ", false)
 	const [filter, setFilter] = useState<"release" | "label" | "artist" | "none">("none")
 	const [layout, setLayout] = useState<"grid" | "list">("grid")
 	const [modalInfo, setModalInfo] = useState<IReleases | undefined>(undefined)
@@ -120,14 +120,18 @@ const CollectionPage: React.FC = () => {
 	const collectionData = useQuery<IReleases[]>({
 		queryKey: [`${username}collection`],
 		queryFn: () =>
-			getCollectionReleases(username, token ?? "", imageQuality, (page, pages) => setLoading({ page: page, pages: pages })),
+			getCollectionReleases(username, token ?? "", imageQuality, (page, pages) =>
+				setLoading({ page: page, pages: pages })
+			),
 		staleTime: 1000 * 60 * 60 * 24, // 24 hours
 	})
 
 	const wantData = useQuery<IReleases[]>({
 		queryKey: [`${username}want`],
 		queryFn: () =>
-			getCollectionWants(username, token ?? "", imageQuality, (page, pages) => setLoading({ page: page, pages: pages })),
+			getCollectionWants(username, token ?? "", imageQuality, (page, pages) =>
+				setLoading({ page: page, pages: pages })
+			),
 		staleTime: 1000 * 60 * 60 * 24, // 24 hours
 	})
 

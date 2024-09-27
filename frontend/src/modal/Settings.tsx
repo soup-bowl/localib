@@ -38,7 +38,7 @@ const Settings: React.FC<Props> = ({ open, hasUpdate, onClose, onSave }) => {
 	const [newUsername, setNewUsername] = useState<string>(username ?? "")
 	const [newPassword, setNewPassword] = useState<string>(token ?? "")
 	const [storageInfo, setStorageInfo] = useState<{ usage: string; quota: string } | undefined>()
-	const [imageQuality, setImageQuality, clearImagequality] = useSettings<boolean>('ImagesAreHQ', false)
+	const [imageQuality, setImageQuality, clearImagequality] = useSettings<boolean>("ImagesAreHQ", false)
 	const appVersion = import.meta.env.VITE_VER ?? "Unknown"
 
 	useEffect(() => {
@@ -126,7 +126,9 @@ const Settings: React.FC<Props> = ({ open, hasUpdate, onClose, onSave }) => {
 				</IonNote>
 				<IonList inset={true}>
 					<IonItem>
-						<IonToggle checked={imageQuality} onIonChange={(e) => setImageQuality(e.detail.checked)}>Increase image quality</IonToggle>
+						<IonToggle checked={imageQuality} onIonChange={(e) => setImageQuality(e.detail.checked)}>
+							Increase image quality
+						</IonToggle>
 					</IonItem>
 				</IonList>
 				<IonNote color="medium" class="ion-margin-horizontal" style={{ display: "block" }}>

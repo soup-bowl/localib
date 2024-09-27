@@ -1,15 +1,15 @@
 import { useState } from "react"
 
-const getLocalStorageItem = <T,>(key: string): T | null => {
+const getLocalStorageItem = <T>(key: string): T | null => {
 	const item = localStorage.getItem(key)
 	return item ? JSON.parse(item) : null
 }
 
-const setLocalStorageItem = <T,>(key: string, value: T): void => {
+const setLocalStorageItem = <T>(key: string, value: T): void => {
 	localStorage.setItem(key, JSON.stringify(value))
 }
 
-const useSettings = <T,>(key: string, defaultValue: T): [T, (value: T) => void, () => void] => {
+const useSettings = <T>(key: string, defaultValue: T): [T, (value: T) => void, () => void] => {
 	const [setting, setSetting] = useState<T>(() => {
 		const storedValue = getLocalStorageItem<T>(key)
 		return storedValue !== null ? storedValue : defaultValue
