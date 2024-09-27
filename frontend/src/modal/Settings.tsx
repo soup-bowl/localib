@@ -18,9 +18,10 @@ import {
 	IonGrid,
 	IonRow,
 	IonAlert,
+	IonToggle,
 } from "@ionic/react"
 import { useQueryClient } from "@tanstack/react-query"
-import { useAuth } from "../hooks"
+import { useAuth, useSettings } from "../hooks"
 import { formatBytes } from "../utils"
 import { IReleases } from "../api"
 
@@ -37,6 +38,7 @@ const Settings: React.FC<Props> = ({ open, hasUpdate, onClose, onSave }) => {
 	const [newUsername, setNewUsername] = useState<string>(username ?? "")
 	const [newPassword, setNewPassword] = useState<string>(token ?? "")
 	const [storageInfo, setStorageInfo] = useState<{ usage: string; quota: string } | undefined>()
+	const [imageQuality, setImageQuality, clearImagequality] = useSettings<boolean>('ImagesAreHQ', false)
 	const appVersion = import.meta.env.VITE_VER ?? "Unknown"
 
 	useEffect(() => {
@@ -62,8 +64,9 @@ const Settings: React.FC<Props> = ({ open, hasUpdate, onClose, onSave }) => {
 	}
 
 	const deleteData = () => {
-		saveAuth("", "")
 		queryClient.clear()
+		clearAuth()
+		clearImagequality()
 		window.location.reload()
 	}
 
@@ -120,6 +123,14 @@ const Settings: React.FC<Props> = ({ open, hasUpdate, onClose, onSave }) => {
 					Until OAuth is implemented, we currently use Access Token for authentication. To get your token,{" "}
 					<a href="https://www.discogs.com/settings/developers">visit the Developer page</a> and copy your
 					token, or click Generate if you do not have one.
+				</IonNote>
+				<IonList inset={true}>
+					<IonItem>
+						<IonToggle checked={imageQuality} onIonChange={(e) => setImageQuality(e.detail.checked)}>Increase image quality</IonToggle>
+					</IonItem>
+				</IonList>
+				<IonNote color="medium" class="ion-margin-horizontal" style={{ display: "block" }}>
+					If you have a large library, you may experience issues with this.
 				</IonNote>
 				<IonList inset={true}>
 					<IonItem>

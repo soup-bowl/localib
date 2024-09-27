@@ -118,5 +118,6 @@ export interface IVinylResponse {
 
 export interface VinylAPIImageMap {
 	image?: string
+	imageHigh?: string
 	barcode?: string
 }
