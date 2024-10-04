@@ -11,7 +11,10 @@
 		"ghcr.io/devcontainers/features/node:1": {
 			"version": "lts"
 		},
-		"ghcr.io/devcontainers/features/docker-in-docker": "latest"
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {
+			"version": "latest",
+			"enableNonRootDocker": "true"
+		}
 	},
 	"forwardPorts": [8100, 5132],
 	"postCreateCommand": "(cd frontend && npm ci) && (cd backend && dotnet restore)"
