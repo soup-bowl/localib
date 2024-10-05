@@ -17,5 +17,18 @@
 		}
 	},
 	"forwardPorts": [8100, 5132],
-	"postCreateCommand": "(cd .devcontainer && docker compose up -d) && (cd frontend && npm ci) && (cd backend && dotnet restore)"
+	"postCreateCommand": "(cd .devcontainer && docker compose up -d) && (cd frontend && npm ci) && (cd backend && dotnet restore)",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-dotnettools.csharp",
+				"ms-dotnettools.vscode-dotnet-runtime",
+				"ms-azuretools.vscode-docker",
+				"ionic.ionic",
+				"rangav.vscode-thunder-client",
+				"mgmcdermott.vscode-language-babel"
+			]
+		}
+	}
+
 }
