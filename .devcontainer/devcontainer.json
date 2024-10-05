@@ -17,5 +17,5 @@
 		}
 	},
 	"forwardPorts": [8100, 5132],
-	"postCreateCommand": "(cd frontend && npm ci) && (cd backend && dotnet restore)"
+	"postCreateCommand": "(cd .devcontainer && docker compose up -d) && (cd frontend && npm ci) && (cd backend && dotnet restore)"
 }
