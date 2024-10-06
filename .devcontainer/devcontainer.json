@@ -3,7 +3,7 @@
 {
 	"name": "Default Linux Universal",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "mcr.microsoft.com/devcontainers/universal:2-linux",
+	"image": "mcr.microsoft.com/devcontainers/base:jammy",
 	"features": {
 		"ghcr.io/devcontainers/features/dotnet:2": {
 			"version": "8.0"
@@ -16,7 +16,10 @@
 			"enableNonRootDocker": "true"
 		}
 	},
-	"forwardPorts": [8100, 5132],
+	"forwardPorts": [
+		8100,
+		5132
+	],
 	"postCreateCommand": "(cd .devcontainer && docker compose up -d) && (cd frontend && npm ci) && (cd backend && dotnet restore)",
 	"customizations": {
 		"vscode": {
@@ -29,6 +32,12 @@
 				"mgmcdermott.vscode-language-babel"
 			]
 		}
-	}
-
+	},
+	"runArgs": [
+		"--userns=keep-id"
+	],
+	"containerEnv": {
+		"HOME": "/home/vscode"
+	},
+	"containerUser": "vscode"
 }
