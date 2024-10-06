@@ -32,12 +32,13 @@
 				"mgmcdermott.vscode-language-babel"
 			]
 		}
-	},
-	"runArgs": [
-		"--userns=keep-id"
-	],
-	"containerEnv": {
-		"HOME": "/home/vscode"
-	},
-	"containerUser": "vscode"
+	}
+	// -- For Podman hosts
+	// "runArgs": [
+	// 	"--userns=keep-id"
+	// ],
+	// "containerEnv": {
+	// 	"HOME": "/home/vscode"
+	// },
+	// "containerUser": "vscode"
 }
