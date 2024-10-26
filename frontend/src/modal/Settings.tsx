@@ -23,7 +23,7 @@ import {
 import { useQueryClient } from "@tanstack/react-query"
 import { useAuth, useSettings } from "../hooks"
 import { formatBytes } from "../utils"
-import { IReleases } from "../api"
+import { IReleaseSet } from "../api"
 
 interface Props {
 	open: boolean
@@ -70,17 +70,16 @@ const Settings: React.FC<Props> = ({ open, hasUpdate, onClose, onSave }) => {
 		window.location.reload()
 	}
 
-	const collection = queryClient.getQueryData<IReleases[]>([`${username}collection`])
-	const wanted = queryClient.getQueryData<IReleases[]>([`${username}want`])
-	const collectionMissing = collection?.filter((obj) => obj.image_base64 === undefined).length ?? 0
-	const wantedMissing = wanted?.filter((obj) => obj.image_base64 === undefined).length ?? 0
+	const collection = queryClient.getQueryData<IReleaseSet>([`${username}collectionv2`])
+	const collectionMissing = collection?.collection.filter((obj) => obj.image_base64 === undefined).length ?? 0
+	const wantedMissing =  collection?.wants.filter((obj) => obj.image_base64 === undefined).length ?? 0
 
 	const inStorageInfo = {
-		collectionCount: collection?.length ?? 0,
+		collectionCount: collection?.collection.length ?? 0,
 		collectionMissing: collectionMissing,
-		wantedCount: wanted?.length ?? 0,
+		wantedCount: collection?.wants.length ?? 0,
 		wantedMissing: wantedMissing,
-		totalCount: (collection?.length ?? 0) + (wanted?.length ?? 0),
+		totalCount: (collection?.collection.length ?? 0) + (collection?.wants.length ?? 0),
 		totalMissing: collectionMissing + wantedMissing,
 	}
 
