@@ -77,7 +77,7 @@ export const getCollectionAndWants = async (
 							acc[record.recordID] = {
 								image: record.image,
 								imageHigh: record.imageHigh,
-								barcode: record.barcode,
+								barcode: record.barcode.replace(/\D/g, '') ?? undefined,
 							}
 							return acc
 						}, {})
