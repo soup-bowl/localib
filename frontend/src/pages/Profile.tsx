@@ -26,12 +26,12 @@ interface Props {
 const ProfilePage: React.FC<Props> = ({ openSettings }) => {
 	const betaBanner = import.meta.env.VITE_BETA_BANNER
 
-	const [{ username, token }, saveAuth, clearAuth] = useAuth()
+	const [{ username, token }] = useAuth()
 
 	const { data, isLoading, isError } = useQuery<IProfile>({
 		queryKey: [`${username}profile`],
 		queryFn: () => getProfile(username ?? "", token ?? ""),
-		staleTime: 1000 * 60 * 60 * 24, // 24 hours
+		staleTime: Infinity,
 	})
 
 	if (!username || isError) {
