@@ -1,4 +1,4 @@
-export { getCollectionReleases, getCollectionWants, getMe, getProfile } from "./discogs"
+export { getCollectionAndWants, getMe, getProfile } from "./discogs"
 export type {
 	ICollections,
 	IWants,
@@ -6,6 +6,7 @@ export type {
 	IProfile,
 	IPagination,
 	IReleases,
+	IReleaseSet,
 	IVinylResponse,
 	IAvailableItem,
 	VinylAPIImageMap,

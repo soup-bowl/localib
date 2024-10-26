@@ -11,26 +11,21 @@ import {
 	IonToolbar,
 } from "@ionic/react"
 import { useQuery } from "@tanstack/react-query"
-import { IReleases, getCollectionReleases, getCollectionWants } from "../api"
+import { IReleaseSet, IReleases, getCollectionAndWants } from "../api"
 import { AlbumList, FullpageInfo, FullpageLoading } from "../components"
 import { BarcodeScanDialog, ViewAlbumDetails } from "../modal"
 import { useAuth, useSettings } from "../hooks"
 import { barcodeOutline } from "ionicons/icons"
 
-interface IReleaseCollective {
-	collection: IReleases[]
-	want: IReleases[]
-}
-
 const SearchPage: React.FC = () => {
 	const [imageQuality] = useSettings<boolean>("ImagesAreHQ", false)
 	const [searchTerm, setSearchTerm] = useState<string>("")
 	const [modalInfo, setModalInfo] = useState<{ data: IReleases; type: "collection" | "want" } | undefined>(undefined)
-	const [filterData, setFilterData] = useState<IReleaseCollective>({ collection: [], want: [] })
+	const [filterData, setFilterData] = useState<IReleaseSet>({ collection: [], wants: [] })
 	const [openScanner, setOpenScanner] = useState<boolean>(false)
 	const betaBanner = import.meta.env.VITE_BETA_BANNER
 
-	const [{ username, token }, saveAuth, clearAuth] = useAuth()
+	const [{ username, token }] = useAuth()
 
 	if (!username) {
 		return (
@@ -42,27 +37,21 @@ const SearchPage: React.FC = () => {
 		)
 	}
 
-	const collectionData = useQuery<IReleases[]>({
-		queryKey: [`${username}collection`],
-		queryFn: () => getCollectionReleases(username, token ?? "", imageQuality),
-		staleTime: Infinity,
-	})
-
-	const wantData = useQuery<IReleases[]>({
-		queryKey: [`${username}want`],
-		queryFn: () => getCollectionWants(username, token ?? "", imageQuality),
+	const { isLoading, isError, data } = useQuery<IReleaseSet>({
+		queryKey: [`${username}collectionv2`],
+		queryFn: () => getCollectionAndWants(username, token ?? "", imageQuality),
 		staleTime: Infinity,
 	})
 
 	const searchData = (search: string) => {
 		if (search.length === 0) {
-			setFilterData({ collection: [], want: [] })
+			setFilterData({ collection: [], wants: [] })
 			return
 		}
 
 		const lowerCaseSearchTerm = search.toLowerCase()
 
-		const filterItems = (data: typeof collectionData.data | undefined) =>
+		const filterItems = (data: IReleases[] | undefined) =>
 			data?.filter(
 				(item) =>
 					item.basic_information.title.toLowerCase().includes(lowerCaseSearchTerm) ||
@@ -73,12 +62,12 @@ const SearchPage: React.FC = () => {
 			) ?? []
 
 		setFilterData({
-			collection: filterItems(collectionData.data),
-			want: filterItems(wantData.data),
+			collection: filterItems(data?.collection),
+			wants: filterItems(data?.wants),
 		})
 	}
 
-	if (collectionData.isLoading || wantData.isLoading) {
+	if (isLoading) {
 		return (
 			<IonPage>
 				<FullpageLoading />
@@ -86,7 +75,7 @@ const SearchPage: React.FC = () => {
 		)
 	}
 
-	if (collectionData.isError || wantData.isError) {
+	if (isError) {
 		return (
 			<IonPage>
 				<FullpageInfo text="An error occurred when loading information." />
@@ -136,9 +125,9 @@ const SearchPage: React.FC = () => {
 					/>
 				)}
 
-				{filterData.want.length > 0 && (
+				{filterData.wants.length > 0 && (
 					<AlbumList
-						data={filterData.want}
+						data={filterData.wants}
 						title="Wanted"
 						onClickAlbum={(album) =>
 							setModalInfo({

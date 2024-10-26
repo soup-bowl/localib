@@ -61,6 +61,11 @@ export interface IReleases {
 	barcode?: string
 }
 
+export interface IReleaseSet {
+	collection: IReleases[]
+	wants: IReleases[]
+}
+
 export interface ICollections {
 	pagination: IPagination
 	releases: IReleases[]

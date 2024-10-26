@@ -18,7 +18,7 @@ import {
 } from "@ionic/react"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { filterOutline, personOutline, pricetagOutline, timeOutline, listOutline, gridOutline } from "ionicons/icons"
-import { IReleases, getCollectionReleases, getCollectionWants } from "../api"
+import { IReleaseSet, IReleases, getCollectionAndWants } from "../api"
 import { FullpageLoading, AlbumGrid, FullpageInfo, AlbumListGroups } from "../components"
 import { ViewAlbumDetails } from "../modal"
 import { useAuth, useSettings } from "../hooks"
@@ -74,7 +74,7 @@ const CollectionPage: React.FC = () => {
 	}>()
 	const betaBanner = import.meta.env.VITE_BETA_BANNER
 
-	const [{ username, token }, saveAuth, clearAuth] = useAuth()
+	const [{ username, token }] = useAuth()
 
 	const getFilterIcon = (filter: string) => {
 		switch (filter) {
@@ -112,24 +112,15 @@ const CollectionPage: React.FC = () => {
 
 	const handleRefresh = async (event: CustomEvent<RefresherEventDetail>) => {
 		await queryClient.invalidateQueries({
-			queryKey: [`${username}collection`, `${username}want`],
+			queryKey: [`${username}collectionv2`],
 		})
 		event.detail.complete()
 	}
 
-	const collectionData = useQuery<IReleases[]>({
-		queryKey: [`${username}collection`],
+	const { isLoading, isError, data } = useQuery<IReleaseSet>({
+		queryKey: [`${username}collectionv2`],
 		queryFn: () =>
-			getCollectionReleases(username, token ?? "", imageQuality, (page, pages) =>
-				setLoading({ page: page, pages: pages })
-			),
-		staleTime: Infinity,
-	})
-
-	const wantData = useQuery<IReleases[]>({
-		queryKey: [`${username}want`],
-		queryFn: () =>
-			getCollectionWants(username, token ?? "", imageQuality, (page, pages) =>
+			getCollectionAndWants(username, token ?? "", imageQuality, (page, pages) =>
 				setLoading({ page: page, pages: pages })
 			),
 		staleTime: Infinity,
@@ -137,12 +128,12 @@ const CollectionPage: React.FC = () => {
 
 	useEffect(() => {
 		setDataSorted({
-			collected: masterSort(filter, collectionData.data ?? []),
-			wanted: masterSort(filter, wantData.data ?? []),
+			collected: masterSort(filter, data?.collection ?? []),
+			wanted: masterSort(filter, data?.wants ?? []),
 		})
-	}, [filter, collectionData.data, wantData.data])
+	}, [filter, data])
 
-	if (collectionData.isLoading || wantData.isLoading) {
+	if (isLoading) {
 		return (
 			<IonPage>
 				<FullpageLoading loadingProgress={loading.page + 1} loadingComplete={loading.pages} />
@@ -150,7 +141,7 @@ const CollectionPage: React.FC = () => {
 		)
 	}
 
-	if (collectionData.isError || wantData.isError) {
+	if (isError) {
 		return (
 			<IonPage>
 				<FullpageInfo text="An error occurred when loading information." />
@@ -219,7 +210,7 @@ const CollectionPage: React.FC = () => {
 				<IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
 					<IonRefresherContent></IonRefresherContent>
 				</IonRefresher>
-				{viewState === "collection" && collectionData.data && dataSorted && (
+				{viewState === "collection" && data && dataSorted && (
 					<>
 						{layout === "grid" ? (
 							<AlbumGrid data={dataSorted?.collected} onClickAlbum={(album) => setModalInfo(album)} />
@@ -232,7 +223,7 @@ const CollectionPage: React.FC = () => {
 					</>
 				)}
 
-				{viewState === "want" && wantData.data && dataSorted && (
+				{viewState === "want" && data && dataSorted && (
 					<>
 						{layout === "grid" ? (
 							<AlbumGrid data={dataSorted?.wanted} onClickAlbum={(album) => setModalInfo(album)} />
