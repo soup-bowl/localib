@@ -50,7 +50,7 @@ import "@ionic/react/css/palettes/dark.always.css"
 import "./theme/variables.css"
 
 setupIonicReact({
-	mode: "ios",
+	mode: import.meta.env.VITE_APP_MODE ?? "ios",
 })
 
 const queryClient = new QueryClient({
