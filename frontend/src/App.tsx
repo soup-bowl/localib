@@ -56,7 +56,7 @@ setupIonicReact({
 const queryClient = new QueryClient({
 	defaultOptions: {
 		queries: {
-			gcTime: 1000 * 60 * 60 * 24 * 24, // 24 days, the theoretical max
+			gcTime: Infinity,
 		},
 	},
 })

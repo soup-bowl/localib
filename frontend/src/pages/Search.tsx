@@ -23,7 +23,7 @@ interface IReleaseCollective {
 }
 
 const SearchPage: React.FC = () => {
-	const [imageQuality, setImageQuality, clearImagequality] = useSettings<boolean>("ImagesAreHQ", false)
+	const [imageQuality] = useSettings<boolean>("ImagesAreHQ", false)
 	const [searchTerm, setSearchTerm] = useState<string>("")
 	const [modalInfo, setModalInfo] = useState<{ data: IReleases; type: "collection" | "want" } | undefined>(undefined)
 	const [filterData, setFilterData] = useState<IReleaseCollective>({ collection: [], want: [] })
@@ -45,13 +45,13 @@ const SearchPage: React.FC = () => {
 	const collectionData = useQuery<IReleases[]>({
 		queryKey: [`${username}collection`],
 		queryFn: () => getCollectionReleases(username, token ?? "", imageQuality),
-		staleTime: 1000 * 60 * 60 * 24, // 24 hours
+		staleTime: Infinity,
 	})
 
 	const wantData = useQuery<IReleases[]>({
 		queryKey: [`${username}want`],
 		queryFn: () => getCollectionWants(username, token ?? "", imageQuality),
-		staleTime: 1000 * 60 * 60 * 24, // 24 hours
+		staleTime: Infinity,
 	})
 
 	const searchData = (search: string) => {
