@@ -72,7 +72,7 @@ const Settings: React.FC<Props> = ({ open, hasUpdate, onClose, onSave }) => {
 
 	const collection = queryClient.getQueryData<IReleaseSet>([`${username}collectionv2`])
 	const collectionMissing = collection?.collection.filter((obj) => obj.image_base64 === undefined).length ?? 0
-	const wantedMissing =  collection?.wants.filter((obj) => obj.image_base64 === undefined).length ?? 0
+	const wantedMissing = collection?.wants.filter((obj) => obj.image_base64 === undefined).length ?? 0
 
 	const inStorageInfo = {
 		collectionCount: collection?.collection.length ?? 0,

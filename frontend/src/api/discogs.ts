@@ -1,5 +1,13 @@
 import { isNullOrBlank } from "../utils"
-import { ICollections, IIdentify, IProfile, IReleases, IReleaseSet, VinylAPIImageMap } from "./interface"
+import {
+	ICollections,
+	IIdentify,
+	IProfile,
+	IReleases,
+	IReleaseSet,
+	VinylAPIImageMap,
+	VinylAPIImageRecord,
+} from "./interface"
 
 const API_URL = "https://api.discogs.com"
 
@@ -36,11 +44,8 @@ export const getCollectionAndWants = async (
 	onProgress?: (page: number, pages: number) => void
 ): Promise<IReleaseSet> => {
 	const vinylURL = import.meta.env.VITE_VINYL_API_URL
-	
-	const fetchReleases = async (
-		url: string,
-		releaseType: 'collection' | 'wants'
-	): Promise<IReleases[]> => {
+
+	const fetchReleases = async (url: string, releaseType: "collection" | "wants"): Promise<IReleases[]> => {
 		let allReleases: IReleases[] = []
 		while (url) {
 			const response = await fetch(url, {
@@ -66,21 +71,27 @@ export const getCollectionAndWants = async (
 						},
 						body: JSON.stringify(
 							// @ts-expect-error Cheating a bit - converting the reference to keep the same models.
-							(releaseType === 'wants' ? data.wants : data.releases).map((item) => item.basic_information.id) ?? []
+							(releaseType === "wants" ? data.wants : data.releases).map(
+								// @ts-expect-error Cheating a bit - converting the reference to keep the same models.
+								(item) => item.basic_information.id
+							) ?? []
 						),
 					})
 
 					if (secondaryResponse.ok) {
 						const imageData = await secondaryResponse.json()
 
-						imageMap = imageData.available.reduce((acc: Record<number, VinylAPIImageMap>, record: any) => {
-							acc[record.recordID] = {
-								image: record.image,
-								imageHigh: record.imageHigh,
-								barcode: record.barcode.replace(/\D/g, '') ?? undefined,
-							}
-							return acc
-						}, {})
+						imageMap = imageData.available.reduce(
+							(acc: Record<number, VinylAPIImageMap>, record: VinylAPIImageRecord) => {
+								acc[record.recordID] = {
+									image: record.image,
+									imageHigh: record.imageHigh,
+									barcode: record.barcode?.replace(/\D/g, "") ?? undefined,
+								}
+								return acc
+							},
+							{}
+						)
 					} else {
 						console.warn("Vinyl API response was not ok, skipping.")
 					}
@@ -90,7 +101,7 @@ export const getCollectionAndWants = async (
 			}
 
 			// @ts-expect-error Cheating a bit - converting the reference to keep the same models.
-			const releasesExtraData = (releaseType === 'wants' ? data.wants : data.releases).map((release) => {
+			const releasesExtraData = (releaseType === "wants" ? data.wants : data.releases).map((release) => {
 				const imageRecord = imageMap[release.basic_information.id] || {
 					image: null,
 					imageHigh: null,
@@ -122,8 +133,8 @@ export const getCollectionAndWants = async (
 
 	// Fetch wants and collection in parallel
 	const [wantsReleases, collectionReleases] = await Promise.all([
-		fetchReleases(`${API_URL}/users/${username}/wants?per_page=100`, 'wants'),
-		fetchReleases(`${API_URL}/users/${username}/collection/folders/0/releases?per_page=100`, 'collection'),
+		fetchReleases(`${API_URL}/users/${username}/wants?per_page=100`, "wants"),
+		fetchReleases(`${API_URL}/users/${username}/collection/folders/0/releases?per_page=100`, "collection"),
 	])
 
 	return {

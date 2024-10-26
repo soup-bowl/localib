@@ -10,4 +10,5 @@ export type {
 	IVinylResponse,
 	IAvailableItem,
 	VinylAPIImageMap,
+	VinylAPIImageRecord,
 } from "./interface"

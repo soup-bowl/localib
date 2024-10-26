@@ -126,3 +126,7 @@ export interface VinylAPIImageMap {
 	imageHigh?: string
 	barcode?: string
 }
+
+export interface VinylAPIImageRecord extends VinylAPIImageMap {
+	recordID: number
+}
