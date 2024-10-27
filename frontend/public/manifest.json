@@ -1,16 +1,13 @@
 {
 	"short_name": "Localib",
 	"name": "Localib",
+	"description": "View your Discogs collection offline!",
 	"icons": [
 		{
-			"src": "favicon.ico",
-			"sizes": "64x64",
-			"type": "image/png"
-		},
-		{
-			"src": "logo-mask-192.png",
+			"src": "logo-mask-144.png",
 			"type": "image/png",
-			"sizes": "192x192"
+			"sizes": "144x144",
+			"purpose": "any"
 		},
 		{
 			"src": "logo-mask-192.png",
@@ -21,12 +18,13 @@
 		{
 			"src": "logo-mask-512.png",
 			"type": "image/png",
-			"sizes": "512x512"
+			"sizes": "512x512",
+			"purpose": "maskable"
 		},
 		{
-			"src": "logo-mask-512.png",
+			"src": "logo-mask-1024.png",
 			"type": "image/png",
-			"sizes": "512x512",
+			"sizes": "1024x1024",
 			"purpose": "maskable"
 		}
 	],
