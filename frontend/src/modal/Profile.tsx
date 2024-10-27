@@ -43,7 +43,11 @@ const ProfileContent: React.FC = () => {
 			<div className="avatar-background" style={{ backgroundImage: `url(${data?.banner_url})` }}>
 				<div className="profile-column">
 					<IonAvatar>
-						<img src={data?.avatar_url} />
+						<img
+							src={data?.avatar_url ?? "/album-placeholder.png"}
+							onError={(e) => ((e.target as HTMLImageElement).src = "/album-placeholder.png")}
+							alt=""
+						/>
 					</IonAvatar>
 				</div>
 				<IonCard style={{ textAlign: "center", marginBottom: 50 }}>
