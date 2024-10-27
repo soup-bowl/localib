@@ -2,7 +2,7 @@
 	"name": "localib",
 	"description": "Collects your Discogs library for offline usage",
 	"private": true,
-	"version": "0.1.6",
+	"version": "develop",
 	"type": "module",
 	"scripts": {
 		"dev": "vite",
