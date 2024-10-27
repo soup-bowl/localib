@@ -1,4 +1,8 @@
 {
-	"dotnet.defaultSolution": "Discapp.sln",
-	"editor.formatOnSave": true
+  "dotnet.defaultSolution": "Discapp.sln",
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }
