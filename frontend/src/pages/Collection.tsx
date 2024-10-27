@@ -20,7 +20,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { filterOutline, personOutline, pricetagOutline, timeOutline, listOutline, gridOutline } from "ionicons/icons"
 import { IReleaseSet, IReleases, getCollectionAndWants } from "../api"
 import { FullpageLoading, AlbumGrid, FullpageInfo, AlbumListGroups } from "../components"
-import { ViewAlbumDetails } from "../modal"
+import { ProfileModal, ViewAlbumDetails } from "../modal"
 import { useAuth, useSettings } from "../hooks"
 import { masterSort } from "../utils"
 import { IReleaseTuple } from "../types"
@@ -67,6 +67,7 @@ const CollectionPage: React.FC = () => {
 	const [layout, setLayout] = useSettings<"grid" | "list">("collectionLayout", "grid")
 	const [modalInfo, setModalInfo] = useState<IReleases | undefined>(undefined)
 	const [loading, setLoading] = useState<{ page: number; pages: number }>({ page: 0, pages: 0 })
+	const [profileModal, setProfileModal] = useState<boolean>(false)
 	const [viewState, setViewState] = useState<"collection" | "want">("collection")
 	const [dataSorted, setDataSorted] = useState<{
 		collected: IReleaseTuple
@@ -153,6 +154,11 @@ const CollectionPage: React.FC = () => {
 		<IonPage>
 			<IonHeader>
 				<IonToolbar>
+					<IonButtons slot="secondary">
+						<IonButton onClick={() => setProfileModal(true)}>
+							<IonIcon slot="icon-only" icon={personOutline} />
+						</IonButton>
+					</IonButtons>
 					<IonButtons slot="primary">
 						<IonButton
 							onClick={() => {
@@ -241,6 +247,7 @@ const CollectionPage: React.FC = () => {
 					/>
 				)}
 			</IonContent>
+			<ProfileModal open={profileModal} onClose={() => setProfileModal(false)} />
 		</IonPage>
 	)
 }
