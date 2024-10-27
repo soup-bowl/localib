@@ -100,14 +100,14 @@ const SettingsPage: React.FC<{ hasUpdate: boolean }> = ({ hasUpdate }) => {
 			</IonHeader>
 			<IonContent className="ion-padding">
 				<IonList inset={true}>
-					<IonItem>
+					<IonItem color="light">
 						<IonInput
 							label="Username"
 							value={newUsername}
 							onIonChange={(e) => setNewUsername(`${e.target.value}`)}
 						/>
 					</IonItem>
-					<IonItem>
+					<IonItem color="light">
 						<IonInput
 							type="password"
 							label="Token"
@@ -124,7 +124,7 @@ const SettingsPage: React.FC<{ hasUpdate: boolean }> = ({ hasUpdate }) => {
 					token, or click Generate if you do not have one.
 				</IonNote>
 				<IonList inset={true}>
-					<IonItem>
+					<IonItem color="light">
 						<IonToggle checked={imageQuality} onIonChange={(e) => setImageQuality(e.detail.checked)}>
 							Increase image quality
 						</IonToggle>
@@ -134,7 +134,7 @@ const SettingsPage: React.FC<{ hasUpdate: boolean }> = ({ hasUpdate }) => {
 					If you have a large library, you may experience issues with this.
 				</IonNote>
 				<IonList inset={true}>
-					<IonItem>
+					<IonItem color="light">
 						<IonLabel>App version</IonLabel>
 						<IonLabel slot="end">
 							{appVersion}
@@ -150,19 +150,19 @@ const SettingsPage: React.FC<{ hasUpdate: boolean }> = ({ hasUpdate }) => {
 							)}
 						</IonLabel>
 					</IonItem>
-					<IonItem>
+					<IonItem color="light">
 						<IonLabel>Storage used</IonLabel>
 						<IonLabel slot="end">
 							{storageInfo?.usage ?? "Unknown"} of {storageInfo?.quota ?? "Unknown"}
 						</IonLabel>
 					</IonItem>
-					<IonItem>
+					<IonItem color="light">
 						<IonLabel>Records stored</IonLabel>
 						<IonLabel id="reccount-tooltip" slot="end">
 							{inStorageInfo.totalCount}
 						</IonLabel>
 					</IonItem>
-					<IonItem>
+					<IonItem color="light">
 						<IonLabel>Records unsynced</IonLabel>
 						<IonLabel id="missing-tooltip" slot="end">
 							{inStorageInfo.totalMissing}
