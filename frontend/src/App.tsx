@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react"
 import { Redirect, Route } from "react-router-dom"
-import { registerSW } from "virtual:pwa-register"
+import { useRegisterSW } from "virtual:pwa-register/react"
 import { QueryClient } from "@tanstack/react-query"
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client"
 import {
 	IonApp,
+	IonBadge,
 	IonIcon,
 	IonLabel,
 	IonRouterOutlet,
@@ -63,18 +63,31 @@ const queryClient = new QueryClient({
 const persister = createIDBPersister()
 
 const App: React.FC = () => {
-	const [updateAvailable, setUpdateAvailable] = useState<boolean>(false)
+	// Insp: https://github.com/vite-pwa/vite-plugin-pwa/blob/main/examples/react-router/src/ReloadPrompt.tsx
+	const reloadSW = "__RELOAD_SW__"
+	const {
+		needRefresh: [needRefresh],
+		updateServiceWorker,
+	} = useRegisterSW({
+		onRegisteredSW(swUrl, r) {
+			console.log(`Service Worker at: ${swUrl}`)
+			// @ts-expect-error TS isn't aware of the virtual value
+			if (reloadSW === "true") {
+				r &&
+					setInterval(() => {
+						console.log("Checking for sw update")
+						r.update()
+					}, 20000)
+			} else {
+				// eslint-disable-next-line prefer-template
+				console.log("SW Registered: " + r)
+			}
+		},
+		onRegisterError(error) {
+			console.log("SW registration error", error)
+		},
+	})
 
-	useEffect(() => {
-		const updateSW = registerSW({
-			onNeedRefresh() {
-				setUpdateAvailable(true)
-			},
-			onOfflineReady() {
-				console.log("The app is ready to work offline.")
-			},
-		})
-	}, [])
 	return (
 		<PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
 			<IonApp>
@@ -88,7 +101,7 @@ const App: React.FC = () => {
 								<SearchPage />
 							</Route>
 							<Route path="/settings">
-								<SettingsPage hasUpdate={updateAvailable} />
+								<SettingsPage hasUpdate={needRefresh} onUpdate={() => updateServiceWorker(true)} />
 							</Route>
 							<Route exact path="/">
 								<Redirect to="/collection" />
@@ -106,6 +119,7 @@ const App: React.FC = () => {
 							<IonTabButton tab="settings" href="/settings">
 								<IonIcon aria-hidden="true" ios={cogOutline} md={settingsOutline} />
 								<IonLabel>Settings</IonLabel>
+								{needRefresh && <IonBadge>!</IonBadge>}
 							</IonTabButton>
 						</IonTabBar>
 					</IonTabs>

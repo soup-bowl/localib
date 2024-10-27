@@ -19,14 +19,14 @@ import {
 	IonToggle,
 	IonButtons,
 } from "@ionic/react"
+import { useHistory } from "react-router"
 import { useQueryClient } from "@tanstack/react-query"
 import { useState, useEffect } from "react"
 import { IReleaseSet } from "../api"
 import { useAuth, useSettings } from "../hooks"
 import { formatBytes } from "../utils"
-import { useHistory } from "react-router"
 
-const SettingsPage: React.FC<{ hasUpdate: boolean }> = ({ hasUpdate }) => {
+const SettingsPage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> = ({ hasUpdate, onUpdate }) => {
 	const betaBanner = import.meta.env.VITE_BETA_BANNER
 
 	const queryClient = useQueryClient()
@@ -55,16 +55,11 @@ const SettingsPage: React.FC<{ hasUpdate: boolean }> = ({ hasUpdate }) => {
 		window.location.reload()
 	}
 
-	const handleUpdate = () => {
-		if (window.location.reload) {
-			window.location.reload()
-		}
-	}
-
 	const deleteData = () => {
 		queryClient.clear()
 		clearAuth()
 		clearImagequality()
+		history.push("/")
 		window.location.reload()
 	}
 
@@ -140,7 +135,7 @@ const SettingsPage: React.FC<{ hasUpdate: boolean }> = ({ hasUpdate }) => {
 							{appVersion}
 							{hasUpdate && (
 								<IonButton
-									onClick={handleUpdate}
+									onClick={onUpdate}
 									color="primary"
 									size="small"
 									style={{ marginLeft: "10px" }}
@@ -186,7 +181,7 @@ const SettingsPage: React.FC<{ hasUpdate: boolean }> = ({ hasUpdate }) => {
 				<IonGrid>
 					<IonRow class="ion-justify-content-center">
 						<IonCol size="auto">
-							<IonButton onClick={handleUpdate} color="primary">
+							<IonButton onClick={() => window.location.reload()} color="primary">
 								Reload app
 							</IonButton>
 						</IonCol>

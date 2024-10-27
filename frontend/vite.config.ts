@@ -9,7 +9,7 @@ export default defineConfig({
 		react(),
 		legacy(),
 		VitePWA({
-			registerType: "autoUpdate",
+			registerType: "prompt",
 			devOptions: {
 				enabled: false,
 			},
