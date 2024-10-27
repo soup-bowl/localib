@@ -14,9 +14,8 @@ import {
 	setupIonicReact,
 } from "@ionic/react"
 import { IonReactRouter } from "@ionic/react-router"
-import { discOutline, searchOutline, personOutline } from "ionicons/icons"
-import { CollectionPage, ProfilePage, SearchPage } from "./pages"
-import { Settings } from "./modal"
+import { discOutline, searchOutline, settingsOutline, cogOutline } from "ionicons/icons"
+import { CollectionPage, SearchPage, SettingsPage } from "./pages"
 import { createIDBPersister } from "./persister"
 
 /* Core CSS required for Ionic components to work properly */
@@ -64,7 +63,6 @@ const queryClient = new QueryClient({
 const persister = createIDBPersister()
 
 const App: React.FC = () => {
-	const [openSettingsDialog, setOpenSettingsDialog] = useState<boolean>(false)
 	const [updateAvailable, setUpdateAvailable] = useState<boolean>(false)
 
 	useEffect(() => {
@@ -86,11 +84,11 @@ const App: React.FC = () => {
 							<Route exact path="/collection">
 								<CollectionPage />
 							</Route>
-							<Route exact path="/profile">
-								<ProfilePage openSettings={setOpenSettingsDialog} />
-							</Route>
 							<Route path="/search">
 								<SearchPage />
+							</Route>
+							<Route path="/settings">
+								<SettingsPage hasUpdate={updateAvailable} />
 							</Route>
 							<Route exact path="/">
 								<Redirect to="/collection" />
@@ -101,23 +99,17 @@ const App: React.FC = () => {
 								<IonIcon aria-hidden="true" icon={discOutline} />
 								<IonLabel>Collection</IonLabel>
 							</IonTabButton>
-							<IonTabButton tab="profile" href="/profile">
-								<IonIcon aria-hidden="true" icon={personOutline} />
-								<IonLabel>Profile</IonLabel>
-							</IonTabButton>
 							<IonTabButton tab="search" href="/search">
 								<IonIcon aria-hidden="true" icon={searchOutline} />
 								<IonLabel>Search</IonLabel>
 							</IonTabButton>
+							<IonTabButton tab="settings" href="/settings">
+								<IonIcon aria-hidden="true" ios={cogOutline} md={settingsOutline} />
+								<IonLabel>Settings</IonLabel>
+							</IonTabButton>
 						</IonTabBar>
 					</IonTabs>
 				</IonReactRouter>
-				<Settings
-					open={openSettingsDialog}
-					hasUpdate={updateAvailable}
-					onClose={() => setOpenSettingsDialog(false)}
-					onSave={() => setOpenSettingsDialog(false)}
-				/>
 			</IonApp>
 		</PersistQueryClientProvider>
 	)

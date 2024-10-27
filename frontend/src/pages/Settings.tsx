@@ -1,39 +1,36 @@
-import { useEffect, useState } from "react"
 import {
-	IonModal,
+	IonPage,
 	IonHeader,
 	IonToolbar,
-	IonButtons,
-	IonButton,
 	IonTitle,
 	IonContent,
-	IonItem,
-	IonInput,
-	IonNote,
-	IonList,
-	IonInputPasswordToggle,
-	IonLabel,
-	IonPopover,
+	IonAlert,
+	IonButton,
 	IonCol,
 	IonGrid,
+	IonInput,
+	IonInputPasswordToggle,
+	IonItem,
+	IonLabel,
+	IonList,
+	IonNote,
+	IonPopover,
 	IonRow,
-	IonAlert,
 	IonToggle,
+	IonButtons,
 } from "@ionic/react"
 import { useQueryClient } from "@tanstack/react-query"
+import { useState, useEffect } from "react"
+import { IReleaseSet } from "../api"
 import { useAuth, useSettings } from "../hooks"
 import { formatBytes } from "../utils"
-import { IReleaseSet } from "../api"
+import { useHistory } from "react-router"
 
-interface Props {
-	open: boolean
-	hasUpdate: boolean
-	onClose: () => void
-	onSave: () => void
-}
+const SettingsPage: React.FC<{ hasUpdate: boolean }> = ({ hasUpdate }) => {
+	const betaBanner = import.meta.env.VITE_BETA_BANNER
 
-const Settings: React.FC<Props> = ({ open, hasUpdate, onClose, onSave }) => {
 	const queryClient = useQueryClient()
+	const history = useHistory()
 	const [{ username, token }, saveAuth, clearAuth] = useAuth()
 	const [newUsername, setNewUsername] = useState<string>(username ?? "")
 	const [newPassword, setNewPassword] = useState<string>(token ?? "")
@@ -54,7 +51,8 @@ const Settings: React.FC<Props> = ({ open, hasUpdate, onClose, onSave }) => {
 	const handleSave = () => {
 		saveAuth(newUsername, newPassword)
 		queryClient.clear()
-		onSave()
+		history.push("/")
+		window.location.reload()
 	}
 
 	const handleUpdate = () => {
@@ -84,12 +82,9 @@ const Settings: React.FC<Props> = ({ open, hasUpdate, onClose, onSave }) => {
 	}
 
 	return (
-		<IonModal isOpen={open}>
+		<IonPage>
 			<IonHeader>
 				<IonToolbar>
-					<IonButtons slot="start">
-						<IonButton onClick={() => onClose()}>Close</IonButton>
-					</IonButtons>
 					<IonTitle>Settings</IonTitle>
 					<IonButtons slot="end">
 						<IonButton strong={true} onClick={handleSave}>
@@ -97,6 +92,11 @@ const Settings: React.FC<Props> = ({ open, hasUpdate, onClose, onSave }) => {
 						</IonButton>
 					</IonButtons>
 				</IonToolbar>
+				{betaBanner && (
+					<IonToolbar className="beta-banner" color="warning">
+						<IonTitle>{betaBanner}</IonTitle>
+					</IonToolbar>
+				)}
 			</IonHeader>
 			<IonContent className="ion-padding">
 				<IonList inset={true}>
@@ -218,8 +218,8 @@ const Settings: React.FC<Props> = ({ open, hasUpdate, onClose, onSave }) => {
 					<a href="https://github.com/soup-bowl/Localib">open source</a>.
 				</IonNote>
 			</IonContent>
-		</IonModal>
+		</IonPage>
 	)
 }
 
-export default Settings
+export default SettingsPage
