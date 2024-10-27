@@ -28,6 +28,43 @@
 			"purpose": "maskable"
 		}
 	],
+	"screenshots": [
+		{
+			"src": "screenshot-desktop-1.png",
+			"type": "image/png",
+			"sizes": "2160x1620",
+			"form_factor": "wide",
+			"label": "Collection display"
+		},
+		{
+			"src": "screenshot-desktop-2.png",
+			"type": "image/png",
+			"sizes": "2160x1620",
+			"form_factor": "wide",
+			"label": "Search display"
+		},
+		{
+			"src": "screenshot-phone-1.png",
+			"type": "image/png",
+			"sizes": "1081x2401",
+			"form_factor": "narrow",
+			"label": "Collection display"
+		},
+		{
+			"src": "screenshot-phone-2.png",
+			"type": "image/png",
+			"sizes": "1081x2401",
+			"form_factor": "narrow",
+			"label": "Album view"
+		},
+		{
+			"src": "screenshot-phone-3.png",
+			"type": "image/png",
+			"sizes": "1081x2401",
+			"form_factor": "narrow",
+			"label": "Search display"
+		}
+	],
 	"start_url": ".",
 	"display": "standalone",
 	"theme_color": "#0d0d0d",
