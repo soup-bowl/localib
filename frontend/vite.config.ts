@@ -16,7 +16,7 @@ export default defineConfig({
 			workbox: {
 				cleanupOutdatedCaches: true,
 			},
-			includeAssets: ['*.png']
+			includeAssets: ["*.png"],
 		}),
 	],
 })
