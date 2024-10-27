@@ -21,8 +21,6 @@ dist
 .env.production.local
 /.nx
 /.nx/cache
-/.vscode/*
-!/.vscode/extensions.json
 .idea
 
 npm-debug.log*
