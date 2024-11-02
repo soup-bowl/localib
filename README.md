@@ -33,10 +33,18 @@ The project also contains a Discogs image scraper, built in .NET. This is design
 
 Configuration is via `appsettings.json` or environment variables:
 
-* `ConnectionStrings__DefaultConnection` - Connection to a MySQL database, like `Server=localhost;Database=discoarchive;User=root;Password=password;`
-* `PathSettings__ImagePath` - Path where the Worker stores to, and the API serves images from.
-* `Discogs__ConsumerKey` - Consumer Key from [Discogs Developer Application][dcd].
-* `Discogs__ConsumerSecret` - Consumer Secret from [Discogs Developer Application][dcd].
+Variable | Description
+-|-
+`ConnectionStrings__DefaultConnection` | Connection to a MySQL database, like `Server=localhost;Database=discoarchive;User=root;Password=password;`
+`PathSettings__ImagePath` | Path where the Worker stores to, and the API serves images from.
+`Discogs__ConsumerKey` | Consumer Key from [Discogs Developer Application][dcd].
+`Discogs__ConsumerSecret` | Consumer Secret from [Discogs Developer Application][dcd].
+
+Environment only:
+
+Variable | Description
+-|-
+`CORS_ALLOWED_ORIGINS` | CORS restriction policy, optional.
 
 Example:
 
