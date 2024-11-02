@@ -32,7 +32,7 @@ else
         options.AddPolicy("DefaultPolicy", builder =>
         {
             builder.WithOrigins(origins)
-                   .AllowAnyMethod()
+                   .WithMethods("POST")
                    .AllowAnyHeader();
         });
     });
