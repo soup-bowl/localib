@@ -93,7 +93,7 @@ const SearchPage: React.FC = () => {
 					<IonTitle>Search</IonTitle>
 					<IonButtons slot="end">
 						<IonButton onClick={() => setOpenScanner(true)}>
-							<IonIcon slot="icon-only" icon={barcodeOutline}></IonIcon>
+							<IonIcon slot="icon-only" icon={barcodeOutline} />
 						</IonButton>
 					</IonButtons>
 				</IonToolbar>

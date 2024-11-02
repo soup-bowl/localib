@@ -170,7 +170,7 @@ const CollectionPage: React.FC = () => {
 								}
 							}}
 						>
-							<IonIcon slot="icon-only" md={getLayoutIcon(layout)}></IonIcon>
+							<IonIcon slot="icon-only" md={getLayoutIcon(layout)} />
 						</IonButton>
 						<IonButton
 							onClick={() =>
@@ -185,7 +185,7 @@ const CollectionPage: React.FC = () => {
 								})
 							}
 						>
-							<IonIcon slot="icon-only" md={getFilterIcon(filter)}></IonIcon>
+							<IonIcon slot="icon-only" md={getFilterIcon(filter)} />
 						</IonButton>
 					</IonButtons>
 					<IonSegment
@@ -211,7 +211,7 @@ const CollectionPage: React.FC = () => {
 			</IonHeader>
 			<IonContent fullscreen>
 				<IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
-					<IonRefresherContent></IonRefresherContent>
+					<IonRefresherContent />
 				</IonRefresher>
 				{viewState === "collection" && data && dataSorted && (
 					<>

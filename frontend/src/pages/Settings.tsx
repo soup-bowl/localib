@@ -25,7 +25,7 @@ import { useState, useEffect } from "react"
 import { IReleaseSet } from "../api"
 import { useAuth, useSettings } from "../hooks"
 import { formatBytes } from "../utils"
-import { InfoBanners } from "../components"
+import { DonateButton, InfoBanners } from "../components"
 
 const SettingsPage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> = ({ hasUpdate, onUpdate }) => {
 	const queryClient = useQueryClient()
@@ -104,7 +104,7 @@ const SettingsPage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> = ({ 
 							value={newPassword}
 							onIonChange={(e) => setNewPassword(`${e.target.value}`)}
 						>
-							<IonInputPasswordToggle slot="end"></IonInputPasswordToggle>
+							<IonInputPasswordToggle slot="end" />
 						</IonInput>
 					</IonItem>
 				</IonList>
@@ -207,6 +207,7 @@ const SettingsPage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> = ({ 
 					Made by <a href="https://subo.dev">soup-bowl</a> and{" "}
 					<a href="https://github.com/soup-bowl/Localib">open source</a>.
 				</IonNote>
+				<DonateButton style={{ marginTop: 10, display: "block", textAlign: "center" }} />
 			</IonContent>
 		</IonPage>
 	)
