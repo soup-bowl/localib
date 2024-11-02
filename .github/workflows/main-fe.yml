@@ -70,4 +70,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          command: pages deploy ./frontend/dist --project-name=localib --env ${{ github.event_name == 'release' && 'main' || 'not-hotdog' }}
+          command: >
+            pages deploy ./frontend/dist
+            --project-name=localib
+            --branch ${{ github.event_name == 'release' && 'main' || 'not-hotdog' }}
