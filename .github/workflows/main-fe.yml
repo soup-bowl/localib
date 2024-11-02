@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - "frontend/**"
+      - ".github/workflows/main-fe.yml"
   release:
     types:
       - published
@@ -69,4 +70,4 @@ jobs:
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          command: pages deploy ./frontend/dist --project-name=localib --env ${{ github.event_name == 'release' && 'prod' || 'dev' }}
+          command: pages deploy ./frontend/dist --project-name=localib --env ${{ github.event_name == 'release' && 'main' || 'not-hotdog' }}
