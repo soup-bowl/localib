@@ -65,11 +65,8 @@ jobs:
         run: cd frontend && npm ci && npm run build:ion
 
       - name: 🚛 Publish Site
-        uses: cloudflare/pages-action@v1
+        uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          projectName: discog
-          directory: ./frontend/dist
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.event_name == 'release' && 'main' || 'not-hotdog' }}
+          command: pages deploy ./frontend/dist --project-name=localib --env ${{ github.event_name == 'release' && 'prod' || 'dev' }}
