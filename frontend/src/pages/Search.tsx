@@ -12,7 +12,7 @@ import {
 } from "@ionic/react"
 import { useQuery } from "@tanstack/react-query"
 import { IReleaseSet, IReleases, getCollectionAndWants } from "../api"
-import { AlbumList, FullpageInfo, FullpageLoading } from "../components"
+import { AlbumList, FullpageInfo, FullpageLoading, InfoBanners } from "../components"
 import { BarcodeScanDialog, ViewAlbumDetails } from "../modal"
 import { useAuth, useSettings } from "../hooks"
 import { barcodeOutline } from "ionicons/icons"
@@ -23,7 +23,6 @@ const SearchPage: React.FC = () => {
 	const [modalInfo, setModalInfo] = useState<{ data: IReleases; type: "collection" | "want" } | undefined>(undefined)
 	const [filterData, setFilterData] = useState<IReleaseSet>({ collection: [], wants: [] })
 	const [openScanner, setOpenScanner] = useState<boolean>(false)
-	const betaBanner = import.meta.env.VITE_BETA_BANNER
 
 	const [{ username, token }] = useAuth()
 
@@ -105,11 +104,7 @@ const SearchPage: React.FC = () => {
 						onIonInput={(ev) => setSearchTerm(ev.target.value?.toLowerCase() ?? "")}
 					/>
 				</IonToolbar>
-				{betaBanner && (
-					<IonToolbar className="beta-banner" color="warning">
-						<IonTitle>{betaBanner}</IonTitle>
-					</IonToolbar>
-				)}
+				<InfoBanners />
 			</IonHeader>
 			<IonContent fullscreen>
 				{filterData.collection.length > 0 && (

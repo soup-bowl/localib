@@ -14,14 +14,16 @@ import {
 	IonTitle,
 	IonToolbar,
 	RefresherEventDetail,
+	SegmentChangeEventDetail,
 	useIonActionSheet,
 } from "@ionic/react"
+import { OverlayEventDetail } from "@ionic/react/dist/types/components/react-component-lib/interfaces"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { filterOutline, personOutline, pricetagOutline, timeOutline, listOutline, gridOutline } from "ionicons/icons"
 import { IReleaseSet, IReleases, getCollectionAndWants } from "../api"
-import { FullpageLoading, AlbumGrid, FullpageInfo, AlbumListGroups } from "../components"
+import { FullpageLoading, AlbumGrid, FullpageInfo, AlbumListGroups, InfoBanners } from "../components"
 import { ProfileModal, ViewAlbumDetails } from "../modal"
-import { useAuth, useSettings } from "../hooks"
+import { useAuth, useOnlineStatus, useSettings } from "../hooks"
 import { masterSort } from "../utils"
 import { IReleaseTuple } from "../types"
 
@@ -73,7 +75,6 @@ const CollectionPage: React.FC = () => {
 		collected: IReleaseTuple
 		wanted: IReleaseTuple
 	}>()
-	const betaBanner = import.meta.env.VITE_BETA_BANNER
 
 	const [{ username, token }] = useAuth()
 
@@ -176,7 +177,7 @@ const CollectionPage: React.FC = () => {
 								present({
 									header: "Sorting",
 									buttons: filterActionButtons,
-									onDidDismiss: ({ detail }) => {
+									onDidDismiss: ({ detail }: CustomEvent<OverlayEventDetail>) => {
 										if (detail.data.action !== "cancel") {
 											setFilter(detail.data.action)
 										}
@@ -189,7 +190,7 @@ const CollectionPage: React.FC = () => {
 					</IonButtons>
 					<IonSegment
 						value={viewState}
-						onIonChange={(e) => {
+						onIonChange={(e: CustomEvent<SegmentChangeEventDetail>) => {
 							const selectedValue = e.detail.value
 							if (selectedValue === "collection" || selectedValue === "want") {
 								setViewState(selectedValue)
@@ -206,11 +207,7 @@ const CollectionPage: React.FC = () => {
 						</IonSegmentButton>
 					</IonSegment>
 				</IonToolbar>
-				{betaBanner && (
-					<IonToolbar className="beta-banner" color="warning">
-						<IonTitle>{betaBanner}</IonTitle>
-					</IonToolbar>
-				)}
+				<InfoBanners />
 			</IonHeader>
 			<IonContent fullscreen>
 				<IonRefresher slot="fixed" onIonRefresh={handleRefresh}>

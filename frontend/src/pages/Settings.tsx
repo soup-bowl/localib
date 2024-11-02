@@ -25,10 +25,9 @@ import { useState, useEffect } from "react"
 import { IReleaseSet } from "../api"
 import { useAuth, useSettings } from "../hooks"
 import { formatBytes } from "../utils"
+import { InfoBanners } from "../components"
 
 const SettingsPage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> = ({ hasUpdate, onUpdate }) => {
-	const betaBanner = import.meta.env.VITE_BETA_BANNER
-
 	const queryClient = useQueryClient()
 	const history = useHistory()
 	const [{ username, token }, saveAuth, clearAuth] = useAuth()
@@ -87,11 +86,7 @@ const SettingsPage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> = ({ 
 						</IonButton>
 					</IonButtons>
 				</IonToolbar>
-				{betaBanner && (
-					<IonToolbar className="beta-banner" color="warning">
-						<IonTitle>{betaBanner}</IonTitle>
-					</IonToolbar>
-				)}
+				<InfoBanners />
 			</IonHeader>
 			<IonContent className="ion-padding">
 				<IonList inset={true}>
