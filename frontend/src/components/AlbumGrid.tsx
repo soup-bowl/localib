@@ -1,7 +1,7 @@
 import { IonCol, IonGrid, IonIcon, IonRow, IonText } from "@ionic/react"
-import { IReleases } from "../api"
-import { IReleaseTuple } from "../types"
 import { cloudOfflineOutline } from "ionicons/icons"
+import { IReleases } from "@/api"
+import { IReleaseTuple } from "@/types"
 import "./AlbumGrid.css"
 
 interface AlbumProps {

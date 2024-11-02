@@ -1,4 +1,4 @@
-import { IReleases } from "./api"
+import { IReleases } from "@/api"
 
 export type IReleasesSort = {
 	[group: string]: IReleases[]

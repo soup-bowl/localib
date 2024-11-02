@@ -1,6 +1,6 @@
 import React from "react"
 import { IonToolbar, IonTitle } from "@ionic/react"
-import { useOnlineStatus } from "../hooks"
+import { useOnlineStatus } from "@/hooks"
 
 const InfoBanners: React.FC = () => {
 	const isOnline = useOnlineStatus()

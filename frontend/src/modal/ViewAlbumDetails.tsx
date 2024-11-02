@@ -13,7 +13,7 @@ import {
 	IonPopover,
 } from "@ionic/react"
 import { cloudOfflineOutline, openOutline } from "ionicons/icons"
-import { IReleases } from "../api"
+import { IReleases } from "@/api"
 
 interface DisplayProps {
 	album: IReleases

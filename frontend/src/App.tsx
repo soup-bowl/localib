@@ -15,8 +15,8 @@ import {
 } from "@ionic/react"
 import { IonReactRouter } from "@ionic/react-router"
 import { discOutline, searchOutline, settingsOutline, cogOutline } from "ionicons/icons"
-import { CollectionPage, SearchPage, SettingsPage } from "./pages"
-import { createIDBPersister } from "./persister"
+import { CollectionPage, SearchPage, SettingsPage } from "@/pages"
+import { createIDBPersister } from "@/persister"
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css"

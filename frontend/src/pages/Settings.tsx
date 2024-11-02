@@ -22,10 +22,10 @@ import {
 import { useHistory } from "react-router"
 import { useQueryClient } from "@tanstack/react-query"
 import { useState, useEffect } from "react"
-import { IReleaseSet } from "../api"
-import { useAuth, useSettings } from "../hooks"
-import { formatBytes } from "../utils"
-import { DonateButton, InfoBanners } from "../components"
+import { IReleaseSet } from "@/api"
+import { useAuth, useSettings } from "@/hooks"
+import { formatBytes } from "@/utils"
+import { DonateButton, InfoBanners } from "@/components"
 
 const SettingsPage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> = ({ hasUpdate, onUpdate }) => {
 	const queryClient = useQueryClient()

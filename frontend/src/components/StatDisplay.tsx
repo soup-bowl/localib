@@ -1,5 +1,5 @@
 import { IonCol, IonGrid, IonIcon, IonRow, IonText } from "@ionic/react"
-import { IStatDisplay } from "../types"
+import { IStatDisplay } from "@/types"
 import "./StatDisplay.css"
 
 interface Props {

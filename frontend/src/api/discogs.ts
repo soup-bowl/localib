@@ -1,4 +1,4 @@
-import { isNullOrBlank } from "../utils"
+import { isNullOrBlank } from "@/utils"
 import {
 	ICollections,
 	IIdentify,

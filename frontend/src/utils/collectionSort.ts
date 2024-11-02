@@ -1,5 +1,5 @@
-import { IReleases } from "../api"
-import { IReleasesSort, IReleaseTuple } from "../types"
+import { IReleases } from "@/api"
+import { IReleasesSort, IReleaseTuple } from "@/types"
 
 export const splitRecordsByYear = (records: IReleases[]): IReleaseTuple => {
 	const recordsByYear = records.reduce<IReleasesSort>((acc, record) => {

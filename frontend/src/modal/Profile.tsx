@@ -14,9 +14,9 @@ import {
 } from "@ionic/react"
 import { useQuery } from "@tanstack/react-query"
 import { hourglass, library, eye } from "ionicons/icons"
-import { IProfile, getProfile } from "../api"
-import { useAuth } from "../hooks"
-import { FullpageInfo, FullpageLoading, StatDisplay } from "../components"
+import { IProfile, getProfile } from "@/api"
+import { useAuth } from "@/hooks"
+import { FullpageInfo, FullpageLoading, StatDisplay } from "@/components"
 import "./Profile.css"
 
 const ProfileContent: React.FC = () => {

@@ -11,8 +11,8 @@ import {
 	IonText,
 } from "@ionic/react"
 import { disc } from "ionicons/icons"
-import { IReleases } from "../api"
-import { IReleaseTuple } from "../types"
+import { IReleases } from "@/api"
+import { IReleaseTuple } from "@/types"
 import "./AlbumList.css"
 
 const AlbumListItem: React.FC<{

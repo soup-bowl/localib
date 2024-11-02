@@ -11,7 +11,6 @@ import {
 	IonRefresherContent,
 	IonSegment,
 	IonSegmentButton,
-	IonTitle,
 	IonToolbar,
 	RefresherEventDetail,
 	SegmentChangeEventDetail,
@@ -20,12 +19,12 @@ import {
 import { OverlayEventDetail } from "@ionic/react/dist/types/components/react-component-lib/interfaces"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { filterOutline, personOutline, pricetagOutline, timeOutline, listOutline, gridOutline } from "ionicons/icons"
-import { IReleaseSet, IReleases, getCollectionAndWants } from "../api"
-import { FullpageLoading, AlbumGrid, FullpageInfo, AlbumListGroups, InfoBanners } from "../components"
-import { ProfileModal, ViewAlbumDetails } from "../modal"
-import { useAuth, useOnlineStatus, useSettings } from "../hooks"
-import { masterSort } from "../utils"
-import { IReleaseTuple } from "../types"
+import { IReleaseSet, IReleases, getCollectionAndWants } from "@/api"
+import { FullpageLoading, AlbumGrid, FullpageInfo, AlbumListGroups, InfoBanners } from "@/components"
+import { ProfileModal, ViewAlbumDetails } from "@/modal"
+import { useAuth, useSettings } from "@/hooks"
+import { masterSort } from "@/utils"
+import { IReleaseTuple } from "@/types"
 
 const filterActionButtons = [
 	{

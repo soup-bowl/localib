@@ -10,12 +10,12 @@ import {
 	IonTitle,
 	IonToolbar,
 } from "@ionic/react"
-import { useQuery } from "@tanstack/react-query"
-import { IReleaseSet, IReleases, getCollectionAndWants } from "../api"
-import { AlbumList, FullpageInfo, FullpageLoading, InfoBanners } from "../components"
-import { BarcodeScanDialog, ViewAlbumDetails } from "../modal"
-import { useAuth, useSettings } from "../hooks"
 import { barcodeOutline } from "ionicons/icons"
+import { useQuery } from "@tanstack/react-query"
+import { IReleaseSet, IReleases, getCollectionAndWants } from "@/api"
+import { AlbumList, FullpageInfo, FullpageLoading, InfoBanners } from "@/components"
+import { BarcodeScanDialog, ViewAlbumDetails } from "@/modal"
+import { useAuth, useSettings } from "@/hooks"
 
 const SearchPage: React.FC = () => {
 	const [imageQuality] = useSettings<boolean>("ImagesAreHQ", false)
