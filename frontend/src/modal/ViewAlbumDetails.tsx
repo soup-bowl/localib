@@ -175,6 +175,15 @@ const ViewAlbumDetails: React.FC<DisplayProps> = ({ album, open, onClose }) => {
 										</p>
 									</IonLabel>
 								</IonItem>
+								<IonItem>
+									<IonLabel>
+										<h2>Rating</h2>
+										<p>
+											{data.community.rating.average}/5 of{" "}
+											{data.community.rating.count.toLocaleString()} ratings
+										</p>
+									</IonLabel>
+								</IonItem>
 							</IonList>
 						)}
 					</>
