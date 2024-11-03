@@ -180,9 +180,9 @@ const ViewAlbumDetails: React.FC<DisplayProps> = ({ album, open, onClose }) => {
 					</>
 				)}
 
-				{tabState === TabSet.Tracks && (
+				{isSuccess && tabState === TabSet.Tracks && (
 					<IonList inset>
-						{data!.tracklist.map((track, index) => (
+						{data.tracklist.map((track, index) => (
 							<IonItem key={index}>
 								<IonNote slot="start">{track.position}</IonNote>
 								<IonLabel>{track.title}</IonLabel>
@@ -191,9 +191,9 @@ const ViewAlbumDetails: React.FC<DisplayProps> = ({ album, open, onClose }) => {
 						))}
 					</IonList>
 				)}
-				{tabState === TabSet.Credits && (
+				{isSuccess && tabState === TabSet.Credits && (
 					<IonList inset>
-						{data!.extraartists.map((artist, index) => (
+						{data.extraartists.map((artist, index) => (
 							<IonItem key={index}>
 								<IonLabel>
 									<h2>{artist.name}</h2>
@@ -203,11 +203,11 @@ const ViewAlbumDetails: React.FC<DisplayProps> = ({ album, open, onClose }) => {
 						))}
 					</IonList>
 				)}
-				{tabState === TabSet.Notes && (
+				{isSuccess && tabState === TabSet.Notes && (
 					<IonList inset>
 						<IonItem>
 							<IonLabel>
-								{data!.notes.split("\n").map((line) => (
+								{data.notes.split("\n").map((line) => (
 									<>
 										{line}
 										<br />
@@ -217,9 +217,9 @@ const ViewAlbumDetails: React.FC<DisplayProps> = ({ album, open, onClose }) => {
 						</IonItem>
 					</IonList>
 				)}
-				{tabState === TabSet.IDs && (
+				{isSuccess && tabState === TabSet.IDs && (
 					<IonList inset>
-						{data!.identifiers.map((id, index) => (
+						{data.identifiers.map((id, index) => (
 							<IonItem key={index}>
 								<IonLabel>
 									<h2>
