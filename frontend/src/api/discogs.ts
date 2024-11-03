@@ -3,6 +3,7 @@ import {
 	ICollections,
 	IIdentify,
 	IProfile,
+	IRelease,
 	IReleases,
 	IReleaseSet,
 	VinylAPIImageMap,
@@ -141,4 +142,19 @@ export const getCollectionAndWants = async (
 		collection: collectionReleases,
 		wants: wantsReleases,
 	}
+}
+
+export const getReleaseInfo = async (password: string, id: number): Promise<IRelease> => {
+	const response = await fetch(`${API_URL}/releases/${id}`, {
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: `Discogs token=${password}`,
+		},
+	})
+
+	if (!response.ok) {
+		throw new Error("Network response was not ok")
+	}
+
+	return await response.json()
 }
