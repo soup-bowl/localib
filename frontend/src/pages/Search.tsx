@@ -133,6 +133,10 @@ const SearchPage: React.FC = () => {
 					/>
 				)}
 
+				{filterData.collection.length + filterData.wants.length <= 0 && (
+					<FullpageInfo text="No records matched your search" />
+				)}
+
 				{modalInfo && (
 					<ViewAlbumDetails
 						album={modalInfo.data}
