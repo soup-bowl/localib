@@ -202,12 +202,11 @@ const SettingsPage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> = ({ 
 						},
 					]}
 				/>
-				<br />
 				<IonNote color="medium" class="ion-margin-horizontal" style={{ display: "block", textAlign: "center" }}>
 					Made by <a href="https://subo.dev">soup-bowl</a> and{" "}
 					<a href="https://github.com/soup-bowl/Localib">open source</a>.
 				</IonNote>
-				<DonateButton style={{ marginTop: 10, display: "block", textAlign: "center" }} />
+				<DonateButton style={{ marginTop: 20, display: "block", textAlign: "center" }} />
 			</IonContent>
 		</IonPage>
 	)
