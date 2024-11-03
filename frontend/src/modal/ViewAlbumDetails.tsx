@@ -43,7 +43,9 @@ const ViewAlbumDetails: React.FC<DisplayProps> = ({ album, open, onClose }) => {
 	const { data, isSuccess } = useQuery<IRelease>({
 		queryKey: ["release", album.id],
 		queryFn: () => getReleaseInfo(token ?? "", album.id),
-		staleTime: Infinity,
+		staleTime: 1000 * 60 * 60 * 24 * 30, // 1 month
+		refetchOnMount: "always",
+		refetchOnWindowFocus: false,
 	})
 
 	return (
