@@ -11,7 +11,18 @@ interface AlbumProps {
 
 const AlbumGridEntry: React.FC<AlbumProps> = ({ album, onClickAlbum }) => (
 	<IonCol size="6" sizeMd="4" sizeLg="3" key={album.instance_id}>
-		<div className="album-art-container" onClick={() => onClickAlbum(album)}>
+		<div
+			className="album-art-container"
+			role="button"
+			tabIndex={0}
+			onClick={() => onClickAlbum(album)}
+			onKeyDown={(e) => {
+				if (e.key === "Enter" || e.key === " ") {
+					e.preventDefault()
+					onClickAlbum(album)
+				}
+			}}
+		>
 			<img
 				src={album.image_base64 ? album.image_base64 : album.basic_information.thumb}
 				className="album-art"
