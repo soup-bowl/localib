@@ -18,6 +18,8 @@ import {
 	IonRow,
 	IonToggle,
 	IonButtons,
+	IonSelectOption,
+	IonSelect,
 } from "@ionic/react"
 import { useHistory } from "react-router"
 import { useQueryClient } from "@tanstack/react-query"
@@ -26,6 +28,7 @@ import { IReleaseSet } from "@/api"
 import { useAuth, useSettings } from "@/hooks"
 import { formatBytes } from "@/utils"
 import { DonateButton, InfoBanners } from "@/components"
+import { DeviceMode } from "@/types"
 
 const SettingsPage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> = ({ hasUpdate, onUpdate }) => {
 	const queryClient = useQueryClient()
@@ -35,6 +38,7 @@ const SettingsPage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> = ({ 
 	const [newPassword, setNewPassword] = useState<string>(token ?? "")
 	const [storageInfo, setStorageInfo] = useState<{ usage: string; quota: string } | undefined>()
 	const [imageQuality, setImageQuality, clearImagequality] = useSettings<boolean>("ImagesAreHQ", false)
+	const [deviceTheme, setDeviceTheme] = useSettings<DeviceMode>("DeviceTheme", "ios")
 	const appVersion = import.meta.env.VITE_VER ?? "Unknown"
 
 	useEffect(() => {
@@ -114,6 +118,18 @@ const SettingsPage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> = ({ 
 					token, or click Generate if you do not have one.
 				</IonNote>
 				<IonList inset={true}>
+					<IonItem color="light">
+						<IonSelect
+							id="changed-theme"
+							label="Theme mode"
+							interface="action-sheet"
+							value={deviceTheme}
+							onIonChange={(e) => setDeviceTheme(e.detail.value)}
+						>
+							<IonSelectOption value="ios">Apple</IonSelectOption>
+							<IonSelectOption value="md">Android (beta)</IonSelectOption>
+						</IonSelect>
+					</IonItem>
 					<IonItem color="light">
 						<IonToggle checked={imageQuality} onIonChange={(e) => setImageQuality(e.detail.checked)}>
 							Increase image quality
@@ -201,6 +217,12 @@ const SettingsPage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> = ({ 
 							handler: deleteData,
 						},
 					]}
+				/>
+				<IonAlert
+					trigger="changed-theme"
+					header="Reload required"
+					message="For changes to take effect, you will need to reload the app."
+					buttons={["OK"]}
 				/>
 				<IonNote color="medium" class="ion-margin-horizontal" style={{ display: "block", textAlign: "center" }}>
 					Made by <a href="https://subo.dev">soup-bowl</a> and{" "}
