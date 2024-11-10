@@ -10,7 +10,7 @@ import {
 	IonTitle,
 	IonToolbar,
 } from "@ionic/react"
-import { barcodeOutline } from "ionicons/icons"
+import { barcodeOutline, barcodeSharp } from "ionicons/icons"
 import { useQuery } from "@tanstack/react-query"
 import { IReleaseSet, IReleases, getCollectionAndWants } from "@/api"
 import { AlbumList, FullpageInfo, FullpageLoading, InfoBanners } from "@/components"
@@ -93,7 +93,7 @@ const SearchPage: React.FC = () => {
 					<IonTitle>Search</IonTitle>
 					<IonButtons slot="end">
 						<IonButton onClick={() => setOpenScanner(true)}>
-							<IonIcon slot="icon-only" icon={barcodeOutline} />
+							<IonIcon slot="icon-only" ios={barcodeOutline} md={barcodeSharp} />
 						</IonButton>
 					</IonButtons>
 				</IonToolbar>

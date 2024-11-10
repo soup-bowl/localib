@@ -17,6 +17,7 @@ import { IonReactRouter } from "@ionic/react-router"
 import { discOutline, searchOutline, settingsOutline, cogOutline } from "ionicons/icons"
 import { CollectionPage, SearchPage, SettingsPage } from "@/pages"
 import { createIDBPersister } from "@/persister"
+import { DeviceMode } from "@/types"
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css"
@@ -48,8 +49,16 @@ import "@ionic/react/css/palettes/dark.always.css"
 /* Theme variables */
 import "./theme/variables.css"
 
+const getDeviceMode = (): DeviceMode => {
+	const item = localStorage.getItem("DeviceTheme")
+	const parsedItem = item ? JSON.parse(item) : "ios"
+	const validItem = parsedItem ? (parsedItem as DeviceMode) : "ios"
+	localStorage.setItem("mode", validItem)
+	return validItem
+}
+
 setupIonicReact({
-	mode: import.meta.env.VITE_APP_MODE ?? "ios",
+	mode: getDeviceMode(),
 })
 
 const queryClient = new QueryClient({

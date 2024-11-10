@@ -18,12 +18,12 @@ import {
 } from "@ionic/react"
 import { OverlayEventDetail } from "@ionic/react/dist/types/components/react-component-lib/interfaces"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { filterOutline, personOutline, pricetagOutline, timeOutline, listOutline, gridOutline } from "ionicons/icons"
+import { personOutline, personSharp } from "ionicons/icons"
 import { IReleaseSet, IReleases, getCollectionAndWants } from "@/api"
 import { FullpageLoading, AlbumGrid, FullpageInfo, AlbumListGroups, InfoBanners } from "@/components"
 import { ProfileModal, ViewAlbumDetails } from "@/modal"
 import { useAuth, useSettings } from "@/hooks"
-import { masterSort } from "@/utils"
+import { getFilterIcon, getLayoutIcon, masterSort } from "@/utils"
 import { IReleaseTuple } from "@/types"
 
 const filterActionButtons = [
@@ -76,30 +76,6 @@ const CollectionPage: React.FC = () => {
 	}>()
 
 	const [{ username, token }] = useAuth()
-
-	const getFilterIcon = (filter: string) => {
-		switch (filter) {
-			default:
-			case "none":
-				return filterOutline
-			case "label":
-				return pricetagOutline
-			case "artist":
-				return personOutline
-			case "release":
-				return timeOutline
-		}
-	}
-
-	const getLayoutIcon = (item: string) => {
-		switch (item) {
-			default:
-			case "grid":
-				return gridOutline
-			case "list":
-				return listOutline
-		}
-	}
 
 	if (!username) {
 		return (
@@ -156,7 +132,7 @@ const CollectionPage: React.FC = () => {
 				<IonToolbar>
 					<IonButtons slot="secondary">
 						<IonButton onClick={() => setProfileModal(true)}>
-							<IonIcon slot="icon-only" icon={personOutline} />
+							<IonIcon slot="icon-only" ios={personOutline} md={personSharp} />
 						</IonButton>
 					</IonButtons>
 					<IonButtons slot="primary">
@@ -169,7 +145,11 @@ const CollectionPage: React.FC = () => {
 								}
 							}}
 						>
-							<IonIcon slot="icon-only" md={getLayoutIcon(layout)} />
+							<IonIcon
+								slot="icon-only"
+								ios={getLayoutIcon(layout, "ios")}
+								md={getLayoutIcon(layout, "md")}
+							/>
 						</IonButton>
 						<IonButton
 							onClick={() =>
@@ -184,7 +164,11 @@ const CollectionPage: React.FC = () => {
 								})
 							}
 						>
-							<IonIcon slot="icon-only" md={getFilterIcon(filter)} />
+							<IonIcon
+								slot="icon-only"
+								ios={getFilterIcon(filter, "ios")}
+								md={getFilterIcon(filter, "md")}
+							/>
 						</IonButton>
 					</IonButtons>
 					<IonSegment
