@@ -124,6 +124,16 @@ const SettingsPage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> = ({ 
 				</IonNote>
 				<IonList inset={true}>
 					<IonItem color={lightMode}>
+						<IonToggle checked={imageQuality} onIonChange={(e) => setImageQuality(e.detail.checked)}>
+							Increase image quality
+						</IonToggle>
+					</IonItem>
+				</IonList>
+				<IonNote color="medium" class="ion-margin-horizontal" style={{ display: "block" }}>
+					If you have a large library, you may experience issues with this.
+				</IonNote>
+				<IonList inset={true}>
+					<IonItem color={lightMode}>
 						<IonSelect
 							id="changed-theme"
 							label="Theme mode"
@@ -135,15 +145,7 @@ const SettingsPage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> = ({ 
 							<IonSelectOption value="md">Android (beta)</IonSelectOption>
 						</IonSelect>
 					</IonItem>
-					<IonItem color={lightMode}>
-						<IonToggle checked={imageQuality} onIonChange={(e) => setImageQuality(e.detail.checked)}>
-							Increase image quality
-						</IonToggle>
-					</IonItem>
 				</IonList>
-				<IonNote color="medium" class="ion-margin-horizontal" style={{ display: "block" }}>
-					If you have a large library, you may experience issues with this.
-				</IonNote>
 				<IonList inset={true}>
 					<IonItem color={lightMode}>
 						<IonLabel>App version</IonLabel>
