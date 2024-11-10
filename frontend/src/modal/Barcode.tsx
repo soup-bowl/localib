@@ -9,7 +9,7 @@ interface DisplayProps {
 }
 
 const BarcodeScanDialog: React.FC<DisplayProps> = ({ open, onClose, onSuccess }) => (
-	<IonModal isOpen={open}>
+	<IonModal isOpen={open} onDidDismiss={() => onClose()}>
 		<IonHeader>
 			<IonToolbar>
 				<IonTitle>Scanner</IonTitle>

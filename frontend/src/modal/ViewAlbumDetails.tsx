@@ -49,7 +49,7 @@ const ViewAlbumDetails: React.FC<DisplayProps> = ({ album, open, onClose }) => {
 	})
 
 	return (
-		<IonModal isOpen={open}>
+		<IonModal isOpen={open} onDidDismiss={() => onClose()}>
 			<IonHeader>
 				<IonToolbar>
 					<IonButtons slot="start">

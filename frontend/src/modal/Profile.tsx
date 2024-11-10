@@ -75,7 +75,7 @@ const ProfileModal: React.FC<{
 	open: boolean
 	onClose: () => void
 }> = ({ open, onClose }) => (
-	<IonModal isOpen={open}>
+	<IonModal isOpen={open} onDidDismiss={() => onClose()}>
 		<IonHeader>
 			<IonToolbar>
 				<IonButtons slot="start">

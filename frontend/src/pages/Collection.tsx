@@ -157,7 +157,7 @@ const CollectionPage: React.FC = () => {
 									header: "Sorting",
 									buttons: filterActionButtons,
 									onDidDismiss: ({ detail }: CustomEvent<OverlayEventDetail>) => {
-										if (detail.data.action !== "cancel") {
+										if (detail.data && detail.data.action !== "cancel") {
 											setFilter(detail.data.action)
 										}
 									},
