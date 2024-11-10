@@ -18,26 +18,13 @@ import {
 } from "@ionic/react"
 import { OverlayEventDetail } from "@ionic/react/dist/types/components/react-component-lib/interfaces"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
-import {
-	filterOutline,
-	personOutline,
-	pricetagOutline,
-	timeOutline,
-	listOutline,
-	gridOutline,
-	gridSharp,
-	listSharp,
-	filterSharp,
-	personSharp,
-	pricetagSharp,
-	timeSharp,
-} from "ionicons/icons"
+import { personOutline, personSharp } from "ionicons/icons"
 import { IReleaseSet, IReleases, getCollectionAndWants } from "@/api"
 import { FullpageLoading, AlbumGrid, FullpageInfo, AlbumListGroups, InfoBanners } from "@/components"
 import { ProfileModal, ViewAlbumDetails } from "@/modal"
 import { useAuth, useSettings } from "@/hooks"
-import { masterSort } from "@/utils"
-import { DeviceMode, IReleaseTuple } from "@/types"
+import { getFilterIcon, getLayoutIcon, masterSort } from "@/utils"
+import { IReleaseTuple } from "@/types"
 
 const filterActionButtons = [
 	{
@@ -89,30 +76,6 @@ const CollectionPage: React.FC = () => {
 	}>()
 
 	const [{ username, token }] = useAuth()
-
-	const getFilterIcon = (filter: string, platform: DeviceMode = "ios") => {
-		switch (filter) {
-			default:
-			case "none":
-				return platform === "ios" ? filterOutline : filterSharp
-			case "label":
-				return platform === "ios" ? pricetagOutline : pricetagSharp
-			case "artist":
-				return platform === "ios" ? personOutline : personSharp
-			case "release":
-				return platform === "ios" ? timeOutline : timeSharp
-		}
-	}
-
-	const getLayoutIcon = (item: string, platform: DeviceMode = "ios") => {
-		switch (item) {
-			default:
-			case "grid":
-				return platform === "ios" ? gridOutline : gridSharp
-			case "list":
-				return platform === "ios" ? listOutline : listSharp
-		}
-	}
 
 	if (!username) {
 		return (
