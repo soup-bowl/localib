@@ -40,6 +40,7 @@ const SettingsPage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> = ({ 
 	const [storageInfo, setStorageInfo] = useState<{ usage: string; quota: string } | undefined>()
 	const [imageQuality, setImageQuality, clearImagequality] = useSettings<boolean>("ImagesAreHQ", false)
 	const [deviceTheme, setDeviceTheme] = useSettings<DeviceMode>("DeviceTheme", "ios")
+	const [restartAlert, setRestartAlert] = useState<boolean>(false)
 	const appVersion = import.meta.env.VITE_VER ?? "Unknown"
 	const ionConfig = getConfig()
 	const currentMode = ionConfig?.get("mode") || "ios"
@@ -135,11 +136,13 @@ const SettingsPage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> = ({ 
 				<IonList inset={true}>
 					<IonItem color={lightMode}>
 						<IonSelect
-							id="changed-theme"
 							label="Theme mode"
 							interface="action-sheet"
 							value={deviceTheme}
-							onIonChange={(e) => setDeviceTheme(e.detail.value)}
+							onIonChange={(e) => {
+								setDeviceTheme(e.detail.value)
+								setRestartAlert(true)
+							}}
 						>
 							<IonSelectOption value="ios">Apple</IonSelectOption>
 							<IonSelectOption value="md">Android (beta)</IonSelectOption>
@@ -226,9 +229,10 @@ const SettingsPage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> = ({ 
 					]}
 				/>
 				<IonAlert
-					trigger="changed-theme"
+					isOpen={restartAlert}
+					onDidDismiss={() => setRestartAlert(false)}
 					header="Reload required"
-					message="For changes to take effect, you will need to reload the app."
+					message="For these changes to take effect, you will need to reload the app."
 					buttons={["OK"]}
 				/>
 				<IonNote color="medium" class="ion-margin-horizontal" style={{ display: "block", textAlign: "center" }}>
