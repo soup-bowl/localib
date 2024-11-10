@@ -77,16 +77,6 @@ const CollectionPage: React.FC = () => {
 
 	const [{ username, token }] = useAuth()
 
-	if (!username) {
-		return (
-			<IonPage>
-				<IonContent fullscreen>
-					<FullpageInfo text="You are not logged in." />
-				</IonContent>
-			</IonPage>
-		)
-	}
-
 	const handleRefresh = async (event: CustomEvent<RefresherEventDetail>) => {
 		await queryClient.invalidateQueries({
 			queryKey: [`${username}collectionv2`],
@@ -97,7 +87,7 @@ const CollectionPage: React.FC = () => {
 	const { isLoading, isError, data } = useQuery<IReleaseSet>({
 		queryKey: [`${username}collectionv2`],
 		queryFn: () =>
-			getCollectionAndWants(username, token ?? "", imageQuality, (page, pages) =>
+			getCollectionAndWants(username!, token ?? "", imageQuality, (page, pages) =>
 				setLoading({ page: page, pages: pages })
 			),
 		staleTime: Infinity,

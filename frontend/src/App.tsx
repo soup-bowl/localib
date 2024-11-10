@@ -5,8 +5,10 @@ import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client
 import {
 	IonApp,
 	IonBadge,
+	IonContent,
 	IonIcon,
 	IonLabel,
+	IonPage,
 	IonRouterOutlet,
 	IonTabBar,
 	IonTabButton,
@@ -18,6 +20,7 @@ import { discOutline, searchOutline, settingsOutline, cogOutline } from "ionicon
 import { CollectionPage, SearchPage, SettingsPage } from "@/pages"
 import { createIDBPersister } from "@/persister"
 import { DeviceMode } from "@/types"
+import { useAuth } from "@/hooks"
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css"
@@ -48,6 +51,7 @@ import "@ionic/react/css/palettes/dark.always.css"
 
 /* Theme variables */
 import "./theme/variables.css"
+import { FullpageInfo } from "./components"
 
 const getDeviceMode = (): DeviceMode => {
 	const item = localStorage.getItem("DeviceTheme")
@@ -71,7 +75,16 @@ const queryClient = new QueryClient({
 
 const persister = createIDBPersister()
 
+const NotLoggedIn: React.FC = () => (
+	<IonPage>
+		<IonContent fullscreen>
+			<FullpageInfo text="You are not logged in." />
+		</IonContent>
+	</IonPage>
+)
+
 const App: React.FC = () => {
+	const [{ username }] = useAuth()
 	// Insp: https://github.com/vite-pwa/vite-plugin-pwa/blob/main/examples/react-router/src/ReloadPrompt.tsx
 	const reloadSW = "__RELOAD_SW__"
 	const {
@@ -104,11 +117,9 @@ const App: React.FC = () => {
 					<IonTabs>
 						<IonRouterOutlet>
 							<Route exact path="/collection">
-								<CollectionPage />
+								{username ? <CollectionPage /> : <NotLoggedIn />}
 							</Route>
-							<Route path="/search">
-								<SearchPage />
-							</Route>
+							<Route path="/search">{username ? <SearchPage /> : <NotLoggedIn />}</Route>
 							<Route path="/settings">
 								<SettingsPage hasUpdate={needRefresh} onUpdate={() => updateServiceWorker(true)} />
 							</Route>

@@ -26,19 +26,9 @@ const SearchPage: React.FC = () => {
 
 	const [{ username, token }] = useAuth()
 
-	if (!username) {
-		return (
-			<IonPage>
-				<IonContent fullscreen>
-					<FullpageInfo text="You are not logged in." />
-				</IonContent>
-			</IonPage>
-		)
-	}
-
 	const { isLoading, isError, data } = useQuery<IReleaseSet>({
 		queryKey: [`${username}collectionv2`],
-		queryFn: () => getCollectionAndWants(username, token ?? "", imageQuality),
+		queryFn: () => getCollectionAndWants(username!, token ?? "", imageQuality),
 		staleTime: Infinity,
 	})
 
@@ -66,6 +56,10 @@ const SearchPage: React.FC = () => {
 		})
 	}
 
+	useEffect(() => {
+		searchData(searchTerm)
+	}, [searchTerm])
+
 	if (isLoading) {
 		return (
 			<IonPage>
@@ -81,10 +75,6 @@ const SearchPage: React.FC = () => {
 			</IonPage>
 		)
 	}
-
-	useEffect(() => {
-		searchData(searchTerm)
-	}, [searchTerm])
 
 	return (
 		<IonPage>
