@@ -10,7 +10,7 @@ interface AlbumProps {
 }
 
 const AlbumGridEntry: React.FC<AlbumProps> = ({ album, onClickAlbum }) => (
-	<IonCol size="6" sizeMd="4" sizeLg="3" key={album.id}>
+	<IonCol size="6" sizeMd="4" sizeLg="3" key={album.instance_id}>
 		<div className="album-art-container" onClick={() => onClickAlbum(album)}>
 			<img
 				src={album.image_base64 ? album.image_base64 : album.basic_information.thumb}
@@ -40,7 +40,7 @@ const AlbumGrid: React.FC<CollectionProps> = ({ data, onClickAlbum }) => (
 				<IonGrid>
 					<IonRow>
 						{options[1].map((album) => (
-							<AlbumGridEntry key={album.id} album={album} onClickAlbum={onClickAlbum} />
+							<AlbumGridEntry key={album.instance_id} album={album} onClickAlbum={onClickAlbum} />
 						))}
 					</IonRow>
 				</IonGrid>
