@@ -17,6 +17,11 @@ import { AlbumList, FullpageInfo, FullpageLoading, InfoBanners } from "@/compone
 import { BarcodeScanDialog, ViewAlbumDetails } from "@/modal"
 import { useAuth, useSettings } from "@/hooks"
 
+const searchFilter = (item: IReleases, lowerCaseSearchTerm: string) =>
+	item.basic_information.title.toLowerCase().includes(lowerCaseSearchTerm) ||
+	item.barcode?.includes(lowerCaseSearchTerm) ||
+	item.basic_information.artists.some((artist) => artist.name.toLowerCase().includes(lowerCaseSearchTerm))
+
 const SearchPage: React.FC = () => {
 	const [imageQuality] = useSettings<boolean>("ImagesAreHQ", false)
 	const [searchTerm, setSearchTerm] = useState<string>("")
@@ -38,17 +43,8 @@ const SearchPage: React.FC = () => {
 			return
 		}
 
-		const lowerCaseSearchTerm = search.toLowerCase()
-
 		const filterItems = (data: IReleases[] | undefined) =>
-			data?.filter(
-				(item) =>
-					item.basic_information.title.toLowerCase().includes(lowerCaseSearchTerm) ||
-					item.barcode?.includes(lowerCaseSearchTerm) ||
-					item.basic_information.artists.some((artist) =>
-						artist.name.toLowerCase().includes(lowerCaseSearchTerm)
-					)
-			) ?? []
+			data?.filter((item) => searchFilter(item, search.toLowerCase())) ?? []
 
 		setFilterData({
 			collection: filterItems(data?.collection),
