@@ -40,13 +40,13 @@ export const AlbumListGroups: React.FC<{
 	onClickAlbum: (album: IReleases) => void
 }> = ({ data, onClickAlbum }) => (
 	<>
-		{data.map((options, index) => (
-			<IonItemGroup key={index}>
+		{data.map((options) => (
+			<IonItemGroup key={options[0]}>
 				<IonItemDivider>
 					<IonLabel>{options[0]}</IonLabel>
 				</IonItemDivider>
-				{options[1].map((album, index) => (
-					<AlbumListItem key={index} album={album} onClickAlbum={onClickAlbum} />
+				{options[1].map((album) => (
+					<AlbumListItem key={album.id} album={album} onClickAlbum={onClickAlbum} />
 				))}
 			</IonItemGroup>
 		))}
@@ -64,8 +64,8 @@ export const AlbumList: React.FC<{
 				<IonLabel>{title}</IonLabel>
 			</IonListHeader>
 		)}
-		{data.map((album, index) => (
-			<AlbumListItem key={index} album={album} onClickAlbum={onClickAlbum} />
+		{data.map((album) => (
+			<AlbumListItem key={album.id} album={album} onClickAlbum={onClickAlbum} />
 		))}
 	</IonList>
 )

@@ -1,4 +1,4 @@
-interface artist {
+interface Artist {
 	id: number
 	resource_url: string
 	name: string
@@ -8,7 +8,7 @@ interface artist {
 	tracks: string
 }
 
-interface label {
+interface Label {
 	id: number
 	resource_url: string
 	name: string
@@ -17,24 +17,24 @@ interface label {
 	entity_type_name: string
 }
 
-interface format {
+interface Format {
 	name: string
 	qty: string
 	descriptions: string[]
 }
 
-interface committer {
+interface Committer {
 	username: string
 	resource_url: string
 }
 
-interface identifiers {
+interface Identifiers {
 	type: string
 	value: string
 	description: string
 }
 
-interface videos {
+interface Videos {
 	uri: string
 	title: string
 	description: string
@@ -42,7 +42,7 @@ interface videos {
 	embed: boolean
 }
 
-interface track {
+interface Track {
 	title: string
 	position: string
 	type_: string
@@ -82,9 +82,9 @@ export interface IReleaseLight {
 	cover_image: string
 	title: string
 	year: number
-	formats: format[]
-	artists: artist[]
-	labels: label[]
+	formats: Format[]
+	artists: Artist[]
+	labels: Label[]
 	genres: string[]
 	styles: string[]
 }
@@ -101,8 +101,8 @@ export interface IRelease extends IReleaseLight {
 			count: number
 			average: number
 		}
-		submitter: committer
-		contributors: committer[]
+		submitter: Committer
+		contributors: Committer[]
 		data_quality: string
 		status: string
 	}
@@ -115,10 +115,10 @@ export interface IRelease extends IReleaseLight {
 	released: string
 	notes: string
 	released_formatted: string
-	identifiers: identifiers[]
-	videos: videos[]
-	tracklist: track[]
-	extraartists: artist[]
+	identifiers: Identifiers[]
+	videos: Videos[]
+	tracklist: Track[]
+	extraartists: Artist[]
 	estimated_weight: number
 	blocked_from_sale: boolean
 }
