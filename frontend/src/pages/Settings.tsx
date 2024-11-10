@@ -20,6 +20,7 @@ import {
 	IonButtons,
 	IonSelectOption,
 	IonSelect,
+	getConfig,
 } from "@ionic/react"
 import { useHistory } from "react-router"
 import { useQueryClient } from "@tanstack/react-query"
@@ -40,6 +41,8 @@ const SettingsPage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> = ({ 
 	const [imageQuality, setImageQuality, clearImagequality] = useSettings<boolean>("ImagesAreHQ", false)
 	const [deviceTheme, setDeviceTheme] = useSettings<DeviceMode>("DeviceTheme", "ios")
 	const appVersion = import.meta.env.VITE_VER ?? "Unknown"
+	const ionConfig = getConfig()
+	const currentMode = ionConfig?.get("mode") || "ios"
 
 	useEffect(() => {
 		if ("storage" in navigator && "estimate" in navigator.storage) {
@@ -79,6 +82,8 @@ const SettingsPage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> = ({ 
 		totalMissing: collectionMissing + wantedMissing,
 	}
 
+	const lightMode = currentMode === "ios" ? "light" : undefined
+
 	return (
 		<IonPage>
 			<IonHeader>
@@ -94,14 +99,14 @@ const SettingsPage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> = ({ 
 			</IonHeader>
 			<IonContent className="ion-padding">
 				<IonList inset={true}>
-					<IonItem color="light">
+					<IonItem color={lightMode}>
 						<IonInput
 							label="Username"
 							value={newUsername}
 							onIonChange={(e) => setNewUsername(`${e.target.value}`)}
 						/>
 					</IonItem>
-					<IonItem color="light">
+					<IonItem color={lightMode}>
 						<IonInput
 							type="password"
 							label="Token"
@@ -118,7 +123,7 @@ const SettingsPage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> = ({ 
 					token, or click Generate if you do not have one.
 				</IonNote>
 				<IonList inset={true}>
-					<IonItem color="light">
+					<IonItem color={lightMode}>
 						<IonSelect
 							id="changed-theme"
 							label="Theme mode"
@@ -130,7 +135,7 @@ const SettingsPage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> = ({ 
 							<IonSelectOption value="md">Android (beta)</IonSelectOption>
 						</IonSelect>
 					</IonItem>
-					<IonItem color="light">
+					<IonItem color={lightMode}>
 						<IonToggle checked={imageQuality} onIonChange={(e) => setImageQuality(e.detail.checked)}>
 							Increase image quality
 						</IonToggle>
@@ -140,7 +145,7 @@ const SettingsPage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> = ({ 
 					If you have a large library, you may experience issues with this.
 				</IonNote>
 				<IonList inset={true}>
-					<IonItem color="light">
+					<IonItem color={lightMode}>
 						<IonLabel>App version</IonLabel>
 						<IonLabel slot="end">
 							{appVersion}
@@ -156,19 +161,19 @@ const SettingsPage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> = ({ 
 							)}
 						</IonLabel>
 					</IonItem>
-					<IonItem color="light">
+					<IonItem color={lightMode}>
 						<IonLabel>Storage used</IonLabel>
 						<IonLabel slot="end">
 							{storageInfo?.usage ?? "Unknown"} of {storageInfo?.quota ?? "Unknown"}
 						</IonLabel>
 					</IonItem>
-					<IonItem color="light">
+					<IonItem color={lightMode}>
 						<IonLabel>Records stored</IonLabel>
 						<IonLabel id="reccount-tooltip" slot="end">
 							{inStorageInfo.totalCount}
 						</IonLabel>
 					</IonItem>
-					<IonItem color="light">
+					<IonItem color={lightMode}>
 						<IonLabel>Records unsynced</IonLabel>
 						<IonLabel id="missing-tooltip" slot="end">
 							{inStorageInfo.totalMissing}
