@@ -46,8 +46,67 @@ export const getCollectionAndWants = async (
 ): Promise<IReleaseSet> => {
 	const vinylURL = import.meta.env.VITE_VINYL_API_URL
 
+	const fetchVinylAPIImageMap = async (ids: number[]): Promise<Record<number, VinylAPIImageMap>> => {
+		if (!vinylURL) return {}
+
+		try {
+			const response = await fetch(`${vinylURL}/api/queue`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(ids),
+			})
+
+			if (response.ok) {
+				const imageData = await response.json()
+				return imageData.available.reduce(
+					(acc: Record<number, VinylAPIImageMap>, record: VinylAPIImageRecord) => {
+						acc[record.recordID] = {
+							image: record.image,
+							imageHigh: record.imageHigh,
+							barcode: record.barcode?.replace(/\D/g, "") ?? undefined,
+						}
+						return acc
+					},
+					{}
+				)
+			} else {
+				console.warn("Vinyl API response was not ok, skipping.")
+			}
+		} catch (error) {
+			console.error("Vinyl API response hit an error, skipping.", error)
+		}
+
+		return {}
+	}
+
+	const enrichReleases = (releases: any[], imageMap: Record<number, VinylAPIImageMap>): any[] => {
+		return releases.map((release) => {
+			const getImage = (imageRecord: VinylAPIImageMap): string | undefined => {
+				if (imageQuality) {
+					return !isNullOrBlank(imageRecord.imageHigh) ? imageRecord.imageHigh : imageRecord.image
+				}
+				return imageRecord.image
+			}
+
+			const imageRecord = imageMap[release.basic_information.id] || {
+				image: null,
+				imageHigh: null,
+				barcode: null,
+			}
+
+			return {
+				...release,
+				image_base64: getImage(imageRecord),
+				barcode: imageRecord.barcode,
+			}
+		})
+	}
+
 	const fetchReleases = async (url: string, releaseType: "collection" | "wants"): Promise<IReleases[]> => {
 		let allReleases: IReleases[] = []
+
 		while (url) {
 			const response = await fetch(url, {
 				headers: {
@@ -62,62 +121,15 @@ export const getCollectionAndWants = async (
 
 			const data: ICollections = await response.json()
 
-			let imageMap: Record<number, VinylAPIImageMap> = {}
-			if (vinylURL && vinylURL !== "") {
-				try {
-					const secondaryResponse = await fetch(`${vinylURL}/api/queue`, {
-						method: "POST",
-						headers: {
-							"Content-Type": "application/json",
-						},
-						body: JSON.stringify(
-							// @ts-expect-error Cheating a bit - converting the reference to keep the same models.
-							(releaseType === "wants" ? data.wants : data.releases).map(
-								// @ts-expect-error Cheating a bit - converting the reference to keep the same models.
-								(item) => item.basic_information.id
-							) ?? []
-						),
-					})
-
-					if (secondaryResponse.ok) {
-						const imageData = await secondaryResponse.json()
-
-						imageMap = imageData.available.reduce(
-							(acc: Record<number, VinylAPIImageMap>, record: VinylAPIImageRecord) => {
-								acc[record.recordID] = {
-									image: record.image,
-									imageHigh: record.imageHigh,
-									barcode: record.barcode?.replace(/\D/g, "") ?? undefined,
-								}
-								return acc
-							},
-							{}
-						)
-					} else {
-						console.warn("Vinyl API response was not ok, skipping.")
-					}
-				} catch (error) {
-					console.error("Vinyl API response hit an error, skipping.", error)
-				}
-			}
-
 			// @ts-expect-error Cheating a bit - converting the reference to keep the same models.
-			const releasesExtraData = (releaseType === "wants" ? data.wants : data.releases).map((release) => {
-				const imageRecord = imageMap[release.basic_information.id] || {
-					image: null,
-					imageHigh: null,
-					barcode: null,
-				}
-				return {
-					...release,
-					image_base64: imageQuality
-						? !isNullOrBlank(imageRecord.imageHigh)
-							? imageRecord.imageHigh
-							: imageRecord.image
-						: imageRecord.image,
-					barcode: imageRecord.barcode,
-				}
-			})
+			const ids = (releaseType === "wants" ? data.wants : data.releases).map((item) => item.basic_information.id)
+			const imageMap = await fetchVinylAPIImageMap(ids)
+
+			const releasesExtraData = enrichReleases(
+				// @ts-expect-error Cheating a bit - converting the reference to keep the same models.
+				releaseType === "wants" ? data.wants : data.releases,
+				imageMap
+			)
 
 			allReleases = [...allReleases, ...releasesExtraData]
 
@@ -126,7 +138,7 @@ export const getCollectionAndWants = async (
 			}
 
 			// @ts-expect-error not sure?
-			url = data.pagination.urls.next
+			url = data.pagination.urls?.next || null
 		}
 
 		return allReleases
