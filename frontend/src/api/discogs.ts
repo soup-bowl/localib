@@ -20,7 +20,7 @@ export const getMe = async (password: string): Promise<IIdentify> => {
 		},
 	})
 	if (!response.ok) {
-		throw new Error("Network response was not ok")
+		throw new Error("Discogs API responded with an unexpected error.")
 	}
 	return response.json()
 }
@@ -33,7 +33,7 @@ export const getProfile = async (username: string, password: string): Promise<IP
 		},
 	})
 	if (!response.ok) {
-		throw new Error("Network response was not ok")
+		throw new Error("Discogs API responded with an unexpected error.")
 	}
 	return response.json()
 }
@@ -138,7 +138,7 @@ export const getCollectionAndWants = async (
 			})
 
 			if (!response.ok) {
-				throw new Error("Network response was not ok")
+				throw new Error("Discogs API responded with an unexpected error.")
 			}
 
 			const data: ICollections = await response.json()
@@ -160,7 +160,7 @@ export const getCollectionAndWants = async (
 			}
 
 			// @ts-expect-error not sure?
-			url = data.pagination.urls?.next || null
+			url = data.pagination.urls?.next ?? null
 		}
 
 		return allReleases
@@ -187,7 +187,7 @@ export const getReleaseInfo = async (password: string, id: number): Promise<IRel
 	})
 
 	if (!response.ok) {
-		throw new Error("Network response was not ok")
+		throw new Error("Discogs API responded with an unexpected error.")
 	}
 
 	return await response.json()
