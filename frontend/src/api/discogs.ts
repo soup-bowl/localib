@@ -46,6 +46,12 @@ export const getCollectionAndWants = async (
 ): Promise<IReleaseSet> => {
 	const vinylURL = import.meta.env.VITE_VINYL_API_URL
 
+	/**
+	 * Fetches the image map from the Vinyl API for a given set of release IDs.
+	 *
+	 * @param {number[]} ids - Array of release IDs to fetch images for.
+	 * @returns {Promise<Record<number, VinylAPIImageMap>>} - A map of release IDs to their corresponding image data.
+	 */
 	const fetchVinylAPIImageMap = async (ids: number[]): Promise<Record<number, VinylAPIImageMap>> => {
 		if (!vinylURL) return {}
 
@@ -81,6 +87,13 @@ export const getCollectionAndWants = async (
 		return {}
 	}
 
+	/**
+	 * Enriches release data with additional information pulled from the Vinyl API.
+	 *
+	 * @param {any[]} releases - Array of release objects to enrich.
+	 * @param {Record<number, VinylAPIImageMap>} imageMap - Map of release IDs to image data.
+	 * @returns {any[]} - Enriched release objects with added image and barcode data.
+	 */
 	const enrichReleases = (releases: any[], imageMap: Record<number, VinylAPIImageMap>): any[] => {
 		return releases.map((release) => {
 			const getImage = (imageRecord: VinylAPIImageMap): string | undefined => {
@@ -104,6 +117,15 @@ export const getCollectionAndWants = async (
 		})
 	}
 
+	/**
+	 * Fetches release data for a user, including collection or wantlist, from the Discogs API.
+	 * Uses pagination to fetch all pages of data and enriches releases with image and barcode information.
+	 *
+	 * @param {string} url - The API endpoint URL to fetch release data from.
+	 * @param {"collection" | "wants"} releaseType - The type of release data to fetch ("collection" or "wants").
+	 * @returns {Promise<IReleases[]>} - Array of release data enriched with image and barcode information.
+	 * @throws {Error} - Throws an error if the network response is not ok.
+	 */
 	const fetchReleases = async (url: string, releaseType: "collection" | "wants"): Promise<IReleases[]> => {
 		let allReleases: IReleases[] = []
 
