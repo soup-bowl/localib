@@ -17,7 +17,7 @@ import {
 } from "@ionic/react"
 import { IonReactRouter } from "@ionic/react-router"
 import { discOutline, searchOutline, settingsOutline, cogOutline } from "ionicons/icons"
-import { CollectionPage, SearchPage, SettingsPage } from "@/pages"
+import { CollectionPage, SettingsLoginPage, SearchPage, SettingsHomePage } from "@/pages"
 import { createIDBPersister } from "@/persister"
 import { DeviceMode } from "@/types"
 import { useAuth } from "@/hooks"
@@ -120,8 +120,11 @@ const App: React.FC = () => {
 								{username ? <CollectionPage /> : <NotLoggedIn />}
 							</Route>
 							<Route path="/search">{username ? <SearchPage /> : <NotLoggedIn />}</Route>
-							<Route path="/settings">
-								<SettingsPage hasUpdate={needRefresh} onUpdate={() => updateServiceWorker(true)} />
+							<Route exact path="/settings/login">
+								<SettingsLoginPage />
+							</Route>
+							<Route exact path="/settings">
+								<SettingsHomePage hasUpdate={needRefresh} onUpdate={() => updateServiceWorker(true)} />
 							</Route>
 							<Route exact path="/">
 								<Redirect to="/collection" />

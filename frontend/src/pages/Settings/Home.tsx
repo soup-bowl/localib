@@ -8,8 +8,6 @@ import {
 	IonButton,
 	IonCol,
 	IonGrid,
-	IonInput,
-	IonInputPasswordToggle,
 	IonItem,
 	IonLabel,
 	IonList,
@@ -17,7 +15,6 @@ import {
 	IonPopover,
 	IonRow,
 	IonToggle,
-	IonButtons,
 	IonSelectOption,
 	IonSelect,
 	getConfig,
@@ -31,12 +28,10 @@ import { formatBytes } from "@/utils"
 import { DonateButton, InfoBanners } from "@/components"
 import { DeviceMode } from "@/types"
 
-const SettingsPage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> = ({ hasUpdate, onUpdate }) => {
+const SettingsHomePage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> = ({ hasUpdate, onUpdate }) => {
 	const queryClient = useQueryClient()
 	const history = useHistory()
-	const [{ username, token }, saveAuth, clearAuth] = useAuth()
-	const [newUsername, setNewUsername] = useState<string>(username ?? "")
-	const [newPassword, setNewPassword] = useState<string>(token ?? "")
+	const [{ username }, _, clearAuth] = useAuth()
 	const [storageInfo, setStorageInfo] = useState<{ usage: string; quota: string } | undefined>()
 	const [imageQuality, setImageQuality, clearImagequality] = useSettings<boolean>("ImagesAreHQ", false)
 	const [deviceTheme, setDeviceTheme] = useSettings<DeviceMode>("DeviceTheme", "ios")
@@ -54,13 +49,6 @@ const SettingsPage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> = ({ 
 			})
 		}
 	}, [])
-
-	const handleSave = () => {
-		saveAuth(newUsername, newPassword)
-		queryClient.clear()
-		history.push("/")
-		window.location.reload()
-	}
 
 	const deleteData = () => {
 		queryClient.clear()
@@ -90,39 +78,15 @@ const SettingsPage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> = ({ 
 			<IonHeader>
 				<IonToolbar>
 					<IonTitle>Settings</IonTitle>
-					<IonButtons slot="end">
-						<IonButton strong={true} onClick={handleSave}>
-							Save
-						</IonButton>
-					</IonButtons>
 				</IonToolbar>
 				<InfoBanners />
 			</IonHeader>
 			<IonContent className="ion-padding">
 				<IonList inset={true}>
-					<IonItem color={lightMode}>
-						<IonInput
-							label="Username"
-							value={newUsername}
-							onIonChange={(e) => setNewUsername(`${e.target.value}`)}
-						/>
-					</IonItem>
-					<IonItem color={lightMode}>
-						<IonInput
-							type="password"
-							label="Token"
-							value={newPassword}
-							onIonChange={(e) => setNewPassword(`${e.target.value}`)}
-						>
-							<IonInputPasswordToggle slot="end" />
-						</IonInput>
+					<IonItem color={lightMode} button={true} routerLink="/settings/login">
+						<IonLabel>Discogs {username ? `account (${username})` : "login"}</IonLabel>
 					</IonItem>
 				</IonList>
-				<IonNote color="medium" class="ion-margin-horizontal" style={{ display: "block" }}>
-					Until OAuth is implemented, we currently use Access Token for authentication. To get your token,{" "}
-					<a href="https://www.discogs.com/settings/developers">visit the Developer page</a> and copy your
-					token, or click Generate if you do not have one.
-				</IonNote>
 				<IonList inset={true}>
 					<IonItem color={lightMode}>
 						<IonToggle checked={imageQuality} onIonChange={(e) => setImageQuality(e.detail.checked)}>
@@ -245,4 +209,4 @@ const SettingsPage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> = ({ 
 	)
 }
 
-export default SettingsPage
+export default SettingsHomePage
