@@ -21,6 +21,7 @@ import { CollectionPage, SettingsLoginPage, SearchPage, SettingsHomePage, Settin
 import { createIDBPersister } from "@/persister"
 import { DeviceMode } from "@/types"
 import { useAuth } from "@/hooks"
+import { FullpageInfo } from "@/components"
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css"
@@ -51,7 +52,6 @@ import "@ionic/react/css/palettes/dark.always.css"
 
 /* Theme variables */
 import "./theme/variables.css"
-import { FullpageInfo } from "./components"
 
 const getDeviceMode = (): DeviceMode => {
 	const item = localStorage.getItem("DeviceTheme")
