@@ -17,7 +17,7 @@ import {
 } from "@ionic/react"
 import { IonReactRouter } from "@ionic/react-router"
 import { discOutline, searchOutline, settingsOutline, cogOutline } from "ionicons/icons"
-import { CollectionPage, SettingsLoginPage, SearchPage, SettingsHomePage } from "@/pages"
+import { CollectionPage, SettingsLoginPage, SearchPage, SettingsHomePage, SettingsStatsPage } from "@/pages"
 import { createIDBPersister } from "@/persister"
 import { DeviceMode } from "@/types"
 import { useAuth } from "@/hooks"
@@ -122,6 +122,9 @@ const App: React.FC = () => {
 							<Route path="/search">{username ? <SearchPage /> : <NotLoggedIn />}</Route>
 							<Route exact path="/settings/login">
 								<SettingsLoginPage />
+							</Route>
+							<Route exact path="/settings/stats">
+								<SettingsStatsPage />
 							</Route>
 							<Route exact path="/settings">
 								<SettingsHomePage hasUpdate={needRefresh} onUpdate={() => updateServiceWorker(true)} />

@@ -12,7 +12,6 @@ import {
 	IonLabel,
 	IonList,
 	IonNote,
-	IonPopover,
 	IonRow,
 	IonToggle,
 	IonSelectOption,
@@ -21,10 +20,8 @@ import {
 } from "@ionic/react"
 import { useHistory } from "react-router"
 import { useQueryClient } from "@tanstack/react-query"
-import { useState, useEffect } from "react"
-import { IReleaseSet } from "@/api"
+import { useState } from "react"
 import { useAuth, useSettings } from "@/hooks"
-import { formatBytes } from "@/utils"
 import { DonateButton, InfoBanners } from "@/components"
 import { DeviceMode } from "@/types"
 
@@ -32,7 +29,6 @@ const SettingsHomePage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> =
 	const queryClient = useQueryClient()
 	const history = useHistory()
 	const [{ username }, _, clearAuth] = useAuth()
-	const [storageInfo, setStorageInfo] = useState<{ usage: string; quota: string } | undefined>()
 	const [imageQuality, setImageQuality, clearImagequality] = useSettings<boolean>("ImagesAreHQ", false)
 	const [deviceTheme, setDeviceTheme] = useSettings<DeviceMode>("DeviceTheme", "ios")
 	const [restartAlert, setRestartAlert] = useState<boolean>(false)
@@ -40,35 +36,12 @@ const SettingsHomePage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> =
 	const ionConfig = getConfig()
 	const currentMode = ionConfig?.get("mode") || "ios"
 
-	useEffect(() => {
-		if ("storage" in navigator && "estimate" in navigator.storage) {
-			navigator.storage.estimate().then(({ usage, quota }) => {
-				if (usage && quota) {
-					setStorageInfo({ usage: formatBytes(usage), quota: formatBytes(quota) })
-				}
-			})
-		}
-	}, [])
-
 	const deleteData = () => {
 		queryClient.clear()
 		clearAuth()
 		clearImagequality()
 		history.push("/")
 		window.location.reload()
-	}
-
-	const collection = queryClient.getQueryData<IReleaseSet>([`${username}collectionv2`])
-	const collectionMissing = collection?.collection.filter((obj) => obj.image_base64 === undefined).length ?? 0
-	const wantedMissing = collection?.wants.filter((obj) => obj.image_base64 === undefined).length ?? 0
-
-	const inStorageInfo = {
-		collectionCount: collection?.collection.length ?? 0,
-		collectionMissing: collectionMissing,
-		wantedCount: collection?.wants.length ?? 0,
-		wantedMissing: wantedMissing,
-		totalCount: (collection?.collection.length ?? 0) + (collection?.wants.length ?? 0),
-		totalMissing: collectionMissing + wantedMissing,
 	}
 
 	const lightMode = currentMode === "ios" ? "light" : undefined
@@ -83,7 +56,7 @@ const SettingsHomePage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> =
 			</IonHeader>
 			<IonContent className="ion-padding">
 				<IonList inset={true}>
-					<IonItem color={lightMode} button={true} routerLink="/settings/login">
+					<IonItem color={lightMode} button routerLink="/settings/login">
 						<IonLabel>Discogs {username ? `account (${username})` : "login"}</IonLabel>
 					</IonItem>
 				</IonList>
@@ -114,7 +87,7 @@ const SettingsHomePage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> =
 					</IonItem>
 				</IonList>
 				<IonList inset={true}>
-					<IonItem color={lightMode}>
+					<IonItem color={lightMode} button routerLink="/settings/stats">
 						<IonLabel>App version</IonLabel>
 						<IonLabel slot="end">
 							{appVersion}
@@ -130,39 +103,8 @@ const SettingsHomePage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> =
 							)}
 						</IonLabel>
 					</IonItem>
-					<IonItem color={lightMode}>
-						<IonLabel>Storage used</IonLabel>
-						<IonLabel slot="end">
-							{storageInfo?.usage ?? "Unknown"} of {storageInfo?.quota ?? "Unknown"}
-						</IonLabel>
-					</IonItem>
-					<IonItem color={lightMode}>
-						<IonLabel>Records stored</IonLabel>
-						<IonLabel id="reccount-tooltip" slot="end">
-							{inStorageInfo.totalCount}
-						</IonLabel>
-					</IonItem>
-					<IonItem color={lightMode}>
-						<IonLabel>Records unsynced</IonLabel>
-						<IonLabel id="missing-tooltip" slot="end">
-							{inStorageInfo.totalMissing}
-						</IonLabel>
-					</IonItem>
 				</IonList>
-				<IonPopover trigger="reccount-tooltip" triggerAction="click">
-					<IonContent class="ion-padding">
-						{inStorageInfo.collectionCount} collected, {inStorageInfo.wantedCount} wanted
-					</IonContent>
-				</IonPopover>
-				<IonPopover trigger="missing-tooltip" triggerAction="click">
-					<IonContent class="ion-padding">
-						{inStorageInfo.collectionMissing} collected, {inStorageInfo.wantedMissing} wanted
-					</IonContent>
-				</IonPopover>
-				<IonNote color="medium" class="ion-margin-horizontal" style={{ display: "block" }}>
-					For some records, we need to collect further information from the Discogs system. This can take some
-					time, so try reloading in a few hours to see it change.
-				</IonNote>
+
 				<IonGrid>
 					<IonRow class="ion-justify-content-center">
 						<IonCol size="auto">
