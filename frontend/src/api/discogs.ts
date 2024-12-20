@@ -1,5 +1,14 @@
-import { isNullOrBlank } from "../utils"
-import { ICollections, IIdentify, IProfile, IReleases, VinylAPIImageMap } from "./interface"
+import { isNullOrBlank } from "@/utils"
+import {
+	ICollections,
+	IIdentify,
+	IProfile,
+	IRelease,
+	IReleases,
+	IReleaseSet,
+	VinylAPIImageMap,
+	VinylAPIImageRecord,
+} from "./interface"
 
 const API_URL = "https://api.discogs.com"
 
@@ -11,7 +20,7 @@ export const getMe = async (password: string): Promise<IIdentify> => {
 		},
 	})
 	if (!response.ok) {
-		throw new Error("Network response was not ok")
+		throw new Error("Discogs API responded with an unexpected error.")
 	}
 	return response.json()
 }
@@ -24,177 +33,162 @@ export const getProfile = async (username: string, password: string): Promise<IP
 		},
 	})
 	if (!response.ok) {
-		throw new Error("Network response was not ok")
+		throw new Error("Discogs API responded with an unexpected error.")
 	}
 	return response.json()
 }
 
-export const getCollectionWants = async (
+export const getCollectionAndWants = async (
 	username: string,
 	password: string,
 	imageQuality: boolean,
 	onProgress?: (page: number, pages: number) => void
-): Promise<IReleases[]> => {
-	let allReleases: IReleases[] = []
-	let url: string | undefined = `${API_URL}/users/${username}/wants?per_page=100`
+): Promise<IReleaseSet> => {
 	const vinylURL = import.meta.env.VITE_VINYL_API_URL
 
-	while (url) {
-		const response = await fetch(url, {
-			headers: {
-				"Content-Type": "application/json",
-				Authorization: `Discogs token=${password}`,
-			},
-		})
+	/**
+	 * Fetches the image map from the Vinyl API for a given set of release IDs.
+	 *
+	 * @param {number[]} ids - Array of release IDs to fetch images for.
+	 * @returns {Promise<Record<number, VinylAPIImageMap>>} - A map of release IDs to their corresponding image data.
+	 */
+	const fetchVinylAPIImageMap = async (ids: number[]): Promise<Record<number, VinylAPIImageMap>> => {
+		if (!vinylURL) return {}
 
-		if (!response.ok) {
-			throw new Error("Network response was not ok")
-		}
+		try {
+			const response = await fetch(`${vinylURL}/api/queue`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(ids),
+			})
 
-		const data: ICollections = await response.json()
-
-		let imageMap: Record<number, VinylAPIImageMap> = {}
-		if (vinylURL && vinylURL !== "") {
-			try {
-				const secondaryResponse = await fetch(`${vinylURL}/api/queue`, {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					// @ts-expect-error Cheating a bit - converting the reference to keep the same models.
-					body: JSON.stringify(data.wants.map((item) => item.basic_information.id) ?? []),
-				})
-
-				if (secondaryResponse.ok) {
-					const imageData = await secondaryResponse.json()
-
-					imageMap = imageData.available.reduce((acc: Record<number, VinylAPIImageMap>, record: any) => {
+			if (response.ok) {
+				const imageData = await response.json()
+				return imageData.available.reduce(
+					(acc: Record<number, VinylAPIImageMap>, record: VinylAPIImageRecord) => {
 						acc[record.recordID] = {
 							image: record.image,
 							imageHigh: record.imageHigh,
-							barcode: record.barcode,
+							barcode: record.barcode?.replace(/\D/g, "") ?? undefined,
 						}
 						return acc
-					}, {})
-				} else {
-					console.warn("Vinyl API response was not ok, skipping.")
-				}
-			} catch (error) {
-				console.error("Vinyl API response hit an error, skipping.", error)
+					},
+					{}
+				)
+			} else {
+				console.warn("Vinyl API response was not ok, skipping.")
 			}
+		} catch (error) {
+			console.error("Vinyl API response hit an error, skipping.", error)
 		}
 
-		// @ts-expect-error Cheating a bit - converting the reference to keep the same models.
-		const releasesExtraData = data.wants.map((release) => {
+		return {}
+	}
+
+	/**
+	 * Enriches release data with additional information pulled from the Vinyl API.
+	 *
+	 * @param {any[]} releases - Array of release objects to enrich.
+	 * @param {Record<number, VinylAPIImageMap>} imageMap - Map of release IDs to image data.
+	 * @returns {any[]} - Enriched release objects with added image and barcode data.
+	 */
+	const enrichReleases = (releases: any[], imageMap: Record<number, VinylAPIImageMap>): any[] => {
+		return releases.map((release) => {
+			const getImage = (imageRecord: VinylAPIImageMap): string | undefined => {
+				if (imageQuality) {
+					return !isNullOrBlank(imageRecord.imageHigh) ? imageRecord.imageHigh : imageRecord.image
+				}
+				return imageRecord.image
+			}
+
 			const imageRecord = imageMap[release.basic_information.id] || {
 				image: null,
 				imageHigh: null,
 				barcode: null,
 			}
+
 			return {
 				...release,
-				image_base64: imageQuality
-					? !isNullOrBlank(imageRecord.imageHigh)
-						? imageRecord.imageHigh
-						: imageRecord.image
-					: imageRecord.image,
+				image_base64: getImage(imageRecord),
 				barcode: imageRecord.barcode,
 			}
 		})
-
-		allReleases = [...allReleases, ...releasesExtraData]
-
-		if (onProgress) {
-			onProgress(data.pagination.page, data.pagination.pages)
-		}
-
-		// Set the url to the next page, or undefined if there are no more pages
-		url = data.pagination.urls.next
 	}
 
-	return allReleases
+	/**
+	 * Fetches release data for a user, including collection or wantlist, from the Discogs API.
+	 * Uses pagination to fetch all pages of data and enriches releases with image and barcode information.
+	 *
+	 * @param {string} url - The API endpoint URL to fetch release data from.
+	 * @param {"collection" | "wants"} releaseType - The type of release data to fetch ("collection" or "wants").
+	 * @returns {Promise<IReleases[]>} - Array of release data enriched with image and barcode information.
+	 * @throws {Error} - Throws an error if the network response is not ok.
+	 */
+	const fetchReleases = async (url: string, releaseType: "collection" | "wants"): Promise<IReleases[]> => {
+		let allReleases: IReleases[] = []
+
+		while (url) {
+			const response = await fetch(url, {
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Discogs token=${password}`,
+				},
+			})
+
+			if (!response.ok) {
+				throw new Error("Discogs API responded with an unexpected error.")
+			}
+
+			const data: ICollections = await response.json()
+
+			// @ts-expect-error Cheating a bit - converting the reference to keep the same models.
+			const ids = (releaseType === "wants" ? data.wants : data.releases).map((item) => item.basic_information.id)
+			const imageMap = await fetchVinylAPIImageMap(ids)
+
+			const releasesExtraData = enrichReleases(
+				// @ts-expect-error Cheating a bit - converting the reference to keep the same models.
+				releaseType === "wants" ? data.wants : data.releases,
+				imageMap
+			)
+
+			allReleases = [...allReleases, ...releasesExtraData]
+
+			if (onProgress) {
+				onProgress(data.pagination.page, data.pagination.pages)
+			}
+
+			// @ts-expect-error not sure?
+			url = data.pagination.urls?.next ?? null
+		}
+
+		return allReleases
+	}
+
+	// Fetch wants and collection in parallel
+	const [wantsReleases, collectionReleases] = await Promise.all([
+		fetchReleases(`${API_URL}/users/${username}/wants?per_page=100`, "wants"),
+		fetchReleases(`${API_URL}/users/${username}/collection/folders/0/releases?per_page=100`, "collection"),
+	])
+
+	return {
+		collection: collectionReleases,
+		wants: wantsReleases,
+	}
 }
 
-export const getCollectionReleases = async (
-	username: string,
-	password: string,
-	imageQuality: boolean,
-	onProgress?: (page: number, pages: number) => void
-): Promise<IReleases[]> => {
-	let allReleases: IReleases[] = []
-	let url: string | undefined = `${API_URL}/users/${username}/collection/folders/0/releases?per_page=100`
-	const vinylURL = import.meta.env.VITE_VINYL_API_URL
+export const getReleaseInfo = async (password: string, id: number): Promise<IRelease> => {
+	const response = await fetch(`${API_URL}/releases/${id}`, {
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: `Discogs token=${password}`,
+		},
+	})
 
-	while (url) {
-		const response = await fetch(url, {
-			headers: {
-				"Content-Type": "application/json",
-				Authorization: `Discogs token=${password}`,
-			},
-		})
-
-		if (!response.ok) {
-			throw new Error("Network response was not ok")
-		}
-
-		const data: ICollections = await response.json()
-
-		let imageMap: Record<number, VinylAPIImageMap> = {}
-		if (vinylURL && vinylURL !== "") {
-			try {
-				const secondaryResponse = await fetch(`${vinylURL}/api/queue`, {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify(data.releases.map((item) => item.basic_information.id) ?? []),
-				})
-
-				if (secondaryResponse.ok) {
-					const imageData = await secondaryResponse.json()
-
-					imageMap = imageData.available.reduce((acc: Record<number, VinylAPIImageMap>, record: any) => {
-						acc[record.recordID] = {
-							image: record.image,
-							imageHigh: record.imageHigh,
-							barcode: record.barcode,
-						}
-						return acc
-					}, {})
-				} else {
-					console.warn("Vinyl API response was not ok, skipping.")
-				}
-			} catch (error) {
-				console.error("Vinyl API response hit an error, skipping.", error)
-			}
-		}
-
-		const releasesExtraData = data.releases.map((release) => {
-			const imageRecord = imageMap[release.basic_information.id] || {
-				image: null,
-				imageHigh: null,
-				barcode: null,
-			}
-			return {
-				...release,
-				image_base64: imageQuality
-					? !isNullOrBlank(imageRecord.imageHigh)
-						? imageRecord.imageHigh
-						: imageRecord.image
-					: imageRecord.image,
-				barcode: imageRecord.barcode,
-			}
-		})
-
-		allReleases = [...allReleases, ...(releasesExtraData as IReleases[])]
-
-		if (onProgress) {
-			onProgress(data.pagination.page, data.pagination.pages)
-		}
-
-		// Set the url to the next page, or undefined if there are no more pages
-		url = data.pagination.urls.next
+	if (!response.ok) {
+		throw new Error("Discogs API responded with an unexpected error.")
 	}
 
-	return allReleases
+	return await response.json()
 }

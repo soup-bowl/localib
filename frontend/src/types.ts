@@ -1,4 +1,4 @@
-import { IReleases } from "./api"
+import { IReleases } from "@/api"
 
 export type IReleasesSort = {
 	[group: string]: IReleases[]
@@ -11,3 +11,5 @@ export type IStatDisplay = {
 	value?: number
 	label: string
 }
+
+export type DeviceMode = "ios" | "md"

@@ -1,5 +1,5 @@
 import { IonCol, IonGrid, IonIcon, IonRow, IonText } from "@ionic/react"
-import { IStatDisplay } from "../types"
+import { IStatDisplay } from "@/types"
 import "./StatDisplay.css"
 
 interface Props {
@@ -9,8 +9,8 @@ interface Props {
 const StatDisplay: React.FC<Props> = ({ items }) => (
 	<IonGrid>
 		<IonRow>
-			{items.map((stat, index) => (
-				<IonCol key={index} className="statdisp-text">
+			{items.map((stat) => (
+				<IonCol key={`${stat.label}${stat.value}`} className="statdisp-text">
 					<IonIcon icon={stat.icon} style={{ fontSize: "48px", color: "#3880ff" }} />
 					<IonText style={{ textAlign: "center" }}>
 						<h2 style={{ margin: 4 }}>{stat.value ?? "N/A"}</h2>

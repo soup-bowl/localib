@@ -23,26 +23,30 @@ namespace Discapp.API.Controllers
 		{
 			RecordReply records = new();
 
-			foreach (int recordId in input)
-			{
-				Record? record = await _context.Records.FirstOrDefaultAsync(r => r.RecordID == recordId);
+			List<Record> existingRecords = await _context.Records
+				.Where(r => input.Contains(r.RecordID))
+				.ToListAsync();
 
-				if (record != null)
+			HashSet<int> existingRecordIds = new(existingRecords.Select(r => r.RecordID));
+
+			foreach (Record record in existingRecords)
+			{
+				records.Available.Add(new()
 				{
-					records.Available.Add(new()
-					{
-						RecordID = record.RecordID,
-						Image = GetImage(record.RecordID.ToString(), "thumb", "jpg") ?? "",
-                        ImageHigh = GetImage(record.RecordID.ToString(), "w3", "webp") ?? "",
-						Barcode = record.Barcode
-					});
-				}
-				else
-				{
-					Queue myEntity = new() { RecordID = recordId };
-					_context.Queue.Add(myEntity);
-					records.Queued.Add(recordId);
-				}
+					RecordID = record.RecordID,
+					Image = GetImage(record.RecordID.ToString(), "thumb", "jpg") ?? "",
+					ImageHigh = GetImage(record.RecordID.ToString(), "w3", "webp") ?? "",
+					Barcode = record.Barcode
+				});
+			}
+
+			// Shoutout to Missing Records in Glasgow.
+			IEnumerable<int> missingRecordIds = input.Except(existingRecordIds);
+			foreach (int recordId in missingRecordIds)
+			{
+				Queue myEntity = new() { RecordID = recordId };
+				_context.Queue.Add(myEntity);
+				records.Queued.Add(recordId);
 			}
 
 			await _context.SaveChangesAsync();
@@ -53,10 +57,10 @@ namespace Discapp.API.Controllers
 		private string? GetImage(string recordID, string type, string format)
 		{
 			var mimeTypes = new Dictionary<string, string>
-            {
-                { "jpg", "image/jpeg" },
-                { "webp", "image/webp" },
-            };
+			{
+				{ "jpg", "image/jpeg" },
+				{ "webp", "image/webp" },
+			};
 
 			string fullPath = Path.Combine(_pathSettings.ImagePath, $"{recordID}_{type.ToLower()}.{format.ToLower()}");
 

@@ -1,4 +1,6 @@
 export { default as AlbumGrid } from "./AlbumGrid"
 export { AlbumList, AlbumListGroups } from "./AlbumList"
 export { FullpageLoading, FullpageInfo } from "./Fullpage"
+export { default as InfoBanners } from "./InfoBanners"
 export { default as StatDisplay } from "./StatDisplay"
+export { DonateButton } from "./Misc"

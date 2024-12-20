@@ -1,55 +1,76 @@
 name: 🚀 Deploy!
 
 on:
-    push:
-        branches:
-            - main
-        paths:
-            - "frontend/**"
-    release:
-        types:
-            - published
-    workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "frontend/**"
+      - ".github/workflows/main-fe.yml"
+  release:
+    types:
+      - published
+  workflow_dispatch:
 
 concurrency:
-    group: "pages"
-    cancel-in-progress: true
+  group: "pages"
+  cancel-in-progress: true
 
 jobs:
-    build:
-        environment:
-            name: github-pages
-            url: ${{ steps.deployment.outputs.page_url }}
+  build:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
-        runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
 
-        permissions:
-            contents: read
-            deployments: write
+    permissions:
+      contents: read
+      deployments: write
 
-        steps:
-            - uses: actions/checkout@v4
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-            - name: 🏗 Setup Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version: 20.x
+      - uses: sonarsource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
-            - name: Set Version
-              run: |
-                VERSION=$(jq -r '.version' frontend/package.json)
-                GIT_COMMIT=$(git rev-parse --short HEAD)
-                echo "VITE_VER=${VERSION}-${GIT_COMMIT}" >> frontend/.env.production
+      - name: 🏗 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
 
-            - name: 📦 Build Site
-              run: cd frontend && npm ci && npm run build:ion
+      - name: Identify version
+        if: github.event_name == 'release'
+        id: get_version
+        uses: battila7/get-version-action@v2
 
-            - name: 🚛 Publish Site
-              uses: cloudflare/pages-action@v1
-              with:
-                  apiToken: ${{ secrets.CF_API_TOKEN }}
-                  accountId: ${{ secrets.CF_ACCOUNT_ID }}
-                  projectName: discog
-                  directory: ./frontend/dist
-                  gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-                  branch: ${{ github.event_name == 'release' && 'main' || 'not-hotdog' }}
+      - name: change version in NPM
+        if: github.event_name == 'release'
+        uses: reedyuk/npm-version@1.2.2
+        with:
+          version: ${{ steps.get_version.outputs.version-without-v  }}
+          package: "frontend"
+          github-tag-version: "false"
+
+      - name: Set Version
+        run: |
+          VERSION=$(jq -r '.version' frontend/package.json)
+          GIT_COMMIT=$(git rev-parse --short HEAD)
+          echo "VITE_VER=${VERSION}-${GIT_COMMIT}" >> frontend/.env.production
+
+      - name: 📦 Build Site
+        run: cd frontend && npm ci && npm run build:ion
+
+      - name: 🚛 Publish Site
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          command: >
+            pages deploy ./frontend/dist
+            --project-name=localib
+            --branch ${{ github.event_name == 'release' && 'main' || 'not-hotdog' }}

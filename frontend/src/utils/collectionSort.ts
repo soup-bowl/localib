@@ -1,5 +1,5 @@
-import { IReleases } from "../api"
-import { IReleasesSort, IReleaseTuple } from "../types"
+import { IReleases } from "@/api"
+import { IReleasesSort, IReleaseTuple } from "@/types"
 
 export const splitRecordsByYear = (records: IReleases[]): IReleaseTuple => {
 	const recordsByYear = records.reduce<IReleasesSort>((acc, record) => {
@@ -58,14 +58,14 @@ export const splitRecordsByLabel = (records: IReleases[]): IReleaseTuple => {
 
 export const masterSort = (sort: "release" | "label" | "artist" | "none", records: IReleases[]): IReleaseTuple => {
 	switch (sort) {
-		default:
-		case "none":
-			return [["", records]]
 		case "release":
 			return splitRecordsByYear(records)
 		case "label":
 			return splitRecordsByLabel(records)
 		case "artist":
 			return splitRecordsByArtist(records)
+		case "none":
+		default:
+			return [["", records]]
 	}
 }

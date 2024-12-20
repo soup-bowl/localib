@@ -9,7 +9,7 @@ interface DisplayProps {
 }
 
 const BarcodeScanDialog: React.FC<DisplayProps> = ({ open, onClose, onSuccess }) => (
-	<IonModal isOpen={open}>
+	<IonModal isOpen={open} onDidDismiss={() => onClose()}>
 		<IonHeader>
 			<IonToolbar>
 				<IonTitle>Scanner</IonTitle>
@@ -20,7 +20,7 @@ const BarcodeScanDialog: React.FC<DisplayProps> = ({ open, onClose, onSuccess })
 		</IonHeader>
 		<IonContent className="ion-padding">
 			<BarcodeScanner
-				onCapture={(barcode: DetectedBarcode) => onSuccess(barcode.rawValue)}
+				onCapture={(barcodes: DetectedBarcode[]) => onSuccess(barcodes[0].rawValue)}
 				options={{
 					formats: ["code_39", "code_93", "code_128", "ean_8", "ean_13", "upc_a", "upc_e"],
 				}}

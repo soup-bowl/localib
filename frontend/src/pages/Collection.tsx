@@ -11,19 +11,20 @@ import {
 	IonRefresherContent,
 	IonSegment,
 	IonSegmentButton,
-	IonTitle,
 	IonToolbar,
 	RefresherEventDetail,
+	SegmentChangeEventDetail,
 	useIonActionSheet,
 } from "@ionic/react"
+import { OverlayEventDetail } from "@ionic/react/dist/types/components/react-component-lib/interfaces"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { filterOutline, personOutline, pricetagOutline, timeOutline, listOutline, gridOutline } from "ionicons/icons"
-import { IReleases, getCollectionReleases, getCollectionWants } from "../api"
-import { FullpageLoading, AlbumGrid, FullpageInfo, AlbumListGroups } from "../components"
-import { ViewAlbumDetails } from "../modal"
-import { useAuth, useSettings } from "../hooks"
-import { masterSort } from "../utils"
-import { IReleaseTuple } from "../types"
+import { personOutline, personSharp } from "ionicons/icons"
+import { IReleaseSet, IReleases, getCollectionAndWants } from "@/api"
+import { FullpageLoading, AlbumGrid, FullpageInfo, AlbumListGroups, InfoBanners } from "@/components"
+import { ProfileModal, ViewAlbumDetails } from "@/modal"
+import { useAuth, useSettings } from "@/hooks"
+import { getFilterIcon, getLayoutIcon, masterSort } from "@/utils"
+import { IReleaseTuple } from "@/types"
 
 const filterActionButtons = [
 	{
@@ -62,87 +63,44 @@ const filterActionButtons = [
 const CollectionPage: React.FC = () => {
 	const queryClient = useQueryClient()
 	const [present] = useIonActionSheet()
-	const [imageQuality, setImageQuality, clearImagequality] = useSettings<boolean>("ImagesAreHQ", false)
-	const [filter, setFilter] = useState<"release" | "label" | "artist" | "none">("none")
-	const [layout, setLayout] = useState<"grid" | "list">("grid")
+	const [imageQuality] = useSettings<boolean>("ImagesAreHQ", false)
+	const [filter, setFilter] = useSettings<"release" | "label" | "artist" | "none">("collectionFilter", "none")
+	const [layout, setLayout] = useSettings<"grid" | "list">("collectionLayout", "grid")
 	const [modalInfo, setModalInfo] = useState<IReleases | undefined>(undefined)
 	const [loading, setLoading] = useState<{ page: number; pages: number }>({ page: 0, pages: 0 })
+	const [profileModal, setProfileModal] = useState<boolean>(false)
 	const [viewState, setViewState] = useState<"collection" | "want">("collection")
 	const [dataSorted, setDataSorted] = useState<{
 		collected: IReleaseTuple
 		wanted: IReleaseTuple
 	}>()
-	const betaBanner = import.meta.env.VITE_BETA_BANNER
 
-	const [{ username, token }, saveAuth, clearAuth] = useAuth()
-
-	const getFilterIcon = (filter: string) => {
-		switch (filter) {
-			default:
-			case "none":
-				return filterOutline
-			case "label":
-				return pricetagOutline
-			case "artist":
-				return personOutline
-			case "release":
-				return timeOutline
-		}
-	}
-
-	const getLayoutIcon = (item: string) => {
-		switch (item) {
-			default:
-			case "grid":
-				return gridOutline
-			case "list":
-				return listOutline
-		}
-	}
-
-	if (!username) {
-		return (
-			<IonPage>
-				<IonContent fullscreen>
-					<FullpageInfo text="You are not logged in." />
-				</IonContent>
-			</IonPage>
-		)
-	}
+	const [{ username, token }] = useAuth()
 
 	const handleRefresh = async (event: CustomEvent<RefresherEventDetail>) => {
 		await queryClient.invalidateQueries({
-			queryKey: [`${username}collection`, `${username}want`],
+			queryKey: [`${username}collectionv2`],
 		})
 		event.detail.complete()
 	}
 
-	const collectionData = useQuery<IReleases[]>({
-		queryKey: [`${username}collection`],
+	const { isLoading, isError, data } = useQuery<IReleaseSet>({
+		queryKey: [`${username}collectionv2`],
 		queryFn: () =>
-			getCollectionReleases(username, token ?? "", imageQuality, (page, pages) =>
+			getCollectionAndWants(username!, token ?? "", imageQuality, (page, pages) =>
 				setLoading({ page: page, pages: pages })
 			),
-		staleTime: 1000 * 60 * 60 * 24, // 24 hours
-	})
-
-	const wantData = useQuery<IReleases[]>({
-		queryKey: [`${username}want`],
-		queryFn: () =>
-			getCollectionWants(username, token ?? "", imageQuality, (page, pages) =>
-				setLoading({ page: page, pages: pages })
-			),
-		staleTime: 1000 * 60 * 60 * 24, // 24 hours
+		staleTime: Infinity,
 	})
 
 	useEffect(() => {
 		setDataSorted({
-			collected: masterSort(filter, collectionData.data ?? []),
-			wanted: masterSort(filter, wantData.data ?? []),
+			collected: masterSort(filter, data?.collection ?? []),
+			wanted: masterSort(filter, data?.wants ?? []),
 		})
-	}, [filter, collectionData.data, wantData.data])
+	}, [filter, data])
 
-	if (collectionData.isLoading || wantData.isLoading) {
+	if (isLoading) {
 		return (
 			<IonPage>
 				<FullpageLoading loadingProgress={loading.page + 1} loadingComplete={loading.pages} />
@@ -150,7 +108,7 @@ const CollectionPage: React.FC = () => {
 		)
 	}
 
-	if (collectionData.isError || wantData.isError) {
+	if (isError) {
 		return (
 			<IonPage>
 				<FullpageInfo text="An error occurred when loading information." />
@@ -162,6 +120,11 @@ const CollectionPage: React.FC = () => {
 		<IonPage>
 			<IonHeader>
 				<IonToolbar>
+					<IonButtons slot="secondary">
+						<IonButton onClick={() => setProfileModal(true)}>
+							<IonIcon slot="icon-only" ios={personOutline} md={personSharp} />
+						</IonButton>
+					</IonButtons>
 					<IonButtons slot="primary">
 						<IonButton
 							onClick={() => {
@@ -172,27 +135,35 @@ const CollectionPage: React.FC = () => {
 								}
 							}}
 						>
-							<IonIcon slot="icon-only" md={getLayoutIcon(layout)}></IonIcon>
+							<IonIcon
+								slot="icon-only"
+								ios={getLayoutIcon(layout, "ios")}
+								md={getLayoutIcon(layout, "md")}
+							/>
 						</IonButton>
 						<IonButton
 							onClick={() =>
 								present({
 									header: "Sorting",
 									buttons: filterActionButtons,
-									onDidDismiss: ({ detail }) => {
-										if (detail.data.action !== "cancel") {
+									onDidDismiss: ({ detail }: CustomEvent<OverlayEventDetail>) => {
+										if (detail.data && detail.data.action !== "cancel") {
 											setFilter(detail.data.action)
 										}
 									},
 								})
 							}
 						>
-							<IonIcon slot="icon-only" md={getFilterIcon(filter)}></IonIcon>
+							<IonIcon
+								slot="icon-only"
+								ios={getFilterIcon(filter, "ios")}
+								md={getFilterIcon(filter, "md")}
+							/>
 						</IonButton>
 					</IonButtons>
 					<IonSegment
 						value={viewState}
-						onIonChange={(e) => {
+						onIonChange={(e: CustomEvent<SegmentChangeEventDetail>) => {
 							const selectedValue = e.detail.value
 							if (selectedValue === "collection" || selectedValue === "want") {
 								setViewState(selectedValue)
@@ -209,17 +180,13 @@ const CollectionPage: React.FC = () => {
 						</IonSegmentButton>
 					</IonSegment>
 				</IonToolbar>
-				{betaBanner && (
-					<IonToolbar className="beta-banner" color="warning">
-						<IonTitle>{betaBanner}</IonTitle>
-					</IonToolbar>
-				)}
+				<InfoBanners />
 			</IonHeader>
 			<IonContent fullscreen>
 				<IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
-					<IonRefresherContent></IonRefresherContent>
+					<IonRefresherContent />
 				</IonRefresher>
-				{viewState === "collection" && collectionData.data && dataSorted && (
+				{viewState === "collection" && data && dataSorted && (
 					<>
 						{layout === "grid" ? (
 							<AlbumGrid data={dataSorted?.collected} onClickAlbum={(album) => setModalInfo(album)} />
@@ -232,7 +199,7 @@ const CollectionPage: React.FC = () => {
 					</>
 				)}
 
-				{viewState === "want" && wantData.data && dataSorted && (
+				{viewState === "want" && data && dataSorted && (
 					<>
 						{layout === "grid" ? (
 							<AlbumGrid data={dataSorted?.wanted} onClickAlbum={(album) => setModalInfo(album)} />
@@ -250,6 +217,7 @@ const CollectionPage: React.FC = () => {
 					/>
 				)}
 			</IonContent>
+			<ProfileModal open={profileModal} onClose={() => setProfileModal(false)} />
 		</IonPage>
 	)
 }
