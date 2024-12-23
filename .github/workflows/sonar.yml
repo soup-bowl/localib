@@ -43,6 +43,7 @@ jobs:
 
       - name: Build and analyze
         run: |
+          rm -f sonar-project.properties
           ./.sonar/scanner/dotnet-sonarscanner begin /k:"localib" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}"
           dotnet build backend
           ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
