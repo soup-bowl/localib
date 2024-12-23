@@ -43,9 +43,9 @@ jobs:
 
       - name: Build and analyze
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"localib" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}"
+          ./.sonar/scanner/dotnet-sonarscanner begin /k:"localib" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}"
           dotnet build backend
-          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+          ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
 
       - uses: sonarsource/sonarqube-scan-action@master
         env:
