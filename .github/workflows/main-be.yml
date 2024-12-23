@@ -52,7 +52,7 @@ jobs:
           platforms: >
             linux/amd64
           context: backend
-          dockerfile: backend/${{ matrix.dockerfile }}
+          file: backend/${{ matrix.dockerfile }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -67,6 +67,6 @@ jobs:
           platforms: >
             linux/amd64
           context: backend
-          dockerfile: backend/${{ matrix.dockerfile }}
+          file: backend/${{ matrix.dockerfile }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
