@@ -43,10 +43,11 @@ jobs:
 
       - name: Build and analyze
         run: |
-          rm -f sonar-project.properties
-          ./.sonar/scanner/dotnet-sonarscanner begin /k:"localib" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}"
+          mv sonar-project.properties .sonar-project.properties.tmp
+          ./.sonar/scanner/dotnet-sonarscanner begin /k:"soup-bowl_localib_AZJs23gJwvap7F1pEwXy" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}"
           dotnet build backend
           ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+          mv .sonar-project.properties.tmp sonar-project.properties
 
       - uses: sonarsource/sonarqube-scan-action@master
         env:
