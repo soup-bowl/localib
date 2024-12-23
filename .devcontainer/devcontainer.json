@@ -1,44 +1,33 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/universal
 {
-	"name": "Default Linux Universal",
-	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "mcr.microsoft.com/devcontainers/base:jammy",
-	"features": {
-		"ghcr.io/devcontainers/features/dotnet:2": {
-			"version": "8.0"
-		},
-		"ghcr.io/devcontainers/features/node:1": {
-			"version": "lts"
-		},
-		"ghcr.io/devcontainers/features/docker-in-docker:2": {
-			"version": "latest",
-			"enableNonRootDocker": "true"
-		}
-	},
-	"forwardPorts": [
-		8100,
-		5132
-	],
-	"postCreateCommand": "(cd .devcontainer && docker compose up -d) && (cd frontend && npm ci) && (cd backend && dotnet restore)",
-	"customizations": {
-		"vscode": {
-			"extensions": [
-				"ms-dotnettools.csharp",
-				"ms-dotnettools.vscode-dotnet-runtime",
-				"ms-azuretools.vscode-docker",
-				"ionic.ionic",
-				"rangav.vscode-thunder-client",
-				"mgmcdermott.vscode-language-babel"
-			]
-		}
-	}
-	// -- For Podman hosts
-	// "runArgs": [
-	// 	"--userns=keep-id"
-	// ],
-	// "containerEnv": {
-	// 	"HOME": "/home/vscode"
-	// },
-	// "containerUser": "vscode"
+  "name": "Localib Dev",
+  // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+  "image": "mcr.microsoft.com/devcontainers/base:jammy",
+  "features": {
+    "ghcr.io/devcontainers/features/dotnet:2": {
+      "version": "8.0"
+    },
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "lts"
+    },
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest",
+      "enableNonRootDocker": "true"
+    }
+  },
+  "forwardPorts": [8100, 5132],
+  "postCreateCommand": "(cd .devcontainer && docker compose up -d) && (cd frontend && npm ci) && (cd backend && dotnet restore)",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-dotnettools.csharp",
+        "ms-dotnettools.vscode-dotnet-runtime",
+        "ms-azuretools.vscode-docker",
+        "ionic.ionic",
+        "rangav.vscode-thunder-client",
+        "mgmcdermott.vscode-language-babel"
+      ]
+    }
+  }
 }
