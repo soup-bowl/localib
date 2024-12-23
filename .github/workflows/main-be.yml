@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - "backend/**"
+      - ".github/workflows/main-be.yml"
   release:
     types:
       - published
