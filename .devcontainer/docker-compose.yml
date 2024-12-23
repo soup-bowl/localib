@@ -1,0 +1,25 @@
+services:
+  mysql:
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: localib
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+  pma:
+    image: phpmyadmin
+    depends_on:
+      - mysql
+    restart: always
+    ports:
+      - 3307:80
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: root
+      PMA_PASSWORD: password
+
+volumes:
+  mysql_data:
