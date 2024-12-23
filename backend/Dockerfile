@@ -23,6 +23,11 @@ WORKDIR /app
 COPY --from=build-api    /publish ./api
 COPY --from=build-worker /publish ./wrk
 
+RUN addgroup --system discapp && adduser --system --ingroup discapp discapp
+RUN chown -R discapp:discapp /app
+
+USER discapp
+
 EXPOSE 8080
 
 CMD ["sh", "-c", "dotnet api/Discapp.API.dll & dotnet wrk/Discapp.Worker.dll"]
