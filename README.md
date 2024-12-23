@@ -57,7 +57,7 @@ docker run --rm \
   -e Discogs__ConsumerSecret=somekeyvalue \
   -v "$(pwd)/Images:/Images" \
   -p 8080:8080 \
-  ghcr.io/soup-bowl/netscrape:edge
+  ghcr.io/soup-bowl/netscrape-combined:edge
 ```
 
 ### Testing Offline Capabilities
