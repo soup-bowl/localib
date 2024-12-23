@@ -1,4 +1,4 @@
-name: Construct Container
+name: Build & Push Backend Images
 
 on:
   push:
@@ -14,6 +14,17 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        include:
+          - dockerfile: Dockerfile.Combined
+            tag: combined
+          - dockerfile: Dockerfile.Worker
+            tag: worker
+          - dockerfile: Dockerfile.API
+            tag: api
+
     steps:
       - name: Checkout Codebase
         uses: actions/checkout@v4
@@ -37,11 +48,11 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: ghcr.io/soup-bowl/netscrape:edge
+          tags: ghcr.io/soup-bowl/netscrape-${{ matrix.tag }}:edge
           platforms: >
             linux/amd64
-          #              linux/arm64
-          context: "{{defaultContext}}:backend"
+          context: backend
+          dockerfile: backend/${{ matrix.dockerfile }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -51,11 +62,11 @@ jobs:
         with:
           push: true
           tags: >
-            ghcr.io/soup-bowl/netscrape:${{ github.event.release.tag_name }},
-            ghcr.io/soup-bowl/netscrape:latest
+            ghcr.io/soup-bowl/netscrape-${{ matrix.tag }}:${{ github.event.release.tag_name }},
+            ghcr.io/soup-bowl/netscrape-${{ matrix.tag }}:latest
           platforms: >
             linux/amd64
-          #              linux/arm64
-          context: "{{defaultContext}}:backend"
+          context: backend
+          dockerfile: backend/${{ matrix.dockerfile }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

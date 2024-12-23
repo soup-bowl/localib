@@ -13,6 +13,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-worker
 WORKDIR /src
 COPY Discapp.Worker/*.csproj Discapp.Worker/
 COPY Discapp.Shared/*.csproj Discapp.Shared/
+
 RUN dotnet restore "Discapp.Worker/Discapp.Worker.csproj"
 COPY . .
 RUN dotnet publish "Discapp.Worker/Discapp.Worker.csproj" -c Release -o /publish
