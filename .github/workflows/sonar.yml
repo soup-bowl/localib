@@ -44,5 +44,5 @@ jobs:
         run: |
           Remove-Item -Path .\sonar-project.properties
           .\.sonar\scanner\dotnet-sonarscanner begin /k:"Localibtest" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}"
-          dotnet build
+          dotnet build backend
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
