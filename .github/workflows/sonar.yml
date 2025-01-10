@@ -8,47 +8,41 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-
+    name: Build and analyze
+    runs-on: windows-latest
+    
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Set up .NET
-        uses: actions/setup-dotnet@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
         with:
-          dotnet-version: 8.0
-
+          java-version: 17
+          distribution: 'zulu'
       - name: Cache SonarQube packages
         uses: actions/cache@v4
         with:
-          path: ~/.sonar/scanner
+          path: ~\.sonar\cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
-
       - name: Cache SonarQube scanner
         id: cache-sonar-scanner
         uses: actions/cache@v4
         with:
-          path: ./.sonar/scanner
+          path: .\.sonar\scanner
           key: ${{ runner.os }}-sonar-scanner
           restore-keys: ${{ runner.os }}-sonar-scanner
-
       - name: Install SonarQube scanner
         if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
+        shell: powershell
         run: |
-          mkdir -p ./.sonar/scanner
-          dotnet tool update dotnet-sonarscanner --tool-path ./.sonar/scanner
-
+          New-Item -Path .\.sonar\scanner -ItemType Directory
+          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
       - name: Build and analyze
+        shell: powershell
         run: |
-          mv sonar-project.properties .sonar-project.properties.tmp
-          ./.sonar/scanner/dotnet-sonarscanner begin /k:"Localibtest" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}"
-          dotnet build backend
-          ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
-
-      - uses: sonarsource/sonarqube-scan-action@master
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          Remove-Item -Path .\sonar-project.properties
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"Localibtest" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}"
+          dotnet build
+          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
