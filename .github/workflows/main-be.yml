@@ -66,8 +66,7 @@ jobs:
             ghcr.io/soup-bowl/netscrape-${{ matrix.tag }}:${{ github.event.release.tag_name }},
             ghcr.io/soup-bowl/netscrape-${{ matrix.tag }}:latest
           platforms: >
-            linux/amd64,
-            linux/arm64
+            linux/amd64
           context: backend
           file: backend/${{ matrix.dockerfile }}
           cache-from: type=gha

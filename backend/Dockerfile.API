@@ -1,13 +1,12 @@
-FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-ARG TARGETARCH
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 
 WORKDIR /src
 COPY Discapp.API/*.csproj Discapp.API/
 COPY Discapp.Shared/*.csproj Discapp.Shared/
 
-RUN dotnet restore "Discapp.API/Discapp.API.csproj" -a $TARGETARCH
+RUN dotnet restore "Discapp.API/Discapp.API.csproj"
 COPY . . 
-RUN dotnet publish "Discapp.API/Discapp.API.csproj" -a $TARGETARCH -c Release -o /publish
+RUN dotnet publish "Discapp.API/Discapp.API.csproj" -c Release -o /publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 
