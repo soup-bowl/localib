@@ -1,12 +1,13 @@
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+ARG TARGETARCH
 
 WORKDIR /src
 COPY Discapp.Worker/*.csproj Discapp.Worker/
 COPY Discapp.Shared/*.csproj Discapp.Shared/
 
-RUN dotnet restore "Discapp.Worker/Discapp.Worker.csproj"
+RUN dotnet restore "Discapp.Worker/Discapp.Worker.csproj" -a $TARGETARCH
 COPY . .
-RUN dotnet publish "Discapp.Worker/Discapp.Worker.csproj" -c Release -o /publish
+RUN dotnet publish "Discapp.Worker/Discapp.Worker.csproj" -a $TARGETARCH -c Release -o /publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 
