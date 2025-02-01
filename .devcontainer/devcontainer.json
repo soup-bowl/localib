@@ -29,5 +29,6 @@
         "mgmcdermott.vscode-language-babel"
       ]
     }
-  }
+  },
+  "remoteUser": "root"
 }
