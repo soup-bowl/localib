@@ -1,4 +1,7 @@
-FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+ARG DOTNET_VERSION=9.0
+ARG BASE_VARIANT=bookworm-slim
+
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:${DOTNET_VERSION}-${BASE_VARIANT} AS build
 ARG TARGETARCH
 
 WORKDIR /src
@@ -9,7 +12,7 @@ RUN dotnet restore "Discapp.Worker/Discapp.Worker.csproj" -a $TARGETARCH
 COPY . .
 RUN dotnet publish "Discapp.Worker/Discapp.Worker.csproj" -a $TARGETARCH -c Release -o /publish
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:${DOTNET_VERSION}-${BASE_VARIANT} AS runtime
 
 WORKDIR /app
 COPY --from=build /publish /app

@@ -1,4 +1,7 @@
-FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build-api
+ARG DOTNET_VERSION=9.0
+ARG BASE_VARIANT=bookworm-slim
+
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:${DOTNET_VERSION}-${BASE_VARIANT} AS build-api
 ARG TARGETARCH
 
 WORKDIR /src
@@ -9,7 +12,7 @@ RUN dotnet restore "Discapp.API/Discapp.API.csproj" -a $TARGETARCH
 COPY . . 
 RUN dotnet publish "Discapp.API/Discapp.API.csproj" -a $TARGETARCH -c Release -o /publish
 
-FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build-worker
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:${DOTNET_VERSION}-${BASE_VARIANT} AS build-worker
 ARG TARGETARCH
 
 WORKDIR /src
@@ -20,16 +23,11 @@ RUN dotnet restore "Discapp.Worker/Discapp.Worker.csproj" -a $TARGETARCH
 COPY . .
 RUN dotnet publish "Discapp.Worker/Discapp.Worker.csproj" -a $TARGETARCH -c Release -o /publish
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:${DOTNET_VERSION}-${BASE_VARIANT} AS runtime
 
 WORKDIR /app
 COPY --from=build-api    /publish ./api
 COPY --from=build-worker /publish ./wrk
-
-RUN addgroup --system discapp && adduser --system --ingroup discapp discapp
-RUN chown -R discapp:discapp /app
-
-USER discapp
 
 EXPOSE 8080
 

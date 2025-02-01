@@ -19,7 +19,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - dockerfile: Dockerfile.Combined
+          - dockerfile: Dockerfile
             tag: combined
           - dockerfile: Dockerfile.Worker
             tag: worker
