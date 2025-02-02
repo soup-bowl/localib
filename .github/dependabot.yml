@@ -26,6 +26,9 @@ updates:
         versions: [">=19.0.0"]
       # Issues with Vite
       - dependency-name: "eslint"
+    labels:
+      - "frontend"
+      - "enhancement"
     groups:
       dev-dependencies:
         patterns:
@@ -37,6 +40,9 @@ updates:
     ignore:
       # Needs Pomelo.EntityFrameworkCore.MySql to release 9^
       - dependency-name: "Microsoft.EntityFrameworkCore.Tools"
+    labels:
+      - "backend"
+      - "enhancement"
     groups:
       dev-dependencies:
         patterns:
