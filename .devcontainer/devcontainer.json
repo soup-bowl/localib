@@ -9,7 +9,7 @@
       "version": "9.0"
     },
     "ghcr.io/devcontainers/features/node:1": {
-      "version": "lts"
+      "version": "22"
     },
     "ghcr.io/devcontainers/features/docker-in-docker:2": {
       "version": "latest",
@@ -29,5 +29,6 @@
         "mgmcdermott.vscode-language-babel"
       ]
     }
-  }
+  },
+  "remoteUser": "root"
 }

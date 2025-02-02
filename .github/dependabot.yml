@@ -12,14 +12,23 @@ updates:
     ignore:
       # Issues with Ionic Framework
       - dependency-name: "react-router"
+        versions: [">=6.0.0"]
       - dependency-name: "react-router-dom"
+        versions: [">=6.0.0"]
       # Ionic impact with 19 - https://github.com/ionic-team/ionic-framework/issues/29991
       - dependency-name: "react"
+        versions: [">=19.0.0"]
       - dependency-name: "react-dom"
+        versions: [">=19.0.0"]
       - dependency-name: "@types/react"
+        versions: [">=19.0.0"]
       - dependency-name: "@types/react-dom"
+        versions: [">=19.0.0"]
       # Issues with Vite
       - dependency-name: "eslint"
+    labels:
+      - "frontend"
+      - "enhancement"
     groups:
       dev-dependencies:
         patterns:
@@ -31,6 +40,9 @@ updates:
     ignore:
       # Needs Pomelo.EntityFrameworkCore.MySql to release 9^
       - dependency-name: "Microsoft.EntityFrameworkCore.Tools"
+    labels:
+      - "backend"
+      - "enhancement"
     groups:
       dev-dependencies:
         patterns:
