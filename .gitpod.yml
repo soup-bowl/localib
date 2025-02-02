@@ -45,11 +45,13 @@ tasks:
     - name: Frontend
       before: cd frontend
       init: |
+        nvm install 22
         npm i -g @ionic/cli
         npm ci
       command: |
         echo "VITE_VINYL_API_URL=$(gp url 5132)" > .env.local
         echo "VITE_BETA_BANNER=\"Development mode inside Gitpod\"" >> .env.local
+        nvm use 22
         npm i -g @ionic/cli
         ionic serve
       openMode: tab-after
