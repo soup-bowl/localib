@@ -5,6 +5,7 @@
 	"version": "develop",
 	"type": "module",
 	"scripts": {
+		"start": "npm run serve",
 		"dev": "vite",
 		"build": "tsc && vite build",
 		"build:ion": "tsc && ionic build --prod",
