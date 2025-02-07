@@ -1,43 +1,25 @@
 services:
-  devcontainer:
-    image: mcr.microsoft.com/devcontainers/base:jammy
-    volumes:
-      - ..:/workspaces/localib:cached
-    security_opt:
-      - seccomp:unconfined
-    command: /bin/sh -c "while sleep 1000; do :; done"
-    networks:
-     - netmcnetface
-
-  db:
-    image: mysql:8.0
-    restart: unless-stopped
+  mysql:
+    image: mysql:latest
+    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: discoarchive
+      MYSQL_DATABASE: localib
     ports:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-    networks:
-     - netmcnetface
-
   pma:
     image: phpmyadmin
     depends_on:
-      - db
-    restart: unless-stopped
+      - mysql
+    restart: always
     ports:
       - 3307:80
     environment:
-      PMA_HOST: db
+      PMA_HOST: mysql
       PMA_USER: root
       PMA_PASSWORD: password
-    networks:
-     - netmcnetface
 
 volumes:
   mysql_data:
-
-networks:
-  netmcnetface:
