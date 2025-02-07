@@ -17,7 +17,7 @@
     }
   },
   "forwardPorts": [8100, 5132],
-  "postCreateCommand": "npm run front:install && npm run back:restore",
+  "postCreateCommand": "npm run front:install && npm run back:restore && npm run back:migrate",
   "customizations": {
     "vscode": {
       "extensions": [
