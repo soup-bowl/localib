@@ -16,7 +16,7 @@
       "enableNonRootDocker": "true"
     }
   },
-  "forwardPorts": [8100, 5132],
+  "forwardPorts": [8100, 5132, 3307],
   "postCreateCommand": "npm run front:install && npm run back:restore && npm run back:migrate",
   "customizations": {
     "vscode": {
