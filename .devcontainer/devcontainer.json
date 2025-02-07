@@ -17,7 +17,7 @@
     }
   },
   "forwardPorts": [8100, 5132],
-  "postCreateCommand": "(cd .devcontainer && docker compose up -d) && (cd frontend && npm ci) && (cd backend && dotnet restore)",
+  "postCreateCommand": "npm run front:install && npm run back:restore",
   "customizations": {
     "vscode": {
       "extensions": [

@@ -1,9 +1,10 @@
 {
 	"scripts": {
-		"web:install": "(cd frontend && npm ci)",
-		"web:start": "(cd frontend && npm start)",
-		"api:migrate": "dotnet tool install --global dotnet-ef && (cd backend/Discapp.API && dotnet ef database update)",
-		"api:start": "(cd backend/Discapp.API && dotnet watch run)",
-		"worker:start": "(cd backend/Discapp.Worker && dotnet watch run)"
+		"front:install": "(cd frontend && npm ci)",
+		"front:start": "(cd frontend && npm start)",
+		"back:migrate": "dotnet tool install --global dotnet-ef && (cd backend/Discapp.API && dotnet ef database update)",
+		"back:restore": "(cd backend && dotnet restore)",
+		"back:api:start": "(cd backend/Discapp.API && dotnet watch run)",
+		"back:worker:start": "(cd backend/Discapp.Worker && dotnet watch run)"
 	}
 }
