@@ -1,0 +1,8 @@
+{
+	"scripts": {
+		"web:install": "(cd frontend && npm ci)",
+		"web:start": "(cd frontend && npm run start)",
+		"api:start": "(cd backend/Discapp.API && dotnet watch run)",
+		"worker:start": "(cd backend/Discapp.Worker && dotnet watch run)"
+	}
+}
