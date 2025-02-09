@@ -25,7 +25,6 @@
         "ms-dotnettools.vscode-dotnet-runtime",
         "ms-azuretools.vscode-docker",
         "ionic.ionic",
-        "rangav.vscode-thunder-client",
         "mgmcdermott.vscode-language-babel"
       ]
     }
