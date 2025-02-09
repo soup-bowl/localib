@@ -31,5 +31,16 @@
     }
   },
   "runArgs": ["--env-file",".devcontainer/devcontainer.env"],
-  "remoteUser": "root"
+  "remoteUser": "root",
+  "portsAttributes": {
+    "3307": {
+      "label": "pma"
+    },
+    "5132": {
+      "label": "API"
+    },
+    "8100": {
+      "label": "Web"
+    }
+  }
 }

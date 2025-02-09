@@ -4,8 +4,8 @@
 		"front:start": "(cd frontend && npm start)",
 		"back:deps": "docker compose -f .devcontainer/docker-compose.yml up -d",
 		"back:migrate": "dotnet tool install --global dotnet-ef && (cd backend/Discapp.API && dotnet ef database update)",
-		"back:restore": "(cd backend && dotnet restore)",
-		"back:api:start": "(cd backend/Discapp.API && dotnet watch run)",
-		"back:worker:start": "(cd backend/Discapp.Worker && dotnet watch run)"
+		"back:restore": "dotnet restore backend",
+		"back:api:start": "dotnet watch --project backend/Discapp.API run",
+		"back:worker:start": "dotnet watch --project backend/Discapp.Worker run"
 	}
 }
