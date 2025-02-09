@@ -17,7 +17,7 @@
     }
   },
   "forwardPorts": [8100, 5132, 3307],
-  "postCreateCommand": "git update-index --assume-unchanged .devcontainer/devcontainer.env && npm run back:deps && npm run front:install && npm run back:restore && npm run back:migrate",
+  "postCreateCommand": "./.devcontainer/postCreateCommand.sh",
   "customizations": {
     "vscode": {
       "extensions": [
@@ -30,7 +30,7 @@
       ]
     }
   },
-  "runArgs": ["--env-file",".devcontainer/devcontainer.env"],
+  "runArgs": ["--env-file", ".devcontainer/devcontainer.env"],
   "remoteUser": "root",
   "portsAttributes": {
     "3307": {
