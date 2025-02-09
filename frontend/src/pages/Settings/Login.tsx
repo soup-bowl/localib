@@ -16,7 +16,7 @@ import {
 } from "@ionic/react"
 import { useHistory } from "react-router"
 import { useQueryClient } from "@tanstack/react-query"
-import { useState } from "react"
+import { useRef } from "react"
 import { useAuth } from "@/hooks"
 import { InfoBanners } from "@/components"
 
@@ -24,13 +24,17 @@ const SettingsLoginPage: React.FC = () => {
 	const queryClient = useQueryClient()
 	const history = useHistory()
 	const [{ username, token }, saveAuth] = useAuth()
-	const [newUsername, setNewUsername] = useState<string>(username ?? "")
-	const [newPassword, setNewPassword] = useState<string>(token ?? "")
 	const ionConfig = getConfig()
 	const currentMode = ionConfig?.get("mode") || "ios"
 
+	const usernameInputRef = useRef<HTMLIonInputElement>(null)
+	const passwordInputRef = useRef<HTMLIonInputElement>(null)
+
 	const handleSave = () => {
-		saveAuth(newUsername, newPassword)
+		const newUsername = (usernameInputRef.current?.value as string) || username
+		const newPassword = (passwordInputRef.current?.value as string) || token
+
+		saveAuth(newUsername ?? "", newPassword ?? "")
 		queryClient.clear()
 		history.push("/")
 		window.location.reload()
@@ -57,19 +61,10 @@ const SettingsLoginPage: React.FC = () => {
 			<IonContent className="ion-padding">
 				<IonList inset={true}>
 					<IonItem color={lightMode}>
-						<IonInput
-							label="Username"
-							value={newUsername}
-							onIonChange={(e) => setNewUsername(`${e.target.value}`)}
-						/>
+						<IonInput label="Username" value={username} ref={usernameInputRef} />
 					</IonItem>
 					<IonItem color={lightMode}>
-						<IonInput
-							type="password"
-							label="Token"
-							value={newPassword}
-							onIonChange={(e) => setNewPassword(`${e.target.value}`)}
-						>
+						<IonInput type="password" label="Token" value={token} ref={passwordInputRef}>
 							<IonInputPasswordToggle slot="end" />
 						</IonInput>
 					</IonItem>
