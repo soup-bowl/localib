@@ -1,0 +1,9 @@
+@host = localhost:5132
+
+POST http://{{host}}/api/Queue
+Accept: text/plain
+Content-Type: application/json
+
+[369548]
+###
+

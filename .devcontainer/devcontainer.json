@@ -25,7 +25,8 @@
         "ms-dotnettools.vscode-dotnet-runtime",
         "ms-azuretools.vscode-docker",
         "ionic.ionic",
-        "mgmcdermott.vscode-language-babel"
+        "mgmcdermott.vscode-language-babel",
+        "humao.rest-client"
       ]
     }
   },
