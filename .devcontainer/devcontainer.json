@@ -17,7 +17,7 @@
     }
   },
   "forwardPorts": [8100, 5132, 3307],
-  "postCreateCommand": "npm run front:install && npm run back:restore && npm run back:migrate",
+  "postCreateCommand": "git update-index --assume-unchanged .devcontainer/devcontainer.env && npm run front:install && npm run back:restore && npm run back:migrate",
   "customizations": {
     "vscode": {
       "extensions": [
