@@ -2,20 +2,27 @@ using Microsoft.AspNetCore.Mvc;
 using System.Text;
 using System.Web;
 using System.Collections.Specialized;
+using Discapp.API.Models;
 
 namespace Discapp.API.Controllers
 {
 	[ApiController]
 	[Route("api/[controller]")]
-	public class AuthController(IHttpClientFactory httpClientFactory) : ControllerBase
+	public class AuthController : ControllerBase
 	{
 		private const string DiscogsRequestTokenUrl = "https://api.discogs.com/oauth/request_token";
 		private const string DiscogsAuthorizeUrl = "https://www.discogs.com/oauth/authorize";
 		private const string DiscogsAccessTokenUrl = "https://api.discogs.com/oauth/access_token";
 
-		private const string ConsumerKey = "";
-		private const string ConsumerSecret = "";
-		private readonly HttpClient _httpClient = httpClientFactory.CreateClient();
+		private readonly HttpClient _httpClient;
+
+		private readonly AuthSettings _authSettings;
+
+		public AuthController(IHttpClientFactory httpClientFactory, AuthSettings authSettings)
+		{
+			_httpClient = httpClientFactory.CreateClient();
+			_authSettings = authSettings;
+		}
 
 		[HttpGet("request-token")]
 		public async Task<IActionResult> GetRequestToken()
@@ -24,16 +31,16 @@ namespace Discapp.API.Controllers
 			string timestamp = GenerateTimestamp();
 
 			string authHeader = $"OAuth " +
-							 $"oauth_consumer_key=\"{ConsumerKey}\"," +
+							 $"oauth_consumer_key=\"{_authSettings.ConsumerKey}\"," +
 							 $"oauth_nonce=\"{nonce}\"," +
-							 $"oauth_signature=\"{ConsumerSecret}&\"," +
+							 $"oauth_signature=\"{_authSettings.ConsumerSecret}&\"," +
 							 $"oauth_signature_method=\"PLAINTEXT\"," +
 							 $"oauth_timestamp=\"{timestamp}\"," +
-							 $"oauth_callback=\"http://localhost:3000/callback\"";
+							 $"oauth_callback=\"{_authSettings.CallbackURL}\"";
 
-			HttpRequestMessage request = new(HttpMethod.Post, DiscogsRequestTokenUrl);
+			HttpRequestMessage request = new(HttpMethod.Get, DiscogsRequestTokenUrl);
 			request.Headers.Add("Authorization", authHeader);
-			request.Headers.Add("User-Agent", "LocalibOfflineCollector/0.1 (http://vinyl.localib.app)");
+			request.Headers.Add("User-Agent", "LocalibOfflineCollector/0.1 (https://vinyl.localib.app)");
 			request.Content = new StringContent("", Encoding.UTF8, "application/x-www-form-urlencoded");
 
 			HttpResponseMessage response = await _httpClient.SendAsync(request);
@@ -57,9 +64,9 @@ namespace Discapp.API.Controllers
 			string timestamp = GenerateTimestamp();
 
 			string authHeader = $"OAuth " +
-							 $"oauth_consumer_key=\"{ConsumerKey}\"," +
+							 $"oauth_consumer_key=\"{_authSettings.ConsumerKey}\"," +
 							 $"oauth_nonce=\"{nonce}\"," +
-							 $"oauth_signature=\"{ConsumerSecret}&\"," +
+							 $"oauth_signature=\"{_authSettings.ConsumerSecret}&\"," +
 							 $"oauth_signature_method=\"PLAINTEXT\"," +
 							 $"oauth_timestamp=\"{timestamp}\"," +
 							 $"oauth_token=\"{oauth_token}\"," +
@@ -67,7 +74,7 @@ namespace Discapp.API.Controllers
 
 			HttpRequestMessage request = new(HttpMethod.Post, DiscogsAccessTokenUrl);
 			request.Headers.Add("Authorization", authHeader);
-			request.Headers.Add("User-Agent", "LocalibOfflineCollector/0.1 (http://vinyl.localib.app)");
+			request.Headers.Add("User-Agent", "LocalibOfflineCollector/0.1 (https://vinyl.localib.app)");
 			request.Content = new StringContent("", Encoding.UTF8, "application/x-www-form-urlencoded");
 
 			HttpResponseMessage response = await _httpClient.SendAsync(request);

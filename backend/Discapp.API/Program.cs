@@ -10,6 +10,13 @@ var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__De
 var imageStoragePath = Environment.GetEnvironmentVariable("PathSettings__ImagePath")
                        ?? builder.Configuration["PathSettings:ImagePath"];
 
+var ClientKey = Environment.GetEnvironmentVariable("AuthSettings__ConsumerKey")
+                       ?? builder.Configuration["AuthSettings:ConsumerKey"];
+var ClientSecret = Environment.GetEnvironmentVariable("AuthSettings__ConsumerSecret")
+                       ?? builder.Configuration["AuthSettings:ConsumerSecret"];
+var CallbackURL = Environment.GetEnvironmentVariable("AuthSettings__CallbackURL")
+                       ?? builder.Configuration["AuthSettings:CallbackURL"];
+
 // --- CORS ---
 string? allowedOrigins = Environment.GetEnvironmentVariable("CORS_ALLOWED_ORIGINS");
 if (string.IsNullOrEmpty(allowedOrigins))
@@ -43,6 +50,13 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     b => b.MigrationsAssembly("Discapp.API")));
 
 builder.Services.AddSingleton(new PathSettings { ImagePath = imageStoragePath ?? "." });
+builder.Services.AddSingleton(new AuthSettings
+{
+    ConsumerKey = ClientKey ?? "",
+    ConsumerSecret = ClientSecret ?? "",
+    CallbackURL = CallbackURL ?? ""
+});
+
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
