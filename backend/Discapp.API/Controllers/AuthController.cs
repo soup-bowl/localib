@@ -24,8 +24,8 @@ namespace Discapp.API.Controllers
 			_authSettings = authSettings;
 		}
 
-		[HttpGet("request-token")]
-		public async Task<IActionResult> GetRequestToken()
+		[HttpGet("Token")]
+		public async Task<ActionResult<AuthToken>> GetRequestToken()
 		{
 			string nonce = GenerateNonce();
 			string timestamp = GenerateTimestamp();
@@ -53,12 +53,16 @@ namespace Discapp.API.Controllers
 			string? oauthToken = query["oauth_token"];
 			string? oauthTokenSecret = query["oauth_token_secret"];
 
-			return Ok(new { redirectUrl = $"{DiscogsAuthorizeUrl}?oauth_token={oauthToken}", tokenSecret = oauthTokenSecret });
+			return Ok(new AuthToken
+			{
+				RedirectUrl = $"{DiscogsAuthorizeUrl}?oauth_token={oauthToken}",
+				TokenSecret = oauthTokenSecret ?? ""
+			});
 		}
 
 
-		[HttpGet("callback")]
-		public async Task<IActionResult> HandleCallback([FromQuery] string oauth_token, [FromQuery] string oauth_secret, [FromQuery] string oauth_verifier)
+		[HttpGet("Callback")]
+		public async Task<ActionResult<CallbackToken>> HandleCallback([FromQuery] CallbackInput oauth_details)
 		{
 			string nonce = GenerateNonce();
 			string timestamp = GenerateTimestamp();
@@ -66,11 +70,11 @@ namespace Discapp.API.Controllers
 			string authHeader = $"OAuth " +
 							 $"oauth_consumer_key=\"{_authSettings.ConsumerKey}\"," +
 							 $"oauth_nonce=\"{nonce}\"," +
-							 $"oauth_signature=\"{_authSettings.ConsumerSecret}&{oauth_secret}\"," +
+							 $"oauth_signature=\"{_authSettings.ConsumerSecret}&{oauth_details.OauthSecret}\"," +
 							 $"oauth_signature_method=\"PLAINTEXT\"," +
 							 $"oauth_timestamp=\"{timestamp}\"," +
-							 $"oauth_token=\"{oauth_token}\"," +
-							 $"oauth_verifier=\"{oauth_verifier}\"";
+							 $"oauth_token=\"{oauth_details.OauthToken}\"," +
+							 $"oauth_verifier=\"{oauth_details.OauthVerifier}\"";
 
 			HttpRequestMessage request = new(HttpMethod.Post, DiscogsAccessTokenUrl);
 			request.Headers.Add("Authorization", authHeader);
@@ -87,7 +91,11 @@ namespace Discapp.API.Controllers
 			string? accessToken = query["oauth_token"];
 			string? accessTokenSecret = query["oauth_token_secret"];
 
-			return Ok(new { accessToken, accessTokenSecret });
+			return Ok(new CallbackToken
+			{
+				AccessToken = accessToken ?? "",
+				SecretToken = accessTokenSecret ?? ""
+			});
 		}
 
 		private static string GenerateNonce() => Guid.NewGuid().ToString("N");
