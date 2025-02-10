@@ -10,12 +10,12 @@ var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__De
 var imageStoragePath = Environment.GetEnvironmentVariable("PathSettings__ImagePath")
                        ?? builder.Configuration["PathSettings:ImagePath"];
 
-var ClientKey = Environment.GetEnvironmentVariable("AuthSettings__ConsumerKey")
-                       ?? builder.Configuration["AuthSettings:ConsumerKey"];
-var ClientSecret = Environment.GetEnvironmentVariable("AuthSettings__ConsumerSecret")
-                       ?? builder.Configuration["AuthSettings:ConsumerSecret"];
-var CallbackURL = Environment.GetEnvironmentVariable("AuthSettings__CallbackURL")
-                       ?? builder.Configuration["AuthSettings:CallbackURL"];
+var ClientKey = Environment.GetEnvironmentVariable("Discogs__ConsumerKey")
+                       ?? builder.Configuration["Discogs:ConsumerKey"];
+var ClientSecret = Environment.GetEnvironmentVariable("Discogs__ConsumerSecret")
+                       ?? builder.Configuration["Discogs:ConsumerSecret"];
+var CallbackURL = Environment.GetEnvironmentVariable("Discogs__CallbackURL")
+                       ?? builder.Configuration["Discogs:CallbackURL"];
 
 // --- CORS ---
 string? allowedOrigins = Environment.GetEnvironmentVariable("CORS_ALLOWED_ORIGINS");
