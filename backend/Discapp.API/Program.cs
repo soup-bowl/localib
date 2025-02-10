@@ -49,6 +49,7 @@ builder.Services.AddSingleton(new PathSettings { ImagePath = imageStoragePath ??
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHttpClient();
 
 var app = builder.Build();
 
