@@ -53,12 +53,12 @@ namespace Discapp.API.Controllers
 			string? oauthToken = query["oauth_token"];
 			string? oauthTokenSecret = query["oauth_token_secret"];
 
-			return Ok(new { redirectUrl = $"{DiscogsAuthorizeUrl}?oauth_token={oauthToken}" });
+			return Ok(new { redirectUrl = $"{DiscogsAuthorizeUrl}?oauth_token={oauthToken}", tokenSecret = oauthTokenSecret });
 		}
 
 
 		[HttpGet("callback")]
-		public async Task<IActionResult> HandleCallback([FromQuery] string oauth_token, [FromQuery] string oauth_verifier)
+		public async Task<IActionResult> HandleCallback([FromQuery] string oauth_token, [FromQuery] string oauth_secret, [FromQuery] string oauth_verifier)
 		{
 			string nonce = GenerateNonce();
 			string timestamp = GenerateTimestamp();
@@ -66,7 +66,7 @@ namespace Discapp.API.Controllers
 			string authHeader = $"OAuth " +
 							 $"oauth_consumer_key=\"{_authSettings.ConsumerKey}\"," +
 							 $"oauth_nonce=\"{nonce}\"," +
-							 $"oauth_signature=\"{_authSettings.ConsumerSecret}&\"," +
+							 $"oauth_signature=\"{_authSettings.ConsumerSecret}&{oauth_secret}\"," +
 							 $"oauth_signature_method=\"PLAINTEXT\"," +
 							 $"oauth_timestamp=\"{timestamp}\"," +
 							 $"oauth_token=\"{oauth_token}\"," +
