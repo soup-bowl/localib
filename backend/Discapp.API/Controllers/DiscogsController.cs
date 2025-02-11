@@ -17,10 +17,27 @@ namespace Discapp.API.Controllers
 		private readonly IAuthService _authService = authService;
 
 		[HttpGet("Identify")]
-		public async Task<ActionResult<AuthToken>> GetIdentity([FromQuery] string key, [FromQuery] string secret)
+		public async Task<ActionResult<AuthToken>> GetIdentity([FromQuery] CallbackToken token)
 		{
 			HttpRequestMessage request = new(HttpMethod.Get, $"{DiscogsBaseURL}/oauth/identity");
-			request.Headers.Add("Authorization", _authService.AuthenticatedRequestHeader(key, secret));
+			request.Headers.Add("Authorization", _authService.AuthenticatedRequestHeader(token));
+			request.Headers.Add("User-Agent", _authService.UserAgent());
+			request.Content = new StringContent("", Encoding.UTF8, "application/x-www-form-urlencoded");
+
+			HttpResponseMessage response = await _httpClient.SendAsync(request);
+			string responseContent = await response.Content.ReadAsStringAsync();
+
+			if (!response.IsSuccessStatusCode)
+				return BadRequest($"Failed to get request token. Status: {response.StatusCode}, Content: {responseContent}");
+
+			return StatusCode((int)response.StatusCode, responseContent);
+		}
+
+		[HttpGet("Profile")]
+		public async Task<ActionResult<AuthToken>> GetProfile([FromQuery] string username, [FromQuery] CallbackToken token)
+		{
+			HttpRequestMessage request = new(HttpMethod.Get, $"{DiscogsBaseURL}/users/{username}");
+			request.Headers.Add("Authorization", _authService.AuthenticatedRequestHeader(token));
 			request.Headers.Add("User-Agent", _authService.UserAgent());
 			request.Content = new StringContent("", Encoding.UTF8, "application/x-www-form-urlencoded");
 
