@@ -8,6 +8,7 @@ namespace Discapp.API.Services
 	{
 		string TokenRequestHeader();
 		string TokenCallbackHeader(CallbackInput oauth_details);
+		string AuthenticatedRequestHeader(string key, string secret);
 		string UserAgent();
 	}
 
@@ -41,6 +42,21 @@ namespace Discapp.API.Services
 				{ "oauth_timestamp", GenerateTimestamp() },
 				{ "oauth_token", oauth_details.OauthToken },
 				{ "oauth_verifier", oauth_details.OauthVerifier }
+			};
+
+			return GenerateHeader(parameters);
+		}
+
+		public string AuthenticatedRequestHeader(string key, string secret)
+		{
+			Dictionary<string, string> parameters = new()
+			{
+				{ "oauth_consumer_key", _authSettings.ConsumerKey },
+				{ "oauth_nonce", GenerateNonce() },
+				{ "oauth_signature", $"{_authSettings.ConsumerSecret}&{secret}" },
+				{ "oauth_signature_method", "PLAINTEXT" },
+				{ "oauth_timestamp", GenerateTimestamp() },
+				{ "oauth_token", key }
 			};
 
 			return GenerateHeader(parameters);
