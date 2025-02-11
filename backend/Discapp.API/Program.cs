@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Discapp.Shared.Data;
 using Discapp.API.Models;
+using Discapp.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -57,6 +58,7 @@ builder.Services.AddSingleton(new AuthSettings
     CallbackURL = CallbackURL ?? ""
 });
 
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
