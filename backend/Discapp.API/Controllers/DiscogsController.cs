@@ -49,5 +49,29 @@ namespace Discapp.API.Controllers
 
 			return StatusCode((int)response.StatusCode, responseContent);
 		}
+
+		[HttpGet("Collection")]
+		public async Task<ActionResult<AuthToken>> GetProfile([FromQuery] string username, [FromQuery] CallbackToken token, [FromQuery] CollectionControls controls)
+		{
+			if (controls.Type != "collection" && controls.Type != "want")
+				return BadRequest("Invalid type. Must be 'collection' or 'want'.");
+
+			string requestBase = (controls.Type == "collection") ?
+				$"{DiscogsBaseURL}/users/{username}/collection/folders/0/releases" :
+				$"{DiscogsBaseURL}/users/{username}/wants";
+			string requestControls = $"?page={controls.Page}&per_page={controls.PerPage}";
+			HttpRequestMessage request = new(HttpMethod.Get, $"{requestBase}{requestControls}");
+			request.Headers.Add("Authorization", _authService.AuthenticatedRequestHeader(token));
+			request.Headers.Add("User-Agent", _authService.UserAgent());
+			request.Content = new StringContent("", Encoding.UTF8, "application/x-www-form-urlencoded");
+
+			HttpResponseMessage response = await _httpClient.SendAsync(request);
+			string responseContent = await response.Content.ReadAsStringAsync();
+
+			if (!response.IsSuccessStatusCode)
+				return BadRequest($"Failed to get request token. Status: {response.StatusCode}, Content: {responseContent}");
+
+			return StatusCode((int)response.StatusCode, responseContent);
+		}
 	}
 }
