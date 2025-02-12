@@ -1,5 +1,7 @@
 import { getAccessToken, getMe } from "@/api"
+import { FullpageLoading } from "@/components"
 import { useAuth, useSettings } from "@/hooks"
+import { IonPage } from "@ionic/react"
 import { useQueryClient } from "@tanstack/react-query"
 import { useEffect } from "react"
 import { useHistory, useLocation } from "react-router-dom"
@@ -25,24 +27,34 @@ const CallbackLoginPage: React.FC = () => {
 			}
 
 			if (oauthToken && oauthVerifier && oauthSecretLogin) {
-				const response = await getAccessToken({
-					oauthToken: oauthToken,
-					oauthSecret: oauthSecretLogin,
-					oauthVerifier: oauthVerifier,
-				})
-				const whoami = await getMe(response.accessToken, response.secretToken)
+				try {
+					const response = await getAccessToken({
+						oauthToken: oauthToken,
+						oauthSecret: oauthSecretLogin,
+						oauthVerifier: oauthVerifier,
+					})
+					const whoami = await getMe(response.accessToken, response.secretToken)
 
-				saveAuth(whoami.username, response.accessToken, response.secretToken)
-				setOauthSecretLogin("")
-				queryClient.clear()
-				history.push("/")
-				window.location.reload()
+					saveAuth(whoami.username, response.accessToken, response.secretToken)
+					setOauthSecretLogin("")
+					queryClient.clear()
+					history.push("/")
+					window.location.reload()
+				} catch (error) {
+					console.error(error)
+					setOauthSecretLogin("")
+					history.push("/")
+				}
 			}
 		}
 		authorizeUser()
 	}, [oauthToken, oauthVerifier, oauthSecretLogin])
 
-	return <>loading</>
+	return (
+		<IonPage>
+			<FullpageLoading />
+		</IonPage>
+	)
 }
 
 export default CallbackLoginPage

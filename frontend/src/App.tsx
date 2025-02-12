@@ -19,7 +19,6 @@ import { IonReactRouter } from "@ionic/react-router"
 import { discOutline, searchOutline, settingsOutline, cogOutline } from "ionicons/icons"
 import {
 	CollectionPage,
-	SettingsLoginPage,
 	SearchPage,
 	SettingsHomePage,
 	SettingsStatsPage,
@@ -91,7 +90,7 @@ const NotLoggedIn: React.FC = () => (
 )
 
 const App: React.FC = () => {
-	const [{ username, token }] = useAuth()
+	const [{ username, accessToken }] = useAuth()
 	// Insp: https://github.com/vite-pwa/vite-plugin-pwa/blob/main/examples/react-router/src/ReloadPrompt.tsx
 	const reloadSW = "__RELOAD_SW__"
 	const {
@@ -124,12 +123,9 @@ const App: React.FC = () => {
 					<IonTabs>
 						<IonRouterOutlet>
 							<Route exact path="/collection">
-								{username && token ? <CollectionPage /> : <NotLoggedIn />}
+								{username && accessToken ? <CollectionPage /> : <NotLoggedIn />}
 							</Route>
 							<Route path="/search">{username ? <SearchPage /> : <NotLoggedIn />}</Route>
-							<Route exact path="/settings/login">
-								<SettingsLoginPage />
-							</Route>
 							<Route exact path="/settings/stats">
 								<SettingsStatsPage />
 							</Route>
