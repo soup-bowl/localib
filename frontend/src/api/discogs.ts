@@ -217,7 +217,7 @@ export const getReleaseInfo = async (password: string, password2: string, id: nu
 		AccessToken: password,
 		SecretToken: password2,
 	})
-	const response = await fetch(`${VINYL_URL}/api/Discogs/Releases/?${params.toString()}`, {
+	const response = await fetch(`${VINYL_URL}/api/Discogs/Release?${params.toString()}`, {
 		headers: { "Content-Type": "application/json" },
 	})
 
