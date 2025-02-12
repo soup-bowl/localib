@@ -37,12 +37,12 @@ interface DisplayProps {
 }
 
 const ViewAlbumDetails: React.FC<DisplayProps> = ({ album, open, onClose }) => {
-	const [{ token }] = useAuth()
+	const [{ accessToken, secretToken }] = useAuth()
 	const [tabState, setTabState] = useState<number>(0)
 
 	const { data, isSuccess } = useQuery<IRelease>({
 		queryKey: ["release", album.id],
-		queryFn: () => getReleaseInfo(token ?? "", album.id),
+		queryFn: () => getReleaseInfo(accessToken ?? "", secretToken ?? "", album.id),
 		staleTime: 1000 * 60 * 60 * 24 * 30, // 1 month
 		refetchOnMount: "always",
 		refetchOnWindowFocus: false,

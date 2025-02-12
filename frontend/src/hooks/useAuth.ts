@@ -13,28 +13,33 @@ const setLocalStorageItem = (key: string, value: string): void => {
 
 interface AuthData {
 	username: string | null
-	token: string | null
+	accessToken: string | null
+	secretToken: string | null
 }
 
-const useAuth = (): [AuthData, (username: string, token: string) => void, () => void] => {
+const useAuth = (): [AuthData, (username: string, accessToken: string, secretToken: string) => void, () => void] => {
 	// Initialize state with values from localStorage
 	const [auth, setAuth] = useState<AuthData>({
 		username: getLocalStorageItem("username"),
-		token: getLocalStorageItem("token"),
+		accessToken: getLocalStorageItem("accessToken"),
+		secretToken: getLocalStorageItem("secretToken"),
 	})
 
 	// Function to update username and token in state and localStorage
-	const saveAuth = (username: string, token: string): void => {
+	const saveAuth = (username: string, accessToken: string, secretToken: string): void => {
 		setLocalStorageItem("username", username)
-		setLocalStorageItem("token", token)
-		setAuth({ username, token })
+		setLocalStorageItem("accessToken", accessToken)
+		setLocalStorageItem("secretToken", secretToken)
+
+		setAuth({ username, accessToken, secretToken })
 	}
 
 	// Function to clear username and token from state and localStorage
 	const clearAuth = (): void => {
 		localStorage.removeItem("username")
-		localStorage.removeItem("token")
-		setAuth({ username: null, token: null })
+		localStorage.removeItem("accessToken")
+		localStorage.removeItem("secretToken")
+		setAuth({ username: null, accessToken: null, secretToken: null })
 	}
 
 	return [auth, saveAuth, clearAuth]

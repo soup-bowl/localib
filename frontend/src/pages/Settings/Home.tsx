@@ -24,6 +24,7 @@ import { useState } from "react"
 import { useAuth, useSettings } from "@/hooks"
 import { DonateButton, InfoBanners } from "@/components"
 import { DeviceMode } from "@/types"
+import { getStartToken } from "@/api"
 
 const SettingsHomePage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> = ({ hasUpdate, onUpdate }) => {
 	const queryClient = useQueryClient()
@@ -31,6 +32,7 @@ const SettingsHomePage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> =
 	const [{ username }, _, clearAuth] = useAuth()
 	const [imageQuality, setImageQuality, clearImagequality] = useSettings<boolean>("ImagesAreHQ", false)
 	const [deviceTheme, setDeviceTheme] = useSettings<DeviceMode>("DeviceTheme", "ios")
+	const [__, setOauthSecretLogin] = useSettings<string>("Callink", "")
 	const [restartAlert, setRestartAlert] = useState<boolean>(false)
 	const appVersion = import.meta.env.VITE_VER ?? "Unknown"
 	const ionConfig = getConfig()
@@ -39,7 +41,6 @@ const SettingsHomePage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> =
 	const deleteData = () => {
 		queryClient.clear()
 		clearAuth()
-		clearImagequality()
 		history.push("/")
 		window.location.reload()
 	}
@@ -56,9 +57,28 @@ const SettingsHomePage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> =
 			</IonHeader>
 			<IonContent className="ion-padding">
 				<IonList inset={true}>
-					<IonItem color={lightMode} button routerLink="/settings/login">
-						<IonLabel>Discogs {username ? `account (${username})` : "login"}</IonLabel>
-					</IonItem>
+					{username ? (
+						<IonItem id="present-alert" color={lightMode} button>
+							<IonLabel>Discogs account ({username})</IonLabel>
+						</IonItem>
+					) : (
+						<IonItem
+							color={lightMode}
+							button
+							onClick={async () => {
+								try {
+									const callink = await getStartToken()
+									setOauthSecretLogin(callink.tokenSecret)
+									window.location.href = callink.redirectUrl
+								} catch (error) {
+									setOauthSecretLogin("")
+									console.error(error)
+								}
+							}}
+						>
+							<IonLabel>Login to Discogs</IonLabel>
+						</IonItem>
+					)}
 				</IonList>
 				<IonList inset={true}>
 					<IonItem color={lightMode}>
@@ -87,7 +107,7 @@ const SettingsHomePage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> =
 					</IonItem>
 				</IonList>
 				<IonList inset={true}>
-					<IonItem color={lightMode} button routerLink="/settings/stats">
+					<IonItem color={lightMode}>
 						<IonLabel>App version</IonLabel>
 						<IonLabel slot="end">
 							{appVersion}
@@ -103,6 +123,9 @@ const SettingsHomePage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> =
 							)}
 						</IonLabel>
 					</IonItem>
+					<IonItem color={lightMode} button routerLink="/settings/stats">
+						<IonLabel>Information</IonLabel>
+					</IonItem>
 				</IonList>
 
 				<IonGrid>
@@ -112,15 +135,10 @@ const SettingsHomePage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> =
 								Reload app
 							</IonButton>
 						</IonCol>
-						<IonCol size="auto">
-							<IonButton id="present-alert" color="danger">
-								Remove data
-							</IonButton>
-						</IonCol>
 					</IonRow>
 				</IonGrid>
 				<IonAlert
-					header="This will remove your account and stored data. Are you sure?"
+					header="Do you want to log out?"
 					trigger="present-alert"
 					buttons={[
 						{
@@ -128,7 +146,7 @@ const SettingsHomePage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> =
 							role: "cancel",
 						},
 						{
-							text: "Delete",
+							text: "Confirm",
 							role: "confirm",
 							handler: deleteData,
 						},

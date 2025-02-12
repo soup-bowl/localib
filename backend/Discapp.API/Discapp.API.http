@@ -1,5 +1,13 @@
 @host = localhost:5132
 
+GET http://{{host}}/api/Auth/request-token
+
+###
+
+GET http://{{host}}/api/Auth/callback?oauth_token=stuff&oauth_verifier=stuff
+
+###
+
 POST http://{{host}}/api/Queue
 Accept: text/plain
 Content-Type: application/json

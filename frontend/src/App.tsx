@@ -17,7 +17,7 @@ import {
 } from "@ionic/react"
 import { IonReactRouter } from "@ionic/react-router"
 import { discOutline, searchOutline, settingsOutline, cogOutline } from "ionicons/icons"
-import { CollectionPage, SettingsLoginPage, SearchPage, SettingsHomePage, SettingsStatsPage } from "@/pages"
+import { CollectionPage, SearchPage, SettingsHomePage, SettingsStatsPage, CallbackLoginPage } from "@/pages"
 import { createIDBPersister } from "@/persister"
 import { DeviceMode } from "@/types"
 import { useAuth } from "@/hooks"
@@ -84,7 +84,7 @@ const NotLoggedIn: React.FC = () => (
 )
 
 const App: React.FC = () => {
-	const [{ username, token }] = useAuth()
+	const [{ username, accessToken }] = useAuth()
 	// Insp: https://github.com/vite-pwa/vite-plugin-pwa/blob/main/examples/react-router/src/ReloadPrompt.tsx
 	const reloadSW = "__RELOAD_SW__"
 	const {
@@ -117,17 +117,17 @@ const App: React.FC = () => {
 					<IonTabs>
 						<IonRouterOutlet>
 							<Route exact path="/collection">
-								{username && token ? <CollectionPage /> : <NotLoggedIn />}
+								{username && accessToken ? <CollectionPage /> : <NotLoggedIn />}
 							</Route>
 							<Route path="/search">{username ? <SearchPage /> : <NotLoggedIn />}</Route>
-							<Route exact path="/settings/login">
-								<SettingsLoginPage />
-							</Route>
 							<Route exact path="/settings/stats">
 								<SettingsStatsPage />
 							</Route>
 							<Route exact path="/settings">
 								<SettingsHomePage hasUpdate={needRefresh} onUpdate={() => updateServiceWorker(true)} />
+							</Route>
+							<Route exact path="/callback">
+								<CallbackLoginPage />
 							</Route>
 							<Route exact path="/">
 								<Redirect to="/collection" />

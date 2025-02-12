@@ -75,7 +75,7 @@ const CollectionPage: React.FC = () => {
 		wanted: IReleaseTuple
 	}>()
 
-	const [{ username, token }] = useAuth()
+	const [{ username, accessToken, secretToken }] = useAuth()
 
 	const handleRefresh = async (event: CustomEvent<RefresherEventDetail>) => {
 		await queryClient.invalidateQueries({
@@ -87,7 +87,7 @@ const CollectionPage: React.FC = () => {
 	const { isLoading, isError, data } = useQuery<IReleaseSet>({
 		queryKey: [`${username}collectionv2`],
 		queryFn: () =>
-			getCollectionAndWants(username!, token ?? "", imageQuality, (page, pages) =>
+			getCollectionAndWants(username!, accessToken ?? "", secretToken ?? "", imageQuality, (page, pages) =>
 				setLoading({ page: page, pages: pages })
 			),
 		staleTime: Infinity,

@@ -1,4 +1,4 @@
-export { getCollectionAndWants, getMe, getProfile, getReleaseInfo } from "./discogs"
+export { getCollectionAndWants, getMe, getAccessToken, getStartToken, getProfile, getReleaseInfo } from "./discogs"
 export type {
 	ICollections,
 	IWants,
@@ -12,4 +12,8 @@ export type {
 	IAvailableItem,
 	VinylAPIImageMap,
 	VinylAPIImageRecord,
+	OAuthResponse,
+	OAuthTokens,
+	OAuthInput,
+	PersonalToken,
 } from "./interface"
