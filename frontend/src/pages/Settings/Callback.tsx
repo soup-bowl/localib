@@ -9,16 +9,21 @@ const CallbackLoginPage: React.FC = () => {
 	const history = useHistory()
 	const location = useLocation()
 	const searchParams = new URLSearchParams(location.search)
-	const [oauthSecretLogin] = useSettings<string | undefined>("Callink", undefined)
-	const [{ username, token }, saveAuth] = useAuth()
+	const [oauthSecretLogin, setOauthSecretLogin] = useSettings<string | undefined>("Callink", undefined)
+	const [{ }, saveAuth] = useAuth()
 
 	const oauthToken = searchParams.get("oauth_token")
 	const oauthVerifier = searchParams.get("oauth_verifier")
-
-	console.log("params", oauthToken, oauthVerifier, oauthSecretLogin)
+	const wasDenied = searchParams.get("denied")
 
 	useEffect(() => {
 		const authorizeUser = async () => {
+			if (wasDenied) {
+				setOauthSecretLogin("")
+				history.push("/")
+				return
+			}
+
 			if (oauthToken && oauthVerifier && oauthSecretLogin) {
 				const response = await getAccessToken({
 					oauthToken: oauthToken,
@@ -28,6 +33,7 @@ const CallbackLoginPage: React.FC = () => {
 				const whoami = await getMe(response.accessToken, response.secretToken)
 
 				saveAuth(whoami.username, response.accessToken, response.secretToken)
+				setOauthSecretLogin("")
 				queryClient.clear()
 				history.push("/")
 				window.location.reload()
