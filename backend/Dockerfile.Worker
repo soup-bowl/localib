@@ -8,17 +8,17 @@ WORKDIR /src
 COPY Discapp.Worker/*.csproj Discapp.Worker/
 COPY Discapp.Shared/*.csproj Discapp.Shared/
 
-RUN dotnet restore "Discapp.Worker/Discapp.Worker.csproj" -a $TARGETARCH
+RUN dotnet restore "Discapp.Worker/Discapp.Worker.csproj" -a "$TARGETARCH"
 COPY . .
-RUN dotnet publish "Discapp.Worker/Discapp.Worker.csproj" -a $TARGETARCH -c Release -o /publish
+RUN dotnet publish "Discapp.Worker/Discapp.Worker.csproj" -a "$TARGETARCH" -c Release -o /publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:${DOTNET_VERSION}-${BASE_VARIANT} AS runtime
 
 WORKDIR /app
 COPY --from=build /publish /app
 
-RUN addgroup --system discapp && adduser --system --ingroup discapp discapp
-RUN chown -R discapp:discapp /app
+RUN addgroup --system discapp && adduser --system --ingroup discapp discapp && \
+	chown -R discapp:discapp /app
 
 USER discapp
 
