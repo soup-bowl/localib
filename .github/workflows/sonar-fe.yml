@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+    paths:
+      - "frontend/**"
+      - ".github/workflows/sonar-fe.yml"
+  workflow_dispatch:
 
 jobs:
   build:
