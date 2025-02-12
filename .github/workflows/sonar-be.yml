@@ -1,4 +1,4 @@
-name: SonarQube Analysis
+name: SonarQube Backend
 
 on:
   push:
@@ -10,7 +10,7 @@ jobs:
   build:
     name: Build and analyze
     runs-on: windows-latest
-    
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -19,7 +19,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: 17
-          distribution: 'zulu'
+          distribution: "zulu"
       - name: Cache SonarQube packages
         uses: actions/cache@v4
         with:
@@ -43,6 +43,6 @@ jobs:
         shell: powershell
         run: |
           Remove-Item -Path .\sonar-project.properties
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"Localibtest" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}"
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"Localib-Backend" /d:sonar.token="${{ secrets.SONAR_TOKEN_BE }}" /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}"
           dotnet build backend
-          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN_BE }}"
