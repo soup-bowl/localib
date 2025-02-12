@@ -17,13 +17,7 @@ import {
 } from "@ionic/react"
 import { IonReactRouter } from "@ionic/react-router"
 import { discOutline, searchOutline, settingsOutline, cogOutline } from "ionicons/icons"
-import {
-	CollectionPage,
-	SearchPage,
-	SettingsHomePage,
-	SettingsStatsPage,
-	CallbackLoginPage,
-} from "@/pages"
+import { CollectionPage, SearchPage, SettingsHomePage, SettingsStatsPage, CallbackLoginPage } from "@/pages"
 import { createIDBPersister } from "@/persister"
 import { DeviceMode } from "@/types"
 import { useAuth } from "@/hooks"
