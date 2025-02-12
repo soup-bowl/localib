@@ -30,7 +30,7 @@ const SettingsHomePage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> =
 	const queryClient = useQueryClient()
 	const history = useHistory()
 	const [{ username }, _, clearAuth] = useAuth()
-	const [imageQuality, setImageQuality, clearImagequality] = useSettings<boolean>("ImagesAreHQ", false)
+	const [imageQuality, setImageQuality] = useSettings<boolean>("ImagesAreHQ", false)
 	const [deviceTheme, setDeviceTheme] = useSettings<DeviceMode>("DeviceTheme", "ios")
 	const [__, setOauthSecretLogin] = useSettings<string>("Callink", "")
 	const [restartAlert, setRestartAlert] = useState<boolean>(false)

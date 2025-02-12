@@ -60,10 +60,10 @@ public class Worker : BackgroundService
 		{
 			try
 			{
-				HttpResponseMessage response = await GetApiResponseWithRetryAsync($"releases/{queueItem.RecordID.ToString()}", 3, 1000, stoppingToken);
+				HttpResponseMessage response = await GetApiResponseWithRetryAsync($"releases/{queueItem.RecordID}", 3, 1000, stoppingToken);
 				response.EnsureSuccessStatusCode();
 
-				DiscogsRelease? releaseData = await response.Content.ReadFromJsonAsync<DiscogsRelease>();
+				DiscogsRelease? releaseData = await response.Content.ReadFromJsonAsync<DiscogsRelease>(cancellationToken: stoppingToken);
 
 				if (!string.IsNullOrEmpty(releaseData?.Thumb))
 				{
@@ -79,14 +79,14 @@ public class Worker : BackgroundService
 						.FirstOrDefault() ?? "";
 
 					string mainCoverUri = releaseData.Images
-						.Where(id => id.Type.ToLower() == "primary")
+						.Where(id => id.Type.Equals("primary", StringComparison.CurrentCultureIgnoreCase))
 						.Select(id => id.Uri)
 						.FirstOrDefault() ?? "";
 					if (!string.IsNullOrEmpty(mainCoverUri))
 					{
 						byte[] mainCover = await GetApiResponseWithRetryAsync(mainCoverUri, 3, 1000, stoppingToken).Result.Content.ReadAsByteArrayAsync(stoppingToken);
 						byte[] conversionOut = await ConvertImage(mainCover, 300, 300);
-						await File.WriteAllBytesAsync(Path.Combine(_pathOptions.ImagePath, queueItem.RecordID.ToString() + "_w3.webp"), conversionOut);
+						await File.WriteAllBytesAsync(Path.Combine(_pathOptions.ImagePath, queueItem.RecordID.ToString() + "_w3.webp"), conversionOut, stoppingToken);
 					}
 
 					Record? existingRecord = await dbContext.Records
@@ -170,7 +170,7 @@ public class Worker : BackgroundService
 			if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
 			{
 				_logger.LogWarning("Received 429 Too Many Requests. Retrying after delay...");
-				await Task.Delay(delayMilliseconds);
+				await Task.Delay(delayMilliseconds, stoppingToken);
 				retryCount++;
 				delayMilliseconds += 1000; // Exponential backoff
 			}
@@ -185,14 +185,10 @@ public class Worker : BackgroundService
 
 	private async static Task<byte[]> ConvertImage(byte[] inputImageBytes, int width, int height)
 	{
-		using (Image image = Image.Load(inputImageBytes))
-		{
-			image.Mutate(x => x.Resize(width, height));
-			using (var outputStream = new MemoryStream())
-			{
-				await image.SaveAsync(outputStream, new WebpEncoder());
-				return outputStream.ToArray();
-			}
-		}
+		using Image image = Image.Load(inputImageBytes);
+		image.Mutate(x => x.Resize(width, height));
+		using var outputStream = new MemoryStream();
+		await image.SaveAsync(outputStream, new WebpEncoder());
+		return outputStream.ToArray();
 	}
 }
