@@ -29,11 +29,11 @@ const SearchPage: React.FC = () => {
 	const [filterData, setFilterData] = useState<IReleaseSet>({ collection: [], wants: [] })
 	const [openScanner, setOpenScanner] = useState<boolean>(false)
 
-	const [{ username, token }] = useAuth()
+	const [{ username, token, token2 }] = useAuth()
 
 	const { isLoading, isError, data } = useQuery<IReleaseSet>({
 		queryKey: [`${username}collectionv2`],
-		queryFn: () => getCollectionAndWants(username!, token ?? "", imageQuality),
+		queryFn: () => getCollectionAndWants(username!, token ?? "", token2 ?? "", imageQuality),
 		staleTime: Infinity,
 	})
 

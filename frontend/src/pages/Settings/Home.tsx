@@ -24,6 +24,7 @@ import { useState } from "react"
 import { useAuth, useSettings } from "@/hooks"
 import { DonateButton, InfoBanners } from "@/components"
 import { DeviceMode } from "@/types"
+import { getStartToken } from "@/api"
 
 const SettingsHomePage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> = ({ hasUpdate, onUpdate }) => {
 	const queryClient = useQueryClient()
@@ -31,6 +32,7 @@ const SettingsHomePage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> =
 	const [{ username }, _, clearAuth] = useAuth()
 	const [imageQuality, setImageQuality, clearImagequality] = useSettings<boolean>("ImagesAreHQ", false)
 	const [deviceTheme, setDeviceTheme] = useSettings<DeviceMode>("DeviceTheme", "ios")
+	const [__, setOauthSecretLogin] = useSettings<string>("Callink", "")
 	const [restartAlert, setRestartAlert] = useState<boolean>(false)
 	const appVersion = import.meta.env.VITE_VER ?? "Unknown"
 	const ionConfig = getConfig()
@@ -56,7 +58,20 @@ const SettingsHomePage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> =
 			</IonHeader>
 			<IonContent className="ion-padding">
 				<IonList inset={true}>
-					<IonItem color={lightMode} button routerLink="/settings/login">
+					<IonItem
+						color={lightMode}
+						button
+						onClick={async () => {
+							try {
+								const callink = await getStartToken()
+								setOauthSecretLogin(callink.tokenSecret)
+								window.location.href = callink.redirectUrl
+							} catch (error) {
+								setOauthSecretLogin("")
+								console.error(error)
+							}
+						}}
+					>
 						<IonLabel>Discogs {username ? `account (${username})` : "login"}</IonLabel>
 					</IonItem>
 				</IonList>

@@ -34,7 +34,7 @@ const SettingsLoginPage: React.FC = () => {
 		const newUsername = (usernameInputRef.current?.value as string) || username
 		const newPassword = (passwordInputRef.current?.value as string) || token
 
-		saveAuth(newUsername ?? "", newPassword ?? "")
+		saveAuth(newUsername ?? "", newPassword ?? "", null)
 		queryClient.clear()
 		history.push("/")
 		window.location.reload()

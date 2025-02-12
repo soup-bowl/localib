@@ -192,3 +192,24 @@ export interface VinylAPIImageMap {
 export interface VinylAPIImageRecord extends VinylAPIImageMap {
 	recordID: number
 }
+
+export interface OAuthInput {
+	oauthToken: string
+	oauthSecret: string
+	oauthVerifier: string
+}
+
+export interface OAuthResponse {
+	redirectUrl: string
+	tokenSecret: string
+}
+
+export interface OAuthTokens {
+	accessToken: string
+	secretToken: string
+}
+
+export interface PersonalToken {
+	username: string
+	token: string
+}

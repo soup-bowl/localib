@@ -20,11 +20,11 @@ import { FullpageInfo, FullpageLoading, StatDisplay } from "@/components"
 import "./Profile.css"
 
 const ProfileContent: React.FC = () => {
-	const [{ username, token }] = useAuth()
+	const [{ username, token, token2 }] = useAuth()
 
 	const { data, isLoading, isError } = useQuery<IProfile>({
 		queryKey: [`${username}profile`],
-		queryFn: () => getProfile(username ?? "", token ?? ""),
+		queryFn: () => getProfile(username ?? "", token ?? "", token2 ?? ""),
 		staleTime: Infinity,
 	})
 
