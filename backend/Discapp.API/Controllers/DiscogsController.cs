@@ -51,7 +51,7 @@ namespace Discapp.API.Controllers
 		}
 
 		[HttpGet("Collection")]
-		public async Task<ActionResult<AuthToken>> GetProfile([FromQuery] string username, [FromQuery] CallbackToken token, [FromQuery] CollectionControls controls)
+		public async Task<ActionResult<AuthToken>> GetCollection([FromQuery] string username, [FromQuery] CallbackToken token, [FromQuery] CollectionControls controls)
 		{
 			if (controls.Type != "collection" && controls.Type != "want")
 				return BadRequest("Invalid type. Must be 'collection' or 'want'.");
@@ -61,6 +61,23 @@ namespace Discapp.API.Controllers
 				$"{DiscogsBaseURL}/users/{username}/wants";
 			string requestControls = $"?page={controls.Page}&per_page={controls.PerPage}";
 			HttpRequestMessage request = new(HttpMethod.Get, $"{requestBase}{requestControls}");
+			request.Headers.Add("Authorization", _authService.AuthenticatedRequestHeader(token));
+			request.Headers.Add("User-Agent", _authService.UserAgent());
+			request.Content = new StringContent("", Encoding.UTF8, "application/x-www-form-urlencoded");
+
+			HttpResponseMessage response = await _httpClient.SendAsync(request);
+			string responseContent = await response.Content.ReadAsStringAsync();
+
+			if (!response.IsSuccessStatusCode)
+				return BadRequest($"Failed to get request token. Status: {response.StatusCode}, Content: {responseContent}");
+
+			return StatusCode((int)response.StatusCode, responseContent);
+		}
+
+		[HttpGet("Release")]
+		public async Task<ActionResult<AuthToken>> GetRelease([FromQuery] int id, [FromQuery] CallbackToken token)
+		{
+			HttpRequestMessage request = new(HttpMethod.Get, $"{DiscogsBaseURL}/releases/{id}");
 			request.Headers.Add("Authorization", _authService.AuthenticatedRequestHeader(token));
 			request.Headers.Add("User-Agent", _authService.UserAgent());
 			request.Content = new StringContent("", Encoding.UTF8, "application/x-www-form-urlencoded");
