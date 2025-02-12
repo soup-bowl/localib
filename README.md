@@ -3,8 +3,7 @@
 </p>
 <h1 align="center">Localib</h1>
 <p align="center">
-  <a href="https://www.codefactor.io/repository/github/soup-bowl/Localib"><img src="https://www.codefactor.io/repository/github/soup-bowl/Localib/badge" alt="CodeFactor" /></a>
-  <a href="https://gitpod.io/#https://github.com/soup-bowl/Localib"><img src="https://img.shields.io/badge/open%20in-Gitpod-orange?logo=gitpod&logoColor=white" /></a>
+  <strong>Modern Discogs experience, with a focus on limited internet library management</strong>
 </p>
 <p align="center">
   <img src="https://f.subo.dev/i/discogs-app-image.webp" alt="" />
