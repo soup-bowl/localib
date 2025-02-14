@@ -2,14 +2,16 @@ using Microsoft.EntityFrameworkCore;
 using Discapp.Shared.Data;
 using Discapp.API.Models;
 using Discapp.API.Services;
+using Microsoft.OpenApi.Models;
+using Discapp.API.Models.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
-                       ?? builder.Configuration.GetConnectionString("DefaultConnection");
+var connectionString = "Server=localhost;Database=discoarchive;User=root;Password=password;";//Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
+                                                                                             //?? builder.Configuration.GetConnectionString("DefaultConnection");
 
-var imageStoragePath = Environment.GetEnvironmentVariable("PathSettings__ImagePath")
-                       ?? builder.Configuration["PathSettings:ImagePath"];
+var imageStoragePath = "/workspaces/localib/backend/Images";//Environment.GetEnvironmentVariable("PathSettings__ImagePath")
+                                                            //?? builder.Configuration["PathSettings:ImagePath"];
 
 var ClientKey = Environment.GetEnvironmentVariable("Discogs__ConsumerKey")
                        ?? builder.Configuration["Discogs:ConsumerKey"];
@@ -59,12 +61,27 @@ builder.Services.AddSingleton(new AuthSettings
 });
 
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IImageProcessService, ImageProcessService>();
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Localib Vinyl", Version = "v1" });
+
+    OpenApiSecurityScheme securityScheme = new()
+    {
+        Name = "Authorization",
+        Description = "Used for the Discogs class of APIs. Enter your token like this: 'Bearer ACCESS_TOKEN&SECRET_TOKEN'",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer"
+    };
+
+    c.AddSecurityDefinition("Bearer", securityScheme);
+});
 builder.Services.AddHttpClient();
 
 var app = builder.Build();

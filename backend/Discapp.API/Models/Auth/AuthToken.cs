@@ -1,4 +1,4 @@
-namespace Discapp.API.Models
+namespace Discapp.API.Models.Auth
 {
 	public class AuthToken
 	{
