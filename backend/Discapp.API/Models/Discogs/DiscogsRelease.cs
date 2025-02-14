@@ -7,10 +7,6 @@ namespace Discapp.API.Models.Discogs
 		public int Id { get; set; }
 		[JsonPropertyName("master_id")]
 		public int MasterId { get; set; }
-		[JsonPropertyName("master_url")]
-		public string MasterUrl { get; set; } = string.Empty;
-		[JsonPropertyName("resource_url")]
-		public string ResourceUrl { get; set; } = string.Empty;
 		public string Thumb { get; set; } = string.Empty;
 		[JsonPropertyName("cover_image")]
 		public string CoverImage { get; set; } = string.Empty;
@@ -55,7 +51,6 @@ namespace Discapp.API.Models.Discogs
 		public string DateChanged { get; set; } = string.Empty;
 		[JsonPropertyName("num_for_sale")]
 		public int NumForSale { get; set; }
-		[JsonPropertyName("lowest_price")]
 		public string Country { get; set; } = string.Empty;
 		public string Released { get; set; } = string.Empty;
 		public string Notes { get; set; } = string.Empty;

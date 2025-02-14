@@ -5,18 +5,8 @@ namespace Discapp.API.Models.Discogs
 	public class DiscogsProfile
 	{
 		public int Id { get; set; }
-		[JsonPropertyName("resource_url")]
-		public string ResourceUrl { get; set; } = string.Empty;
-		[JsonPropertyName("consumer_name")]
+		[JsonPropertyName("email")]
 		public string Email { get; set; } = string.Empty;
-		[JsonPropertyName("inventory_url")]
-		public string InventoryUrl { get; set; } = string.Empty;
-		[JsonPropertyName("collection_folders_url")]
-		public string CollectionFoldersUrl { get; set; } = string.Empty;
-		[JsonPropertyName("collection_fields_url")]
-		public string CollectionFieldsUrl { get; set; } = string.Empty;
-		[JsonPropertyName("wantlist_url")]
-		public string WantlistUrl { get; set; } = string.Empty;
 		[JsonPropertyName("uri")]
 		public string Uri { get; set; } = string.Empty;
 		[JsonPropertyName("profile")]
