@@ -71,6 +71,12 @@ export interface IReleases {
 	basic_information: IReleaseLight
 	image_base64?: string
 	barcode?: string
+	vinyl?: {
+		recordID: number
+		image: string
+		imageHigh: string
+		barcode: string
+	}
 }
 
 export interface IReleaseLight {

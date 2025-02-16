@@ -1,6 +1,5 @@
-using System;
 using System.Text;
-using Discapp.API.Models;
+using Discapp.API.Models.Auth;
 
 namespace Discapp.API.Services
 {
@@ -10,6 +9,7 @@ namespace Discapp.API.Services
 		string TokenCallbackHeader(CallbackInput oauth_details);
 		string AuthenticatedRequestHeader(CallbackToken token);
 		string UserAgent();
+		CallbackToken? ExtractToken(string? authorizationHeader);
 	}
 
 	public class AuthService(AuthSettings authSettings) : IAuthService
@@ -63,6 +63,28 @@ namespace Discapp.API.Services
 		}
 
 		public string UserAgent() => "LocalibOfflineCollector/0.1 (https://vinyl.localib.app)";
+
+		public CallbackToken? ExtractToken(string? authorizationHeader)
+		{
+			if (string.IsNullOrEmpty(authorizationHeader) || !authorizationHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+			{
+				return null;
+			}
+
+			string token = authorizationHeader["Bearer ".Length..].Trim();
+			string[] parts = token.Split('&', 2);
+
+			if (parts.Length != 2)
+			{
+				return null;
+			}
+
+			return new CallbackToken
+			{
+				AccessToken = parts[0],
+				SecretToken = parts[1]
+			};
+		}
 
 		private static string GenerateHeader(Dictionary<string, string> parameters)
 		{

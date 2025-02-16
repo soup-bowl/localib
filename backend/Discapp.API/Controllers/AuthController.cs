@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Text;
 using System.Web;
 using System.Collections.Specialized;
-using Discapp.API.Models;
+using Discapp.API.Models.Auth;
 using Discapp.API.Services;
 
 namespace Discapp.API.Controllers
