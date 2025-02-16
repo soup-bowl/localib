@@ -58,7 +58,7 @@ namespace Discapp.API.Models.Discogs
 		public string ReleasedFormatted { get; set; } = string.Empty;
 		public List<DiscogsIdentifiers>? Identifiers { get; set; }
 		public List<DiscogsTrack>? Tracklist { get; set; }
-		[JsonPropertyName("extra_artists")]
+		[JsonPropertyName("extraartists")]
 		public List<DiscogsArtist>? ExtraArtists { get; set; }
 		[JsonPropertyName("estimated_weight")]
 		public int EstimatedWeight { get; set; }
