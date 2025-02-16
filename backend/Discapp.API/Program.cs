@@ -7,10 +7,10 @@ using Discapp.API.Models.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 
-Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
+var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
                        ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
-Environment.GetEnvironmentVariable("PathSettings__ImagePath")
+var imageStoragePath = Environment.GetEnvironmentVariable("PathSettings__ImagePath")
                        ?? builder.Configuration["PathSettings:ImagePath"];
 
 var ClientKey = Environment.GetEnvironmentVariable("Discogs__ConsumerKey")
