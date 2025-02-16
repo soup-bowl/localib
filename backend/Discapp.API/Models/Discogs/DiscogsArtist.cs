@@ -1,5 +1,3 @@
-using System.Text.Json.Serialization;
-
 namespace Discapp.API.Models.Discogs
 {
 	public class DiscogsArtist
