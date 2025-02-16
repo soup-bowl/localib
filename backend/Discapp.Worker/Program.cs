@@ -5,20 +5,24 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = Host.CreateApplicationBuilder(args);
 
-builder.Configuration
-       .AddEnvironmentVariables()
-       .AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: true);
-
-var configuration = builder.Configuration;
-
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var connectionString = Environment.GetEnvironmentVariable("LOCALIB_CONNECTION_STRING");
+var imageStoragePath = Environment.GetEnvironmentVariable("LOCALIB_IMAGE_PATH") ?? ".";
+var ClientKey = Environment.GetEnvironmentVariable("LOCALIB_DISCOGS_CONSUMER_KEY") ?? "";
+var ClientSecret = Environment.GetEnvironmentVariable("LOCALIB_DISCOGS_CONSUMER_SECRET") ?? "";
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
 );
 
-builder.Services.Configure<DiscogsOptions>(configuration.GetSection("Discogs"));
-builder.Services.Configure<PathSettings>(configuration.GetSection("PathSettings"));
+builder.Services.Configure<DiscogsOptions>(options =>
+{
+    options.ConsumerKey = ClientKey;
+    options.ConsumerSecret = ClientSecret;
+});
+builder.Services.Configure<PathSettings>(options =>
+{
+    options.ImagePath = imageStoragePath;
+});
 builder.Services.AddHostedService<Worker>();
 
 var host = builder.Build();

@@ -7,18 +7,11 @@ using Discapp.API.Models.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
-                       ?? builder.Configuration.GetConnectionString("DefaultConnection");
-
-var imageStoragePath = Environment.GetEnvironmentVariable("PathSettings__ImagePath")
-                       ?? builder.Configuration["PathSettings:ImagePath"];
-
-var ClientKey = Environment.GetEnvironmentVariable("Discogs__ConsumerKey")
-                       ?? builder.Configuration["Discogs:ConsumerKey"];
-var ClientSecret = Environment.GetEnvironmentVariable("Discogs__ConsumerSecret")
-                       ?? builder.Configuration["Discogs:ConsumerSecret"];
-var CallbackURL = Environment.GetEnvironmentVariable("Discogs__CallbackURL")
-                       ?? builder.Configuration["Discogs:CallbackURL"];
+var connectionString = Environment.GetEnvironmentVariable("LOCALIB_CONNECTION_STRING");
+var imageStoragePath = Environment.GetEnvironmentVariable("LOCALIB_IMAGE_PATH");
+var ClientKey = Environment.GetEnvironmentVariable("LOCALIB_DISCOGS_CONSUMER_KEY");
+var ClientSecret = Environment.GetEnvironmentVariable("LOCALIB_DISCOGS_CONSUMER_SECRET");
+var CallbackURL = Environment.GetEnvironmentVariable("LOCALIB_DISCOGS_CALLBACK_URL");
 
 // --- CORS ---
 string? allowedOrigins = Environment.GetEnvironmentVariable("CORS_ALLOWED_ORIGINS");
