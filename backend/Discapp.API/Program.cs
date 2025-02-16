@@ -7,11 +7,11 @@ using Discapp.API.Models.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = "Server=localhost;Database=discoarchive;User=root;Password=password;";//Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
-                                                                                             //?? builder.Configuration.GetConnectionString("DefaultConnection");
+Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
+                       ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
-var imageStoragePath = "/workspaces/localib/backend/Images";//Environment.GetEnvironmentVariable("PathSettings__ImagePath")
-                                                            //?? builder.Configuration["PathSettings:ImagePath"];
+Environment.GetEnvironmentVariable("PathSettings__ImagePath")
+                       ?? builder.Configuration["PathSettings:ImagePath"];
 
 var ClientKey = Environment.GetEnvironmentVariable("Discogs__ConsumerKey")
                        ?? builder.Configuration["Discogs:ConsumerKey"];
