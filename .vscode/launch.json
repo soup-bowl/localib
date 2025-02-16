@@ -5,7 +5,18 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": ".NET Core Launch (console)",
+			"name": ".NET Core Launch (Worker)",
+			"type": "coreclr",
+			"request": "launch",
+			"preLaunchTask": "build-worker",
+			"program": "${workspaceFolder}/backend/Discapp.Worker/bin/Debug/net8.0/Discapp.Worker.dll",
+			"args": [],
+			"cwd": "${workspaceFolder}",
+			"stopAtEntry": false,
+			"console": "internalConsole"
+		},
+		{
+			"name": ".NET Core Launch (API)",
 			"type": "coreclr",
 			"request": "launch",
 			"preLaunchTask": "build",
