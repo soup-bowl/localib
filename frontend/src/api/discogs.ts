@@ -42,12 +42,11 @@ export const getAccessToken = async (input: OAuthInput): Promise<OAuthTokens> =>
 }
 
 export const getMe = async (password: string, password2: string): Promise<IIdentify> => {
-	const params = new URLSearchParams({
-		AccessToken: password,
-		SecretToken: password2,
-	})
-	const response = await fetch(`${VINYL_URL}/api/Discogs/Identify?${params.toString()}`, {
-		headers: { "Content-Type": "application/json" },
+	const response = await fetch(`${VINYL_URL}/api/Discogs/Identify`, {
+		headers: {
+			"Authorization": `Bearer ${password}&${password2}`,
+			"Content-Type": "application/json"
+		},
 	})
 	if (!response.ok) {
 		throw new Error("Discogs API responded with an unexpected error.")
@@ -58,11 +57,12 @@ export const getMe = async (password: string, password2: string): Promise<IIdent
 export const getProfile = async (username: string, password: string, password2: string): Promise<IProfile> => {
 	const params = new URLSearchParams({
 		Username: username,
-		AccessToken: password,
-		SecretToken: password2,
 	})
 	const response = await fetch(`${VINYL_URL}/api/Discogs/Profile?${params.toString()}`, {
-		headers: { "Content-Type": "application/json" },
+		headers: {
+			"Authorization": `Bearer ${password}&${password2}`,
+			"Content-Type": "application/json"
+		},
 	})
 	if (!response.ok) {
 		throw new Error("Discogs API responded with an unexpected error.")
@@ -77,73 +77,6 @@ export const getCollectionAndWants = async (
 	imageQuality: boolean,
 	onProgress?: (page: number, pages: number) => void
 ): Promise<IReleaseSet> => {
-	/**
-	 * Fetches the image map from the Vinyl API for a given set of release IDs.
-	 *
-	 * @param {number[]} ids - Array of release IDs to fetch images for.
-	 * @returns {Promise<Record<number, VinylAPIImageMap>>} - A map of release IDs to their corresponding image data.
-	 */
-	const fetchVinylAPIImageMap = async (ids: number[]): Promise<Record<number, VinylAPIImageMap>> => {
-		try {
-			const response = await fetch(`${VINYL_URL}/api/queue`, {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(ids),
-			})
-
-			if (response.ok) {
-				const imageData = await response.json()
-				return imageData.available.reduce(
-					(acc: Record<number, VinylAPIImageMap>, record: VinylAPIImageRecord) => {
-						acc[record.recordID] = {
-							image: record.image,
-							imageHigh: record.imageHigh,
-							barcode: record.barcode?.replace(/\D/g, "") ?? undefined,
-						}
-						return acc
-					},
-					{}
-				)
-			} else {
-				console.warn("Vinyl API response was not ok, skipping.")
-			}
-		} catch (error) {
-			console.error("Vinyl API response hit an error, skipping.", error)
-		}
-
-		return {}
-	}
-
-	/**
-	 * Enriches release data with additional information pulled from the Vinyl API.
-	 *
-	 * @param {any[]} releases - Array of release objects to enrich.
-	 * @param {Record<number, VinylAPIImageMap>} imageMap - Map of release IDs to image data.
-	 * @returns {any[]} - Enriched release objects with added image and barcode data.
-	 */
-	const enrichReleases = (releases: any[], imageMap: Record<number, VinylAPIImageMap>): any[] => {
-		return releases.map((release) => {
-			const getImage = (imageRecord: VinylAPIImageMap): string | undefined => {
-				if (imageQuality) {
-					return !isNullOrBlank(imageRecord.imageHigh) ? imageRecord.imageHigh : imageRecord.image
-				}
-				return imageRecord.image
-			}
-
-			const imageRecord = imageMap[release.basic_information.id] || {
-				image: null,
-				imageHigh: null,
-				barcode: null,
-			}
-
-			return {
-				...release,
-				image_base64: getImage(imageRecord),
-				barcode: imageRecord.barcode,
-			}
-		})
-	}
-
 	/**
 	 * Fetches release data for a user, including collection or wantlist, from the Discogs API.
 	 * Uses pagination to fetch all pages of data and enriches releases with image and barcode information.
@@ -160,14 +93,15 @@ export const getCollectionAndWants = async (
 		while (loop) {
 			const params = new URLSearchParams({
 				Username: username,
-				AccessToken: password,
-				SecretToken: password2,
 				Type: releaseType,
 				Page: page.toString(),
 				PerPage: "100",
 			})
-			const response = await fetch(`${VINYL_URL}/api/Discogs/Collection?${params.toString()}`, {
-				headers: { "Content-Type": "application/json" },
+			const response = await fetch(`${VINYL_URL}/api/Discogs/${releaseType}s?${params.toString()}`, {
+				headers: {
+					"Authorization": `Bearer ${password}&${password2}`,
+					"Content-Type": "application/json"
+				},
 			})
 
 			if (!response.ok) {
@@ -181,16 +115,16 @@ export const getCollectionAndWants = async (
 			}
 
 			// @ts-expect-error Cheating a bit - converting the reference to keep the same models.
-			const ids = (releaseType === "want" ? data.wants : data.releases).map((item) => item.basic_information.id)
-			const imageMap = await fetchVinylAPIImageMap(ids)
+			const parseData: IReleases[] = (releaseType === "want" ? data.wants : data.releases).map((release: IReleases) => {
+				return {
+					...release,
+					image_base64: (release.vinyl) ? (imageQuality) ? release.vinyl.imageHigh : release.vinyl.image : "",
+					barcode: (release.vinyl) ? release.vinyl.barcode : "",
+					vinyl: undefined
+				};
+			})
 
-			const releasesExtraData = enrichReleases(
-				// @ts-expect-error Cheating a bit - converting the reference to keep the same models.
-				releaseType === "want" ? data.wants : data.releases,
-				imageMap
-			)
-
-			allReleases = [...allReleases, ...releasesExtraData]
+			allReleases = [...allReleases, ...parseData]
 
 			if (onProgress) {
 				onProgress(data.pagination.page, data.pagination.pages)
@@ -214,11 +148,12 @@ export const getCollectionAndWants = async (
 export const getReleaseInfo = async (password: string, password2: string, id: number): Promise<IRelease> => {
 	const params = new URLSearchParams({
 		Id: id.toString(),
-		AccessToken: password,
-		SecretToken: password2,
 	})
 	const response = await fetch(`${VINYL_URL}/api/Discogs/Release?${params.toString()}`, {
-		headers: { "Content-Type": "application/json" },
+		headers: {
+			"Authorization": `Bearer ${password}&${password2}`,
+			"Content-Type": "application/json"
+		},
 	})
 
 	if (!response.ok) {
