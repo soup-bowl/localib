@@ -72,9 +72,11 @@ const SettingsProfilePage: React.FC = () => {
 				<InfoBanners />
 			</IonHeader>
 			<IonContent className="ion-padding">
-				<div
+				<IonCard
 					className="avatar-background"
-					style={{ backgroundImage: data?.banner_base64 ? `url(${data.banner_base64})` : undefined }}
+					style={{
+						backgroundImage: data?.banner_base64 ? `url(${data.banner_base64})` : undefined,
+					}}
 				>
 					<div className="profile-column">
 						<IonAvatar>
@@ -93,7 +95,7 @@ const SettingsProfilePage: React.FC = () => {
 						<IonCardContent>{data?.profile}</IonCardContent>
 					</IonCard>
 					<br />
-				</div>
+				</IonCard>
 				<IonList inset={true}>
 					<IonItem color={lightMode}>
 						<IonLabel>Registered</IonLabel>
