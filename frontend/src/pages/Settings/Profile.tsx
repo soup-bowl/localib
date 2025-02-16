@@ -20,17 +20,22 @@ import {
 	IonAlert,
 	getConfig,
 	IonCardContent,
+	IonButton,
+	IonIcon,
 } from "@ionic/react"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { hourglass, library, eye } from "ionicons/icons"
+import { hourglass, library, eye, qrCodeOutline, qrCodeSharp } from "ionicons/icons"
 import "./Profile.css"
 import { useHistory } from "react-router"
+import { QRCodeDialog } from "@/modal"
+import { useState } from "react"
 
 const SettingsProfilePage: React.FC = () => {
 	const queryClient = useQueryClient()
 	const history = useHistory()
 	const [{ username, accessToken, secretToken }, _, clearAuth] = useAuth()
 	const ionConfig = getConfig()
+	const [openScanner, setOpenScanner] = useState<boolean>(false)
 	const currentMode = ionConfig?.get("mode") || "ios"
 
 	const lightMode = currentMode === "ios" ? "light" : undefined
@@ -66,6 +71,11 @@ const SettingsProfilePage: React.FC = () => {
 				<IonToolbar>
 					<IonButtons slot="start" collapse={true}>
 						<IonBackButton />
+					</IonButtons>
+					<IonButtons slot="primary">
+						<IonButton onClick={() => setOpenScanner(true)}>
+							<IonIcon slot="icon-only" ios={qrCodeOutline} md={qrCodeSharp} />
+						</IonButton>
 					</IonButtons>
 					<IonTitle>Profile</IonTitle>
 				</IonToolbar>
@@ -131,6 +141,12 @@ const SettingsProfilePage: React.FC = () => {
 					]}
 				/>
 			</IonContent>
+			<QRCodeDialog
+				title="Share Profile"
+				codeContent={`https://www.discogs.com/user/${data?.username}`}
+				open={openScanner}
+				onClose={() => setOpenScanner(false)}
+			/>
 		</IonPage>
 	)
 }
