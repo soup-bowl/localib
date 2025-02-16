@@ -14,15 +14,17 @@ import {
 	IonSelectOption,
 	IonSelect,
 	getConfig,
+	IonAvatar,
 } from "@ionic/react"
 import { useState } from "react"
 import { useAuth, useSettings } from "@/hooks"
 import { InfoBanners } from "@/components"
 import { DeviceMode } from "@/types"
-import { getStartToken } from "@/api"
+import { getProfile, getStartToken, IProfile } from "@/api"
+import { useQuery } from "@tanstack/react-query"
 
 const SettingsHomePage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> = ({ hasUpdate, onUpdate }) => {
-	const [{ username }] = useAuth()
+	const [{ username, accessToken, secretToken }, _, clearAuth] = useAuth()
 	const [imageQuality, setImageQuality] = useSettings<boolean>("ImagesAreHQ", false)
 	const [deviceTheme, setDeviceTheme] = useSettings<DeviceMode>("DeviceTheme", "ios")
 	const [__, setOauthSecretLogin] = useSettings<string>("Callink", "")
@@ -32,6 +34,13 @@ const SettingsHomePage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> =
 	const currentMode = ionConfig?.get("mode") || "ios"
 
 	const lightMode = currentMode === "ios" ? "light" : undefined
+
+	const { data } = useQuery<IProfile>({
+		queryKey: [`${username}profile`],
+		queryFn: () => getProfile(username ?? "", accessToken ?? "", secretToken ?? ""),
+		staleTime: Infinity,
+		enabled: Boolean(username && accessToken && secretToken),
+	})
 
 	return (
 		<IonPage>
@@ -45,7 +54,15 @@ const SettingsHomePage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> =
 				<IonList inset={true}>
 					{username ? (
 						<IonItem color={lightMode} button routerLink="/settings/profile">
-							<IonLabel>Discogs account ({username})</IonLabel>
+							{data?.avatar_base64 && (
+								<IonAvatar aria-hidden="true" slot="start">
+									<img alt="" src={data?.avatar_base64} />
+								</IonAvatar>
+							)}
+							<IonLabel>
+								<h2>{username}</h2>
+								<p>Discogs Account</p>
+							</IonLabel>
 						</IonItem>
 					) : (
 						<IonItem
