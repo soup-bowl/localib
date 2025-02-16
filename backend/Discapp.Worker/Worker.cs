@@ -154,6 +154,7 @@ public class Worker : BackgroundService
 						RecordID = oldRecord.RecordID
 					};
 					dbContext.Queue.Add(newQueueItem);
+					dbContext.Records.Remove(oldRecord);
 				}
 			}
 			await dbContext.SaveChangesAsync(stoppingToken);
