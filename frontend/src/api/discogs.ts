@@ -44,8 +44,8 @@ export const getAccessToken = async (input: OAuthInput): Promise<OAuthTokens> =>
 export const getMe = async (password: string, password2: string): Promise<IIdentify> => {
 	const response = await fetch(`${VINYL_URL}/api/Discogs/Identify`, {
 		headers: {
-			"Authorization": `Bearer ${password}&${password2}`,
-			"Content-Type": "application/json"
+			Authorization: `Bearer ${password}&${password2}`,
+			"Content-Type": "application/json",
 		},
 	})
 	if (!response.ok) {
@@ -60,8 +60,8 @@ export const getProfile = async (username: string, password: string, password2: 
 	})
 	const response = await fetch(`${VINYL_URL}/api/Discogs/Profile?${params.toString()}`, {
 		headers: {
-			"Authorization": `Bearer ${password}&${password2}`,
-			"Content-Type": "application/json"
+			Authorization: `Bearer ${password}&${password2}`,
+			"Content-Type": "application/json",
 		},
 	})
 	if (!response.ok) {
@@ -99,8 +99,8 @@ export const getCollectionAndWants = async (
 			})
 			const response = await fetch(`${VINYL_URL}/api/Discogs/${releaseType}s?${params.toString()}`, {
 				headers: {
-					"Authorization": `Bearer ${password}&${password2}`,
-					"Content-Type": "application/json"
+					Authorization: `Bearer ${password}&${password2}`,
+					"Content-Type": "application/json",
 				},
 			})
 
@@ -115,14 +115,20 @@ export const getCollectionAndWants = async (
 			}
 
 			// @ts-expect-error Cheating a bit - converting the reference to keep the same models.
-			const parseData: IReleases[] = (releaseType === "want" ? data.wants : data.releases).map((release: IReleases) => {
-				return {
-					...release,
-					image_base64: (release.vinyl) ? (imageQuality) ? release.vinyl.imageHigh : release.vinyl.image : "",
-					barcode: (release.vinyl) ? release.vinyl.barcode : "",
-					vinyl: undefined
-				};
-			})
+			const parseData: IReleases[] = (releaseType === "want" ? data.wants : data.releases).map(
+				(release: IReleases) => {
+					return {
+						...release,
+						image_base64: release.vinyl
+							? imageQuality
+								? release.vinyl.imageHigh
+								: release.vinyl.image
+							: "",
+						barcode: release.vinyl ? release.vinyl.barcode : "",
+						vinyl: undefined,
+					}
+				}
+			)
 
 			allReleases = [...allReleases, ...parseData]
 
@@ -151,8 +157,8 @@ export const getReleaseInfo = async (password: string, password2: string, id: nu
 	})
 	const response = await fetch(`${VINYL_URL}/api/Discogs/Release?${params.toString()}`, {
 		headers: {
-			"Authorization": `Bearer ${password}&${password2}`,
-			"Content-Type": "application/json"
+			Authorization: `Bearer ${password}&${password2}`,
+			"Content-Type": "application/json",
 		},
 	})
 

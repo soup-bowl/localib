@@ -7,6 +7,8 @@ namespace Discapp.API.Models.Discogs
 		public int Id { get; set; }
 		[JsonPropertyName("email")]
 		public string Email { get; set; } = string.Empty;
+		public string Name { get; set; } = string.Empty;
+		public string Username { get; set; } = string.Empty;
 		[JsonPropertyName("uri")]
 		public string Uri { get; set; } = string.Empty;
 		[JsonPropertyName("profile")]
@@ -41,6 +43,7 @@ namespace Discapp.API.Models.Discogs
 		public string BannerUrl { get; set; } = string.Empty;
 		[JsonPropertyName("avatar_base64")]
 		public string? AvatarBase64 { get; set; }
+		[JsonPropertyName("banner_base64")]
 		public string? BannerBase64 { get; set; }
 	}
 }

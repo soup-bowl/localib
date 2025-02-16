@@ -12,6 +12,10 @@ import {
 	getConfig,
 	IonBackButton,
 	IonButtons,
+	IonButton,
+	IonCol,
+	IonGrid,
+	IonRow,
 } from "@ionic/react"
 import { useQueryClient } from "@tanstack/react-query"
 import { useState, useEffect } from "react"
@@ -20,7 +24,7 @@ import { useAuth } from "@/hooks"
 import { formatBytes } from "@/utils"
 import { InfoBanners } from "@/components"
 
-const SettingsStatsPage: React.FC = () => {
+const SettingsInformationPage: React.FC = () => {
 	const queryClient = useQueryClient()
 	const [{ username }] = useAuth()
 	const [storageInfo, setStorageInfo] = useState<{ usage: string; quota: string } | undefined>()
@@ -59,7 +63,7 @@ const SettingsStatsPage: React.FC = () => {
 					<IonButtons slot="start" collapse={true}>
 						<IonBackButton />
 					</IonButtons>
-					<IonTitle>Statistics</IonTitle>
+					<IonTitle>Information</IonTitle>
 				</IonToolbar>
 				<InfoBanners />
 			</IonHeader>
@@ -98,9 +102,24 @@ const SettingsStatsPage: React.FC = () => {
 					For some records, we need to collect further information from the Discogs system. This can take some
 					time, so try reloading in a few hours to see it change.
 				</IonNote>
+				<IonList inset={true}>
+					<IonItem color={lightMode} button href="https://github.com/soup-bowl/Localib" target="_blank">
+						<IonLabel>Source code</IonLabel>
+					</IonItem>
+				</IonList>
+
+				<IonGrid>
+					<IonRow class="ion-justify-content-center">
+						<IonCol size="auto">
+							<IonButton onClick={() => window.location.reload()} color="primary">
+								Reload app
+							</IonButton>
+						</IonCol>
+					</IonRow>
+				</IonGrid>
 			</IonContent>
 		</IonPage>
 	)
 }
 
-export default SettingsStatsPage
+export default SettingsInformationPage

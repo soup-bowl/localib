@@ -6,30 +6,23 @@ import {
 	IonContent,
 	IonAlert,
 	IonButton,
-	IonCol,
-	IonGrid,
 	IonItem,
 	IonLabel,
 	IonList,
 	IonNote,
-	IonRow,
 	IonToggle,
 	IonSelectOption,
 	IonSelect,
 	getConfig,
 } from "@ionic/react"
-import { useHistory } from "react-router"
-import { useQueryClient } from "@tanstack/react-query"
 import { useState } from "react"
 import { useAuth, useSettings } from "@/hooks"
-import { DonateButton, InfoBanners } from "@/components"
+import { InfoBanners } from "@/components"
 import { DeviceMode } from "@/types"
 import { getStartToken } from "@/api"
 
 const SettingsHomePage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> = ({ hasUpdate, onUpdate }) => {
-	const queryClient = useQueryClient()
-	const history = useHistory()
-	const [{ username }, _, clearAuth] = useAuth()
+	const [{ username }] = useAuth()
 	const [imageQuality, setImageQuality] = useSettings<boolean>("ImagesAreHQ", false)
 	const [deviceTheme, setDeviceTheme] = useSettings<DeviceMode>("DeviceTheme", "ios")
 	const [__, setOauthSecretLogin] = useSettings<string>("Callink", "")
@@ -37,13 +30,6 @@ const SettingsHomePage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> =
 	const appVersion = import.meta.env.VITE_VER ?? "Unknown"
 	const ionConfig = getConfig()
 	const currentMode = ionConfig?.get("mode") || "ios"
-
-	const deleteData = () => {
-		queryClient.clear()
-		clearAuth()
-		history.push("/")
-		window.location.reload()
-	}
 
 	const lightMode = currentMode === "ios" ? "light" : undefined
 
@@ -58,7 +44,7 @@ const SettingsHomePage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> =
 			<IonContent className="ion-padding">
 				<IonList inset={true}>
 					{username ? (
-						<IonItem id="present-alert" color={lightMode} button>
+						<IonItem color={lightMode} button routerLink="/settings/profile">
 							<IonLabel>Discogs account ({username})</IonLabel>
 						</IonItem>
 					) : (
@@ -123,35 +109,20 @@ const SettingsHomePage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> =
 							)}
 						</IonLabel>
 					</IonItem>
-					<IonItem color={lightMode} button routerLink="/settings/stats">
+					<IonItem color={lightMode} button routerLink="/settings/info">
 						<IonLabel>Information</IonLabel>
+					</IonItem>
+					<IonItem
+						color={lightMode}
+						button
+						detail={false}
+						href="https://www.buymeacoffee.com/soupbowl"
+						target="_blank"
+					>
+						<IonLabel>Donate</IonLabel>
 					</IonItem>
 				</IonList>
 
-				<IonGrid>
-					<IonRow class="ion-justify-content-center">
-						<IonCol size="auto">
-							<IonButton onClick={() => window.location.reload()} color="primary">
-								Reload app
-							</IonButton>
-						</IonCol>
-					</IonRow>
-				</IonGrid>
-				<IonAlert
-					header="Do you want to log out?"
-					trigger="present-alert"
-					buttons={[
-						{
-							text: "Cancel",
-							role: "cancel",
-						},
-						{
-							text: "Confirm",
-							role: "confirm",
-							handler: deleteData,
-						},
-					]}
-				/>
 				<IonAlert
 					isOpen={restartAlert}
 					onDidDismiss={() => setRestartAlert(false)}
@@ -159,11 +130,6 @@ const SettingsHomePage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> =
 					message="For these changes to take effect, you will need to reload the app."
 					buttons={["OK"]}
 				/>
-				<IonNote color="medium" class="ion-margin-horizontal" style={{ display: "block", textAlign: "center" }}>
-					Made by <a href="https://subo.dev">soup-bowl</a> and{" "}
-					<a href="https://github.com/soup-bowl/Localib">open source</a>.
-				</IonNote>
-				<DonateButton style={{ marginTop: 20, display: "block", textAlign: "center" }} />
 			</IonContent>
 		</IonPage>
 	)

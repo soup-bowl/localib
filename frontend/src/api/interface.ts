@@ -176,7 +176,9 @@ export interface IProfile {
 	releases_rated: number
 	rating_avg: number
 	avatar_url: string
+	avatar_base64?: string
 	banner_url: string
+	banner_base64?: string
 }
 
 export interface IAvailableItem {
