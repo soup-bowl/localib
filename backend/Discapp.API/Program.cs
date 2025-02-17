@@ -7,8 +7,15 @@ using Discapp.API.Models.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = Environment.GetEnvironmentVariable("LOCALIB_CONNECTION_STRING");
-var imageStoragePath = Environment.GetEnvironmentVariable("LOCALIB_IMAGE_PATH");
+var dbHost = Environment.GetEnvironmentVariable("LOCALIB_DB_HOST") ?? "localhost";
+var dbPort = Environment.GetEnvironmentVariable("LOCALIB_DB_PORT") ?? "3306";
+var dbName = Environment.GetEnvironmentVariable("LOCALIB_DB_NAME") ?? "database";
+var dbUser = Environment.GetEnvironmentVariable("LOCALIB_DB_USER") ?? "root";
+var dbPassword = Environment.GetEnvironmentVariable("LOCALIB_DB_PASSWORD") ?? "password";
+var connectionString = Environment.GetEnvironmentVariable("LOCALIB_CONNECTION_STRING")
+    ?? $"Server={dbHost};Port={dbPort};Database={dbName};User={dbUser};Password={dbPassword};";
+
+var imageStoragePath = Environment.GetEnvironmentVariable("LOCALIB_IMAGE_PATH") ?? "./Images";
 var ClientKey = Environment.GetEnvironmentVariable("LOCALIB_DISCOGS_CONSUMER_KEY");
 var ClientSecret = Environment.GetEnvironmentVariable("LOCALIB_DISCOGS_CONSUMER_SECRET");
 var CallbackURL = Environment.GetEnvironmentVariable("LOCALIB_DISCOGS_CALLBACK_URL");

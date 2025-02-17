@@ -6,11 +6,13 @@ namespace Discapp.Shared.Data
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var connectionString = Environment.GetEnvironmentVariable("LOCALIB_CONNECTION_STRING");
-            if (string.IsNullOrEmpty(connectionString))
-            {
-                throw new InvalidOperationException("Database connection string not set in environment variables.");
-            }
+            var dbHost = Environment.GetEnvironmentVariable("LOCALIB_DB_HOST") ?? "localhost";
+            var dbPort = Environment.GetEnvironmentVariable("LOCALIB_DB_PORT") ?? "3306";
+            var dbName = Environment.GetEnvironmentVariable("LOCALIB_DB_NAME") ?? "database";
+            var dbUser = Environment.GetEnvironmentVariable("LOCALIB_DB_USER") ?? "root";
+            var dbPassword = Environment.GetEnvironmentVariable("LOCALIB_DB_PASSWORD") ?? "password";
+            var connectionString = Environment.GetEnvironmentVariable("LOCALIB_CONNECTION_STRING")
+                ?? $"Server={dbHost};Port={dbPort};Database={dbName};User={dbUser};Password={dbPassword};";
 
             optionsBuilder.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 21)),
             b => b.MigrationsAssembly("Discapp.API"));
