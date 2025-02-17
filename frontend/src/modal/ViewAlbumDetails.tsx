@@ -192,7 +192,7 @@ const ViewAlbumDetails: React.FC<DisplayProps> = ({ album, open, onClose }) => {
 				{isSuccess && tabState === TabSet.Tracks && (
 					<IonList inset>
 						{data.tracklist.map((track) => (
-							<IonItem key={track.position}>
+							<IonItem key={`${track.position}${track.title}`}>
 								<IonNote slot="start">{track.position}</IonNote>
 								<IonLabel>{track.title}</IonLabel>
 								<IonNote slot="end">{track.duration}</IonNote>
@@ -202,11 +202,11 @@ const ViewAlbumDetails: React.FC<DisplayProps> = ({ album, open, onClose }) => {
 				)}
 				{isSuccess && tabState === TabSet.Credits && (
 					<IonList inset>
-						<>{console.log(data.extraartists)}</>
 						{data.extraartists ? (
 							<>
-								{data.extraartists.map((artist) => (
-									<IonItem key={artist.id}>
+								{/* Only option to use i here - all items in the object can be duplicated. */}
+								{data.extraartists.map((artist, i) => (
+									<IonItem key={i}>
 										<IonLabel>
 											<h2>{artist.name}</h2>
 											<p>{artist.role}</p>
@@ -225,11 +225,11 @@ const ViewAlbumDetails: React.FC<DisplayProps> = ({ album, open, onClose }) => {
 					<IonList inset>
 						<IonItem>
 							<IonLabel>
-								{data.notes.split("\n").map((line) => (
-									<>
+								{data.notes.split("\n").map((line, i) => (
+									<div key={i}>
 										{line}
 										<br />
-									</>
+									</div>
 								))}
 							</IonLabel>
 						</IonItem>
@@ -238,7 +238,7 @@ const ViewAlbumDetails: React.FC<DisplayProps> = ({ album, open, onClose }) => {
 				{isSuccess && tabState === TabSet.IDs && (
 					<IonList inset>
 						{data.identifiers.map((id) => (
-							<IonItem key={`${id.type}${id.value}`}>
+							<IonItem key={`${id.type}${id.value}${id.description}`}>
 								<IonLabel>
 									<h2>
 										{id.type} {id.description}
