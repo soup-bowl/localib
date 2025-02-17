@@ -28,32 +28,27 @@ This project has a counterpart API service (internally referenced as the **Vinyl
 
 The API consists of two separate applications - a REST API, and a worker service that collects all the records passing through the system, and downloads the artwork for it. This service will scrape the dominant album art, and store both the thumbnail and a heavily-optimised larger image to allow for optional higher-quality album art persistence.
 
-Configuration is primarily via environment variables, or by `appsettings.json`:
+Configuration is via environment variables:
 
-Variable | Description
--|-
-`ConnectionStrings__DefaultConnection` | Connection to a MySQL database, like `Server=localhost;Database=discoarchive;User=root;Password=password;`
-`PathSettings__ImagePath` | Path where the Worker stores to, and the API serves images from.
-`Discogs__ConsumerKey` | Consumer Key from [Discogs Developer Application][dcd], used by both the API and the worker.
-`Discogs__ConsumerSecret` | Consumer Secret from [Discogs Developer Application][dcd], used by both the API and the worker.
-`Discogs__CallbackURL` | Callback to the frontend's `/callback` URL to handle OAuth flow.
-
-Environment only:
-
-Variable | Description
--|-
-`CORS_ALLOWED_ORIGINS` | CORS restriction policy, optional.
+Variable | Impacts | Description
+-|-|-
+`LOCALIB_CONNECTION_STRING` | Both | Connection to a MySQL database, like `Server=localhost;Database=discoarchive;User=root;Password=password;`
+`LOCALIB_IMAGE_PATH` | Both | Path where the Worker stores to, and the API serves images from. Default via Docker is `/Images`.
+`LOCALIB_DISCOGS_CONSUMER_KEY` | Both | Consumer Key from [Discogs Developer Application][dcd], used by both the API and the worker.
+`LOCALIB_DISCOGS_CONSUMER_SECRET` | Both | Consumer Secret from [Discogs Developer Application][dcd], used by both the API and the worker.
+`LOCALIB_DISCOGS_CALLBACK_URL` | API | Callback to the frontend's `/callback` URL to handle OAuth flow.
+`LOCALIB_CORS_ALLOWED_ORIGINS` | API | CORS restriction policy, optional, API only.
 
 Example:
 
 ```bash
 docker run --rm \
   --name Localib \
-  -e ConnectionStrings__DefaultConnection="Server=localhost;Database=disc;User=root;Password=password;" \
-  -e PathSettings__ImagePath=/Images \
-  -e Discogs__ConsumerKey=somekeyvalue \
-  -e Discogs__ConsumerSecret=somekeyvalue \
-  -e Discogs__CallbackURL=https://localib.app/callback \
+  -e LOCALIB_CONNECTION_STRING="Server=localhost;Database=disc;User=root;Password=password;" \
+  -e LOCALIB_IMAGE_PATH=/Images \
+  -e LOCALIB_DISCOGS_CONSUMER_KEY=somekeyvalue \
+  -e LOCALIB_DISCOGS_CONSUMER_SECRET=somekeyvalue \
+  -e LOCALIB_DISCOGS_CALLBACK_URL=https://localib.app/callback \
   -v "$(pwd)/Images:/Images" \
   -p 8080:8080 \
   ghcr.io/soup-bowl/netscrape-combined:edge

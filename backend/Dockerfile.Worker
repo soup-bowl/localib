@@ -22,4 +22,7 @@ RUN addgroup --system discapp && adduser --system --ingroup discapp discapp && \
 
 USER discapp
 
+ENV LOCALIB_IMAGE_PATH=/Images
+VOLUME ["${LOCALIB_IMAGE_PATH}"]
+
 CMD ["dotnet", "Discapp.Worker.dll"]
