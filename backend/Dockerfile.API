@@ -22,6 +22,9 @@ RUN addgroup --system discapp && adduser --system --ingroup discapp discapp && \
 
 USER discapp
 
+ENV LOCALIB_IMAGE_PATH=/Images
+VOLUME ["${LOCALIB_IMAGE_PATH}"]
+
 EXPOSE 8080
 
 CMD ["dotnet", "Discapp.API.dll"]
