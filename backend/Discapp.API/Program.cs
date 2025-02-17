@@ -14,7 +14,7 @@ var ClientSecret = Environment.GetEnvironmentVariable("LOCALIB_DISCOGS_CONSUMER_
 var CallbackURL = Environment.GetEnvironmentVariable("LOCALIB_DISCOGS_CALLBACK_URL");
 
 // --- CORS ---
-string? allowedOrigins = Environment.GetEnvironmentVariable("CORS_ALLOWED_ORIGINS");
+string? allowedOrigins = Environment.GetEnvironmentVariable("LOCALIB_CORS_ALLOWED_ORIGINS");
 if (string.IsNullOrEmpty(allowedOrigins))
 {
     builder.Services.AddCors(options =>

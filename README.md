@@ -30,14 +30,14 @@ The API consists of two separate applications - a REST API, and a worker service
 
 Configuration is via environment variables:
 
-Variable | Description
--|-
-`LOCALIB_CONNECTION_STRING` | Connection to a MySQL database, like `Server=localhost;Database=discoarchive;User=root;Password=password;`
-`LOCALIB_IMAGE_PATH` | Path where the Worker stores to, and the API serves images from.
-`LOCALIB_DISCOGS_CONSUMER_KEY` | Consumer Key from [Discogs Developer Application][dcd], used by both the API and the worker.
-`LOCALIB_DISCOGS_CONSUMER_SECRET` | Consumer Secret from [Discogs Developer Application][dcd], used by both the API and the worker.
-`LOCALIB_DISCOGS_CALLBACK_URL` | Callback to the frontend's `/callback` URL to handle OAuth flow.
-`CORS_ALLOWED_ORIGINS` | CORS restriction policy, optional.
+Variable | Impacts | Description
+-|-|-
+`LOCALIB_CONNECTION_STRING` | Both | Connection to a MySQL database, like `Server=localhost;Database=discoarchive;User=root;Password=password;`
+`LOCALIB_IMAGE_PATH` | Both | Path where the Worker stores to, and the API serves images from.
+`LOCALIB_DISCOGS_CONSUMER_KEY` | Both | Consumer Key from [Discogs Developer Application][dcd], used by both the API and the worker.
+`LOCALIB_DISCOGS_CONSUMER_SECRET` | Both | Consumer Secret from [Discogs Developer Application][dcd], used by both the API and the worker.
+`LOCALIB_DISCOGS_CALLBACK_URL` | API | Callback to the frontend's `/callback` URL to handle OAuth flow.
+`LOCALIB_CORS_ALLOWED_ORIGINS` | API | CORS restriction policy, optional, API only.
 
 Example:
 
