@@ -27,7 +27,6 @@ enum TabSet {
 	Tracks,
 	Credits,
 	Notes,
-	IDs,
 }
 
 interface DisplayProps {
@@ -101,9 +100,6 @@ const ViewAlbumDetails: React.FC<DisplayProps> = ({ album, open, onClose }) => {
 					</IonSegmentButton>
 					<IonSegmentButton value={TabSet.Notes}>
 						<IonLabel>Notes</IonLabel>
-					</IonSegmentButton>
-					<IonSegmentButton value={TabSet.IDs}>
-						<IonLabel>IDs</IonLabel>
 					</IonSegmentButton>
 				</IonSegment>
 				{tabState === TabSet.Info && (
@@ -222,32 +218,32 @@ const ViewAlbumDetails: React.FC<DisplayProps> = ({ album, open, onClose }) => {
 					</IonList>
 				)}
 				{isSuccess && tabState === TabSet.Notes && (
-					<IonList inset>
-						<IonItem>
-							<IonLabel>
-								{data.notes.split("\n").map((line, i) => (
-									<div key={i}>
-										{line}
-										<br />
-									</div>
-								))}
-							</IonLabel>
-						</IonItem>
-					</IonList>
-				)}
-				{isSuccess && tabState === TabSet.IDs && (
-					<IonList inset>
-						{data.identifiers.map((id) => (
-							<IonItem key={`${id.type}${id.value}${id.description}`}>
+					<>
+						<IonList inset>
+							<IonItem>
 								<IonLabel>
-									<h2>
-										{id.type} {id.description}
-									</h2>
-									<p>{id.value}</p>
+									{data.notes.split("\n").map((line, i) => (
+										<div key={i}>
+											{line}
+											<br />
+										</div>
+									))}
 								</IonLabel>
 							</IonItem>
-						))}
-					</IonList>
+						</IonList>
+						<IonList inset>
+							{data.identifiers.map((id) => (
+								<IonItem key={`${id.type}${id.value}${id.description}`}>
+									<IonLabel>
+										<h2>
+											{id.type} {id.description}
+										</h2>
+										<p>{id.value}</p>
+									</IonLabel>
+								</IonItem>
+							))}
+						</IonList>
+					</>
 				)}
 			</IonContent>
 		</IonModal>
