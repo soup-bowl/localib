@@ -28,7 +28,7 @@ import { hourglass, library, eye, qrCodeOutline, qrCodeSharp } from "ionicons/ic
 import "./Profile.css"
 import { useHistory } from "react-router"
 import { QRCodeDialog } from "@/modal"
-import { useState } from "react"
+import { ReactNode, useState } from "react"
 
 const SettingsProfilePage: React.FC = () => {
 	const queryClient = useQueryClient()
@@ -63,7 +63,22 @@ const SettingsProfilePage: React.FC = () => {
 		window.location.reload()
 	}
 
-	console.log(data)
+	const ToCardOrNotToCard = ({ background = undefined, children }: { background?: string; children: ReactNode }) => {
+		if (Boolean(background)) {
+			return (
+				<IonCard
+					className="avatar-background"
+					style={{
+						backgroundImage: `url(${background})`,
+					}}
+				>
+					{children}
+				</IonCard>
+			)
+		}
+
+		return <>{children}</>
+	}
 
 	return (
 		<IonPage>
@@ -82,12 +97,7 @@ const SettingsProfilePage: React.FC = () => {
 				<InfoBanners />
 			</IonHeader>
 			<IonContent className="ion-padding">
-				<IonCard
-					className="avatar-background"
-					style={{
-						backgroundImage: data?.banner_base64 ? `url(${data.banner_base64})` : undefined,
-					}}
-				>
+				<ToCardOrNotToCard background={data?.banner_base64}>
 					<div className="profile-column">
 						<IonAvatar>
 							<img
@@ -97,7 +107,7 @@ const SettingsProfilePage: React.FC = () => {
 							/>
 						</IonAvatar>
 					</div>
-					<IonCard style={{ textAlign: "center", marginBottom: 50 }}>
+					<IonCard style={{ textAlign: "center", marginBottom: data?.banner_base64 ? 50 : 0 }}>
 						<IonCardHeader>
 							<IonCardTitle>{data?.username}</IonCardTitle>
 							<IonCardSubtitle>{data?.name}</IonCardSubtitle>
@@ -105,7 +115,7 @@ const SettingsProfilePage: React.FC = () => {
 						<IonCardContent>{data?.profile}</IonCardContent>
 					</IonCard>
 					<br />
-				</IonCard>
+				</ToCardOrNotToCard>
 				<IonList inset={true}>
 					<IonItem color={lightMode}>
 						<IonLabel>Registered</IonLabel>
