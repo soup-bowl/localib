@@ -101,7 +101,7 @@ const SettingsProfilePage: React.FC = () => {
 					<div className="profile-column">
 						<IonAvatar>
 							<img
-								src={"/album-placeholder.png"}
+								src={data?.avatar_base64 ?? "/album-placeholder.png"}
 								onError={(e) => ((e.target as HTMLImageElement).src = "/album-placeholder.png")}
 								alt=""
 							/>
