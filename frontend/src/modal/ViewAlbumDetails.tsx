@@ -202,14 +202,23 @@ const ViewAlbumDetails: React.FC<DisplayProps> = ({ album, open, onClose }) => {
 				)}
 				{isSuccess && tabState === TabSet.Credits && (
 					<IonList inset>
-						{data.extraartists.map((artist) => (
-							<IonItem key={artist.id}>
-								<IonLabel>
-									<h2>{artist.name}</h2>
-									<p>{artist.role}</p>
-								</IonLabel>
+						<>{console.log(data.extraartists)}</>
+						{data.extraartists ? (
+							<>
+								{data.extraartists.map((artist) => (
+									<IonItem key={artist.id}>
+										<IonLabel>
+											<h2>{artist.name}</h2>
+											<p>{artist.role}</p>
+										</IonLabel>
+									</IonItem>
+								))}
+							</>
+						) : (
+							<IonItem>
+								<IonLabel color="medium">No information found</IonLabel>
 							</IonItem>
-						))}
+						)}
 					</IonList>
 				)}
 				{isSuccess && tabState === TabSet.Notes && (
