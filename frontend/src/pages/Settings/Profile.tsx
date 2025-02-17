@@ -1,5 +1,5 @@
 import { IProfile, getProfile } from "@/api"
-import { FullpageInfo, FullpageLoading, InfoBanners, StatDisplay } from "@/components"
+import { FullpageInfo, FullpageLoading, InfoBanners } from "@/components"
 import { useAuth } from "@/hooks"
 import {
 	IonContent,
@@ -24,7 +24,7 @@ import {
 	IonIcon,
 } from "@ionic/react"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { hourglass, library, eye, qrCodeOutline, qrCodeSharp } from "ionicons/icons"
+import { qrCodeOutline, qrCodeSharp } from "ionicons/icons"
 import "./Profile.css"
 import { useHistory } from "react-router"
 import { QRCodeDialog } from "@/modal"
@@ -101,7 +101,7 @@ const SettingsProfilePage: React.FC = () => {
 					<div className="profile-column">
 						<IonAvatar>
 							<img
-								src={data?.avatar_base64 ?? "/album-placeholder.png"}
+								src={"/album-placeholder.png"}
 								onError={(e) => ((e.target as HTMLImageElement).src = "/album-placeholder.png")}
 								alt=""
 							/>

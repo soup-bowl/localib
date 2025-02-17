@@ -18,7 +18,6 @@ import {
 } from "@ionic/react"
 import { OverlayEventDetail } from "@ionic/react/dist/types/components/react-component-lib/interfaces"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { personOutline, personSharp } from "ionicons/icons"
 import { IReleaseSet, IReleases, getCollectionAndWants } from "@/api"
 import { FullpageLoading, AlbumGrid, FullpageInfo, AlbumListGroups, InfoBanners } from "@/components"
 import { ViewAlbumDetails } from "@/modal"

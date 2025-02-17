@@ -1,4 +1,3 @@
-import { isNullOrBlank } from "@/utils"
 import {
 	ICollections,
 	IIdentify,
@@ -9,11 +8,8 @@ import {
 	OAuthInput,
 	OAuthResponse,
 	OAuthTokens,
-	VinylAPIImageMap,
-	VinylAPIImageRecord,
 } from "./interface"
 
-const API_URL = "https://api.discogs.com"
 const VINYL_URL = import.meta.env.VITE_VINYL_API_URL
 
 export const getStartToken = async (): Promise<OAuthResponse> => {
