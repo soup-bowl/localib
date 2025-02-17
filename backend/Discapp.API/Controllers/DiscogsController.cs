@@ -24,26 +24,32 @@ namespace Discapp.API.Controllers
 		public Task<ActionResult<DiscogsProfile>> GetProfile([FromQuery] string username, [FromHeader(Name = "Authorization")] string token) =>
 			SendDiscogsRequestAsync<DiscogsProfile>($"users/{username}", _authService.ExtractToken(token), async data =>
 			{
-				try
+				if (!string.IsNullOrEmpty(data.AvatarUrl))
 				{
-					byte[] imageBytes = await _httpClient.GetByteArrayAsync(data.AvatarUrl);
-					data.AvatarBase64 = $"data:jpeg;base64,{Convert.ToBase64String(imageBytes)}";
-				}
-				catch (HttpRequestException ex)
-				{
-					Console.WriteLine($"Failed to fetch avatar for User ID {data.Id}: {ex.Message}");
-					data.AvatarBase64 = null;
+					try
+					{
+						byte[] imageBytes = await _httpClient.GetByteArrayAsync(data.AvatarUrl);
+						data.AvatarBase64 = $"data:jpeg;base64,{Convert.ToBase64String(imageBytes)}";
+					}
+					catch (Exception ex)
+					{
+						Console.WriteLine($"Failed to fetch avatar for User ID {data.Id}: {ex.Message}");
+						data.AvatarBase64 = null;
+					}
 				}
 
-				try
+				if (!string.IsNullOrEmpty(data.BannerUrl))
 				{
-					byte[] imageBytes = await _httpClient.GetByteArrayAsync(data.BannerUrl);
-					data.BannerBase64 = $"data:jpeg;base64,{Convert.ToBase64String(imageBytes)}";
-				}
-				catch (HttpRequestException ex)
-				{
-					Console.WriteLine($"Failed to fetch banner for User ID {data.Id}: {ex.Message}");
-					data.BannerBase64 = null;
+					try
+					{
+						byte[] imageBytes = await _httpClient.GetByteArrayAsync(data.BannerUrl);
+						data.BannerBase64 = $"data:jpeg;base64,{Convert.ToBase64String(imageBytes)}";
+					}
+					catch (Exception ex)
+					{
+						Console.WriteLine($"Failed to fetch banner for User ID {data.Id}: {ex.Message}");
+						data.BannerBase64 = null;
+					}
 				}
 
 				return data;
