@@ -30,6 +30,23 @@ import { useHistory } from "react-router"
 import { QRCodeDialog } from "@/modal"
 import { ReactNode, useState } from "react"
 
+const ToCardOrNotToCard = ({ background = undefined, children }: { background?: string; children: ReactNode }) => {
+	if (background) {
+		return (
+			<IonCard
+				className="avatar-background"
+				style={{
+					backgroundImage: `url(${background})`,
+				}}
+			>
+				{children}
+			</IonCard>
+		)
+	}
+
+	return <>{children}</>
+}
+
 const SettingsProfilePage: React.FC = () => {
 	const queryClient = useQueryClient()
 	const history = useHistory()
@@ -61,23 +78,6 @@ const SettingsProfilePage: React.FC = () => {
 		clearAuth()
 		history.push("/")
 		window.location.reload()
-	}
-
-	const ToCardOrNotToCard = ({ background = undefined, children }: { background?: string; children: ReactNode }) => {
-		if (Boolean(background)) {
-			return (
-				<IonCard
-					className="avatar-background"
-					style={{
-						backgroundImage: `url(${background})`,
-					}}
-				>
-					{children}
-				</IonCard>
-			)
-		}
-
-		return <>{children}</>
 	}
 
 	return (

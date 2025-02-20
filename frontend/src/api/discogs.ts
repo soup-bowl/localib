@@ -113,13 +113,16 @@ export const getCollectionAndWants = async (
 			// @ts-expect-error Cheating a bit - converting the reference to keep the same models.
 			const parseData: IReleases[] = (releaseType === "want" ? data.wants : data.releases).map(
 				(release: IReleases) => {
+					const image = () => {
+						if (release.vinyl) {
+							return imageQuality ? release.vinyl.imageHigh : release.vinyl.image
+						}
+						return ""
+					}
+
 					return {
 						...release,
-						image_base64: release.vinyl
-							? imageQuality
-								? release.vinyl.imageHigh
-								: release.vinyl.image
-							: "",
+						image_base64: image(),
 						barcode: release.vinyl ? release.vinyl.barcode : "",
 						vinyl: undefined,
 					}

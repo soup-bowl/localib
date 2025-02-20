@@ -24,7 +24,7 @@ import { getProfile, getStartToken, IProfile } from "@/api"
 import { useQuery } from "@tanstack/react-query"
 
 const SettingsHomePage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> = ({ hasUpdate, onUpdate }) => {
-	const [{ username, accessToken, secretToken }, _, clearAuth] = useAuth()
+	const [{ username, accessToken, secretToken }] = useAuth()
 	const [imageQuality, setImageQuality] = useSettings<boolean>("ImagesAreHQ", false)
 	const [deviceTheme, setDeviceTheme] = useSettings<DeviceMode>("DeviceTheme", "ios")
 	const [__, setOauthSecretLogin] = useSettings<string>("Callink", "")

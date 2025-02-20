@@ -12,7 +12,7 @@ const CallbackLoginPage: React.FC = () => {
 	const location = useLocation()
 	const searchParams = new URLSearchParams(location.search)
 	const [oauthSecretLogin, setOauthSecretLogin] = useSettings<string | undefined>("Callink", undefined)
-	const [{}, saveAuth] = useAuth()
+	const [_, saveAuth] = useAuth()
 
 	const oauthToken = searchParams.get("oauth_token")
 	const oauthVerifier = searchParams.get("oauth_verifier")
