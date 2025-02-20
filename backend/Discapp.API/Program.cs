@@ -4,6 +4,7 @@ using Discapp.API.Models;
 using Discapp.API.Services;
 using Microsoft.OpenApi.Models;
 using Discapp.API.Models.Auth;
+using Discapp.Shared.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +20,8 @@ var imageStoragePath = Environment.GetEnvironmentVariable("LOCALIB_IMAGE_PATH") 
 var ClientKey = Environment.GetEnvironmentVariable("LOCALIB_DISCOGS_CONSUMER_KEY");
 var ClientSecret = Environment.GetEnvironmentVariable("LOCALIB_DISCOGS_CONSUMER_SECRET");
 var CallbackURL = Environment.GetEnvironmentVariable("LOCALIB_DISCOGS_CALLBACK_URL");
+
+builder.Services.Configure<DiscogApiSettings>(builder.Configuration.GetSection("DiscogApis"));
 
 // --- CORS ---
 string? allowedOrigins = Environment.GetEnvironmentVariable("LOCALIB_CORS_ALLOWED_ORIGINS");
@@ -99,4 +102,4 @@ app.UseHttpsRedirection();
 
 app.MapControllers();
 
-app.Run();
+await app.RunAsync();

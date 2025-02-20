@@ -1,4 +1,5 @@
 using Discapp.Worker.Models;
+using Discapp.Shared.Models;
 using Discapp.Shared.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -6,7 +7,6 @@ using System.Net.Http.Json;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Formats.Webp;
-using System.IO;
 
 namespace Discapp.Worker;
 
@@ -17,16 +17,18 @@ public class Worker : BackgroundService
 	private readonly DiscogsOptions _discogsOptions;
 	private readonly PathSettings _pathOptions;
 	private readonly HttpClient _httpClient;
+	private readonly DiscogApiSettings _discogSettings;
 
-	public Worker(ILogger<Worker> logger, IServiceScopeFactory scopeFactory, IOptions<DiscogsOptions> discogsOptions, IOptions<PathSettings> pathOptions)
+	public Worker(ILogger<Worker> logger, IServiceScopeFactory scopeFactory, IOptions<DiscogsOptions> discogsOptions, IOptions<PathSettings> pathOptions, IOptions<DiscogApiSettings> discogSettings)
 	{
 		_logger = logger;
 		_scopeFactory = scopeFactory;
 		_discogsOptions = discogsOptions.Value;
 		_pathOptions = pathOptions.Value;
+		_discogSettings = discogSettings.Value;
 		_httpClient = new HttpClient
 		{
-			BaseAddress = new Uri("https://api.discogs.com/")
+			BaseAddress = new Uri(_discogSettings.BaseUrl)
 		};
 		_httpClient.DefaultRequestHeaders.Add("User-Agent", "DiscappWorker/1.0");
 		_httpClient.DefaultRequestHeaders.Add("Authorization", $"Discogs key={_discogsOptions.ConsumerKey}, secret={_discogsOptions.ConsumerSecret}");
@@ -38,7 +40,7 @@ public class Worker : BackgroundService
 		{
 			if (_logger.IsEnabled(LogLevel.Information))
 			{
-				_logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
+				_logger.LogInformation("Worker running at: {Time}", DateTimeOffset.Now);
 
 				using IServiceScope scope = _scopeFactory.CreateScope();
 
@@ -111,18 +113,18 @@ public class Worker : BackgroundService
 					dbContext.Queue.Remove(queueItem);
 					await dbContext.SaveChangesAsync(stoppingToken);
 
-					_logger.LogInformation($"Processed and removed Queue item with ID {queueItem.Id}, saved image to {filePath}");
+					_logger.LogInformation("Processed and removed Queue item with ID {QueueId}, saved image to {FilePath}", queueItem.Id, filePath);
 				}
 				else
 				{
-					_logger.LogWarning($"No thumbnail found for release ID {queueItem.RecordID}");
+					_logger.LogWarning("No thumbnail found for release ID {RecordID}", queueItem.RecordID);
 					dbContext.Queue.Remove(queueItem);
 					await dbContext.SaveChangesAsync(stoppingToken);
 				}
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex, $"An error occurred while processing the queue ID {queueItem.Id}.");
+				_logger.LogError(ex, "An error occurred while processing the queue ID {QueueItemId}.", queueItem.Id);
 				dbContext.Queue.Remove(queueItem);
 				await dbContext.SaveChangesAsync(stoppingToken);
 			}
@@ -158,7 +160,7 @@ public class Worker : BackgroundService
 				}
 			}
 			await dbContext.SaveChangesAsync(stoppingToken);
-			_logger.LogInformation($"Checked {oldRecords.Count} old records and added them to the queue if not already present.");
+			_logger.LogInformation("Checked {OldRecordCount} old records and added them to the queue if not already present.", oldRecords.Count);
 		}
 	}
 

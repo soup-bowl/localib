@@ -1,28 +1,26 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using System.Text;
 using System.Web;
 using System.Collections.Specialized;
 using Discapp.API.Models.Auth;
 using Discapp.API.Services;
+using Discapp.Shared.Models;
 
 namespace Discapp.API.Controllers
 {
 	[ApiController]
 	[Route("api/[controller]")]
-	public class AuthController(IHttpClientFactory httpClientFactory, IAuthService authService) : ControllerBase
+	public class AuthController(IHttpClientFactory httpClientFactory, IAuthService authService, IOptions<DiscogApiSettings> discogSettings) : ControllerBase
 	{
-		private const string DiscogsRequestTokenUrl = "https://api.discogs.com/oauth/request_token";
-		private const string DiscogsAuthorizeUrl = "https://www.discogs.com/oauth/authorize";
-		private const string DiscogsAccessTokenUrl = "https://api.discogs.com/oauth/access_token";
-
 		private readonly HttpClient _httpClient = httpClientFactory.CreateClient();
-
 		private readonly IAuthService _authService = authService;
+		private readonly DiscogApiSettings _discogSettings = discogSettings.Value;
 
 		[HttpGet("Token")]
 		public async Task<ActionResult<AuthToken>> GetRequestToken()
 		{
-			HttpRequestMessage request = new(HttpMethod.Get, DiscogsRequestTokenUrl);
+			HttpRequestMessage request = new(HttpMethod.Get, _discogSettings.RequestTokenUrl);
 			request.Headers.Add("Authorization", _authService.TokenRequestHeader());
 			request.Headers.Add("User-Agent", _authService.UserAgent());
 			request.Content = new StringContent("", Encoding.UTF8, "application/x-www-form-urlencoded");
@@ -39,7 +37,7 @@ namespace Discapp.API.Controllers
 
 			return Ok(new AuthToken
 			{
-				RedirectUrl = $"{DiscogsAuthorizeUrl}?oauth_token={oauthToken}",
+				RedirectUrl = $"{_discogSettings.AuthorizeUrl}?oauth_token={oauthToken}",
 				TokenSecret = oauthTokenSecret ?? ""
 			});
 		}
@@ -48,7 +46,7 @@ namespace Discapp.API.Controllers
 		[HttpGet("Callback")]
 		public async Task<ActionResult<CallbackToken>> HandleCallback([FromQuery] CallbackInput oauth_details)
 		{
-			HttpRequestMessage request = new(HttpMethod.Post, DiscogsAccessTokenUrl);
+			HttpRequestMessage request = new(HttpMethod.Post, _discogSettings.AccessTokenUrl);
 			request.Headers.Add("Authorization", _authService.TokenCallbackHeader(oauth_details));
 			request.Headers.Add("User-Agent", _authService.UserAgent());
 			request.Content = new StringContent("", Encoding.UTF8, "application/x-www-form-urlencoded");
