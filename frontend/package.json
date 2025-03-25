@@ -50,7 +50,7 @@
 		"prettier": "^3.5.2",
 		"react-barcode-scanner": "^3.2.1",
 		"typescript": "^5.8.2",
-		"vite": "^6.2.0",
+		"vite": "^6.2.3",
 		"vite-plugin-pwa": "^0.21.1"
 	}
 }
