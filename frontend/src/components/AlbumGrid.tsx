@@ -23,11 +23,7 @@ const AlbumGridEntry: React.FC<AlbumProps> = ({ album, onClickAlbum }) => (
 				}
 			}}
 		>
-			<img
-				src={album.image_base64 ? album.image_base64 : album.basic_information.thumb}
-				className="album-art"
-				alt=""
-			/>
+			<img src={album.image_base64 ?? album.basic_information.thumb} className="album-art" alt="" />
 			{!album.image_base64 && (
 				<IonIcon className="nodl" aria-hidden="true" icon={cloudOfflineOutline} size="large" />
 			)}

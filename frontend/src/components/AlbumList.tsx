@@ -21,7 +21,7 @@ const AlbumListItem: React.FC<{
 }> = ({ album, onClickAlbum }) => (
 	<IonItem className="album-list-item" onClick={() => onClickAlbum(album)}>
 		<IonAvatar aria-hidden="true" slot="start">
-			<img alt="" src={album.image_base64 ? album.image_base64 : album.basic_information.thumb} />
+			<img alt="" src={album.image_base64 ?? album.basic_information.thumb} />
 		</IonAvatar>
 		<IonLabel>
 			<strong>{album.basic_information.title}</strong>

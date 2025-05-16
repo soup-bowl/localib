@@ -53,7 +53,7 @@ const SettingsProfilePage: React.FC = () => {
 	const [{ username, accessToken, secretToken }, _, clearAuth] = useAuth()
 	const ionConfig = getConfig()
 	const [openScanner, setOpenScanner] = useState<boolean>(false)
-	const currentMode = ionConfig?.get("mode") || "ios"
+	const currentMode = ionConfig?.get("mode") ?? "ios"
 
 	const lightMode = currentMode === "ios" ? "light" : undefined
 

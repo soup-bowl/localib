@@ -31,7 +31,7 @@ const SettingsHomePage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> =
 	const [restartAlert, setRestartAlert] = useState<boolean>(false)
 	const appVersion = import.meta.env.VITE_VER ?? "Unknown"
 	const ionConfig = getConfig()
-	const currentMode = ionConfig?.get("mode") || "ios"
+	const currentMode = ionConfig?.get("mode") ?? "ios"
 
 	const lightMode = currentMode === "ios" ? "light" : undefined
 

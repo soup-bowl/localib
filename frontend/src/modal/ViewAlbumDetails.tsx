@@ -79,7 +79,7 @@ const ViewAlbumDetails: React.FC<DisplayProps> = ({ album, open, onClose }) => {
 			</IonHeader>
 			<IonContent className="ion-padding">
 				<div style={{ display: "flex", justifyContent: "center", marginBottom: 15 }}>
-					<img src={album.image_base64 ? album.image_base64 : album.basic_information.thumb} alt="" />
+					<img src={album.image_base64 ?? album.basic_information.thumb} alt="" />
 				</div>
 				<IonSegment
 					value={tabState}

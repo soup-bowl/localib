@@ -29,7 +29,7 @@ const SettingsInformationPage: React.FC = () => {
 	const [{ username }] = useAuth()
 	const [storageInfo, setStorageInfo] = useState<{ usage: string; quota: string } | undefined>()
 	const ionConfig = getConfig()
-	const currentMode = ionConfig?.get("mode") || "ios"
+	const currentMode = ionConfig?.get("mode") ?? "ios"
 
 	useEffect(() => {
 		if ("storage" in navigator && "estimate" in navigator.storage) {
