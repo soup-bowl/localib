@@ -1,25 +1,30 @@
 services:
-  mysql:
-    image: mysql:latest
+  postgres:
+    image: postgres:latest
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: localib
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: localib
     ports:
-      - "3306:3306"
+      - "5432:5432"
     volumes:
-      - mysql_data:/var/lib/mysql
-  pma:
-    image: phpmyadmin
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  adminer:
+    image: adminer
     depends_on:
-      - mysql
+      - postgres
     restart: always
     ports:
-      - 3307:80
+      - 8080:8080
     environment:
-      PMA_HOST: mysql
-      PMA_USER: root
-      PMA_PASSWORD: password
+      ADMINER_DEFAULT_SERVER: postgres
 
 volumes:
-  mysql_data:
+  postgres_data:

@@ -16,7 +16,7 @@
       "enableNonRootDocker": "true"
     }
   },
-  "forwardPorts": [8100, 5132, 3307],
+  "forwardPorts": [8100, 5132, 8080],
   "postCreateCommand": "./.devcontainer/postCreateCommand.sh",
   "customizations": {
     "vscode": {
@@ -34,7 +34,7 @@
   "runArgs": ["--env-file", ".devcontainer/devcontainer.env"],
   "remoteUser": "root",
   "portsAttributes": {
-    "3307": {
+    "8080": {
       "label": "pma"
     },
     "5132": {

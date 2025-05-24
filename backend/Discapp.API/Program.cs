@@ -9,12 +9,12 @@ using Discapp.Shared.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 var dbHost = Environment.GetEnvironmentVariable("LOCALIB_DB_HOST") ?? "localhost";
-var dbPort = Environment.GetEnvironmentVariable("LOCALIB_DB_PORT") ?? "3306";
-var dbName = Environment.GetEnvironmentVariable("LOCALIB_DB_NAME") ?? "database";
-var dbUser = Environment.GetEnvironmentVariable("LOCALIB_DB_USER") ?? "root";
+var dbPort = Environment.GetEnvironmentVariable("LOCALIB_DB_PORT") ?? "5432";
+var dbName = Environment.GetEnvironmentVariable("LOCALIB_DB_NAME") ?? "postgres";
+var dbUser = Environment.GetEnvironmentVariable("LOCALIB_DB_USER") ?? "postgres";
 var dbPassword = Environment.GetEnvironmentVariable("LOCALIB_DB_PASSWORD") ?? "password";
 var connectionString = Environment.GetEnvironmentVariable("LOCALIB_CONNECTION_STRING")
-    ?? $"Server={dbHost};Port={dbPort};Database={dbName};User={dbUser};Password={dbPassword};";
+    ?? $"Host={dbHost};Port={dbPort};Database={dbName};Username={dbUser};Password={dbPassword};";
 
 var imageStoragePath = Environment.GetEnvironmentVariable("LOCALIB_IMAGE_PATH") ?? "./Images";
 var ClientKey = Environment.GetEnvironmentVariable("LOCALIB_DISCOGS_CONSUMER_KEY");
@@ -52,8 +52,7 @@ else
 }
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 21)),
-    b => b.MigrationsAssembly("Discapp.API")));
+    options.UseNpgsql(connectionString, b => b.MigrationsAssembly("Discapp.API")));
 
 builder.Services.AddSingleton(new PathSettings { ImagePath = imageStoragePath ?? "." });
 builder.Services.AddSingleton(new AuthSettings
