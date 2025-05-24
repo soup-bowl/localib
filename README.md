@@ -62,7 +62,7 @@ docker run --rm \
   ghcr.io/soup-bowl/netscrape-combined:edge
 ```
 
-Want to use a connection string? Replace all the DB fields with `-e LOCALIB_CONNECTION_STRING="Server=localhost;Database=disc;User=root;Password=password;"`.
+Want to use a connection string? Replace all the DB fields with `-e LOCALIB_CONNECTION_STRING="Host=localhost;Database=postgres;Username=postgres;Password=password;"`.
 
 ### Testing Offline Capabilities
 
