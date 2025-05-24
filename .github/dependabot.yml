@@ -37,9 +37,6 @@ updates:
     directory: "/backend"
     schedule:
       interval: "monthly"
-    ignore:
-      # Needs Pomelo.EntityFrameworkCore.MySql to release 9^
-      - dependency-name: "Microsoft.EntityFrameworkCore.Tools"
     labels:
       - "backend"
       - "enhancement"
