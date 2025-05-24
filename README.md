@@ -32,12 +32,12 @@ Configuration is via environment variables:
 
 | Variable                          | Impacts | Description                                                                                       |
 | --------------------------------- | ------- | ------------------------------------------------------------------------------------------------- |
-| `LOCALIB_DB_HOST`                 | Both    | MySQL database hostname. Default `localhost`.                                                     |
-| `LOCALIB_DB_PORT`                 | Both    | MySQL port number. Default `3306`.                                                                |
-| `LOCALIB_DB_NAME`                 | Both    | MySQL database schema. Default `database`.                                                        |
-| `LOCALIB_DB_USER`                 | Both    | MySQL database access user. Default `root`.                                                       |
-| `LOCALIB_DB_PASSWORD`             | Both    | MySQL database access password. Default `password` (lol).                                         |
-| `LOCALIB_CONNECTION_STRING`       | Both    | MySQL Connection string. Overrides the above fields, if set.                                      |
+| `LOCALIB_DB_HOST`                 | Both    | PostgreSQL database hostname. Default `localhost`.                                                |
+| `LOCALIB_DB_PORT`                 | Both    | PostgreSQL port number. Default `5432`.                                                           |
+| `LOCALIB_DB_NAME`                 | Both    | PostgreSQL database schema. Default `postgres`.                                                   |
+| `LOCALIB_DB_USER`                 | Both    | PostgreSQL database access user. Default `postgres`.                                              |
+| `LOCALIB_DB_PASSWORD`             | Both    | PostgreSQL database access password. Default `password` (lol).                                    |
+| `LOCALIB_CONNECTION_STRING`       | Both    | PostgreSQL Connection string. Overrides the above fields, if set.                                 |
 | `LOCALIB_IMAGE_PATH`              | Both    | Path where the Worker stores to, and the API serves images from. Default via Docker is `/Images`. |
 | `LOCALIB_DISCOGS_CONSUMER_KEY`    | Both    | Consumer Key from [Discogs Developer Application][dcd], used by both the API and the worker.      |
 | `LOCALIB_DISCOGS_CONSUMER_SECRET` | Both    | Consumer Secret from [Discogs Developer Application][dcd], used by both the API and the worker.   |
