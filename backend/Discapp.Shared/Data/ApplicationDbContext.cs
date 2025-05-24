@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Discapp.Shared.Data
 {
@@ -15,6 +16,20 @@ namespace Discapp.Shared.Data
                 ?? $"Host={dbHost};Port={dbPort};Database={dbName};Username={dbUser};Password={dbPassword};";
 
             optionsBuilder.UseNpgsql(connectionString, b => b.MigrationsAssembly("Discapp.API"));
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            // PQL cries over a DT that isn't UTC - rightly so.
+            var dateTimeConverter = new ValueConverter<DateTime, DateTime>(
+                v => v.Kind == DateTimeKind.Utc ? v : v.ToUniversalTime(),
+                v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
+
+            modelBuilder.Entity<Record>()
+                .Property(r => r.Recorded)
+                .HasConversion(dateTimeConverter);
+
+            base.OnModelCreating(modelBuilder);
         }
 
         public DbSet<Queue> Queue { get; set; } = null!;
