@@ -5,18 +5,16 @@ using Discapp.API.Models;
 using Discapp.API.Models.Discogs;
 using Discapp.API.Models.Auth;
 using Discapp.API.Services;
-using Discapp.Shared.Models;
 
 namespace Discapp.API.Controllers
 {
 	[ApiController]
 	[Route("api/[controller]")]
-	public class DiscogsController(IHttpClientFactory httpClientFactory, IAuthService authService, IImageProcessService imageService, IOptions<DiscogApiSettings> discogSettings) : ControllerBase
+	public class DiscogsController(IHttpClientFactory httpClientFactory, IAuthService authService, IImageProcessService imageService) : ControllerBase
 	{
 		private readonly HttpClient _httpClient = httpClientFactory.CreateClient();
 		private readonly IAuthService _authService = authService;
 		private readonly IImageProcessService _imageService = imageService;
-		private readonly DiscogApiSettings _discogSettings = discogSettings.Value;
 
 		[HttpGet("Identify")]
 		public Task<ActionResult<DiscogsIdentity>> GetIdentity([FromHeader(Name = "Authorization")] string token) =>
@@ -94,7 +92,7 @@ namespace Discapp.API.Controllers
 			if (token is null)
 				return BadRequest("Invalid token.");
 
-			HttpRequestMessage request = new(HttpMethod.Get, $"{_discogSettings.BaseUrl}/{endpoint}");
+			HttpRequestMessage request = new(HttpMethod.Get, $"https://api.discogs.com/{endpoint}");
 			request.Headers.Add("Authorization", _authService.AuthenticatedRequestHeader(token));
 			request.Headers.Add("User-Agent", _authService.UserAgent());
 

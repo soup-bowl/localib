@@ -2,7 +2,6 @@ using Discapp.Worker;
 using Discapp.Worker.Models;
 using Discapp.Shared.Data;
 using Microsoft.EntityFrameworkCore;
-using Discapp.Shared.Models;
 
 var builder = Host.CreateApplicationBuilder(args);
 
@@ -17,8 +16,6 @@ var connectionString = Environment.GetEnvironmentVariable("LOCALIB_CONNECTION_ST
 var imageStoragePath = Environment.GetEnvironmentVariable("LOCALIB_IMAGE_PATH") ?? "./Images";
 var ClientKey = Environment.GetEnvironmentVariable("LOCALIB_DISCOGS_CONSUMER_KEY") ?? "";
 var ClientSecret = Environment.GetEnvironmentVariable("LOCALIB_DISCOGS_CONSUMER_SECRET") ?? "";
-
-builder.Services.Configure<DiscogApiSettings>(builder.Configuration.GetSection("DiscogApis"));
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString)

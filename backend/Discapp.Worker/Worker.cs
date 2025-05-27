@@ -1,5 +1,4 @@
 using Discapp.Worker.Models;
-using Discapp.Shared.Models;
 using Discapp.Shared.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -17,18 +16,16 @@ public class Worker : BackgroundService
 	private readonly DiscogsOptions _discogsOptions;
 	private readonly PathSettings _pathOptions;
 	private readonly HttpClient _httpClient;
-	private readonly DiscogApiSettings _discogSettings;
 
-	public Worker(ILogger<Worker> logger, IServiceScopeFactory scopeFactory, IOptions<DiscogsOptions> discogsOptions, IOptions<PathSettings> pathOptions, IOptions<DiscogApiSettings> discogSettings)
+	public Worker(ILogger<Worker> logger, IServiceScopeFactory scopeFactory, IOptions<DiscogsOptions> discogsOptions, IOptions<PathSettings> pathOptions)
 	{
 		_logger = logger;
 		_scopeFactory = scopeFactory;
 		_discogsOptions = discogsOptions.Value;
 		_pathOptions = pathOptions.Value;
-		_discogSettings = discogSettings.Value;
 		_httpClient = new HttpClient
 		{
-			BaseAddress = new Uri(_discogSettings.BaseUrl)
+			BaseAddress = new Uri("https://api.discogs.com")
 		};
 		_httpClient.DefaultRequestHeaders.Add("User-Agent", "DiscappWorker/1.0");
 		_httpClient.DefaultRequestHeaders.Add("Authorization", $"Discogs key={_discogsOptions.ConsumerKey}, secret={_discogsOptions.ConsumerSecret}");
