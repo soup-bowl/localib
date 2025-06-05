@@ -59,7 +59,7 @@ docker run --rm \
   -e LOCALIB_DISCOGS_CALLBACK_URL=https://localib.app/callback \
   -v "$(pwd)/Images:/Images" \
   -p 8080:8080 \
-  ghcr.io/soup-bowl/netscrape-combined:edge
+  ghcr.io/soup-bowl/localib/api:edge
 ```
 
 Want to use a connection string? Replace all the DB fields with `-e LOCALIB_CONNECTION_STRING="Host=localhost;Database=postgres;Username=postgres;Password=password;"`.

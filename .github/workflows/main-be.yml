@@ -19,18 +19,12 @@ jobs:
     strategy:
       matrix:
         include:
-          - dockerfile: Dockerfile
-            tag: combined
-            variant: bookworm-slim
           - dockerfile: Dockerfile.Worker
             variant: bookworm-slim
             tag: worker
           - dockerfile: Dockerfile.API
             tag: api
             variant: bookworm-slim
-          - dockerfile: Dockerfile
-            tag: combined
-            variant: alpine
           - dockerfile: Dockerfile.Worker
             variant: alpine
             tag: worker
@@ -61,7 +55,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: ghcr.io/soup-bowl/netscrape-${{ matrix.tag }}:edge${{ matrix.variant == 'alpine' && '-alpine' || '' }}
+          tags: ghcr.io/soup-bowl/localib/${{ matrix.tag }}:edge${{ matrix.variant == 'alpine' && '-alpine' || '' }}
           platforms: >
             linux/amd64,
             linux/arm64
@@ -78,8 +72,8 @@ jobs:
         with:
           push: true
           tags: >
-            ghcr.io/soup-bowl/netscrape-${{ matrix.tag }}:${{ github.event.release.tag_name }}${{ matrix.variant == 'alpine' && '-alpine' || '' }},
-            ghcr.io/soup-bowl/netscrape-${{ matrix.tag }}:latest${{ matrix.variant == 'alpine' && '-alpine' || '' }}
+            ghcr.io/soup-bowl/localib/${{ matrix.tag }}:${{ github.event.release.tag_name }}${{ matrix.variant == 'alpine' && '-alpine' || '' }},
+            ghcr.io/soup-bowl/localib/${{ matrix.tag }}:latest${{ matrix.variant == 'alpine' && '-alpine' || '' }}
           platforms: >
             linux/amd64,
             linux/arm64
