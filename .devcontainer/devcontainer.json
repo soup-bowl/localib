@@ -32,7 +32,6 @@
     }
   },
   "runArgs": ["--env-file", ".devcontainer/devcontainer.env"],
-  "remoteUser": "root",
   "portsAttributes": {
     "8080": {
       "label": "pma"
