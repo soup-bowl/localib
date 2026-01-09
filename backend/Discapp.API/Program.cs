@@ -2,8 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using Discapp.Shared.Data;
 using Discapp.API.Models;
 using Discapp.API.Services;
-using Microsoft.OpenApi.Models;
 using Discapp.API.Models.Auth;
+using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -66,20 +66,41 @@ builder.Services.AddScoped<IImageProcessService, ImageProcessService>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
+builder.Services.AddOpenApi("v1", options =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Localib Vinyl", Version = "v1" });
-
-    OpenApiSecurityScheme securityScheme = new()
+    options.AddDocumentTransformer((document, context, cancellationToken) =>
     {
-        Name = "Authorization",
-        Description = "Used for the Discogs class of APIs. Enter your token like this: 'Bearer ACCESS_TOKEN&SECRET_TOKEN'",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.Http,
-        Scheme = "Bearer"
-    };
+        document.Info = new OpenApiInfo
+        {
+            Title = "Localib Vinyl",
+            Version = "v1"
+        };
 
-    c.AddSecurityDefinition("Bearer", securityScheme);
+        document.Components ??= new OpenApiComponents();
+        document.Components.SecuritySchemes ??= new Dictionary<string, IOpenApiSecurityScheme>();
+
+        // Equivalent of your Swashbuckle AddSecurityDefinition("Bearer", ...)
+        document.Components.SecuritySchemes["Bearer"] = new OpenApiSecurityScheme
+        {
+            Type = SecuritySchemeType.Http,
+            Scheme = "bearer",
+            In = ParameterLocation.Header,
+            Name = "Authorization",
+            Description = "Used for the Discogs class of APIs. Enter your token like this: 'Bearer ACCESS_TOKEN&SECRET_TOKEN'"
+        };
+
+        // Apply it globally (similar to adding a security requirement everywhere)
+        foreach (var operation in document.Paths.Values.SelectMany(p => p.Operations))
+        {
+            operation.Value.Security ??= [];
+            operation.Value.Security.Add(new OpenApiSecurityRequirement
+            {
+                [new OpenApiSecuritySchemeReference("Bearer", document)] = []
+            });
+        }
+
+        return Task.CompletedTask;
+    });
 });
 builder.Services.AddHttpClient();
 
@@ -88,8 +109,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.MapOpenApi();
 }
 
 app.UseCors("DefaultPolicy");
