@@ -24,7 +24,7 @@
         "ms-dotnettools.csharp",
         "ms-dotnettools.vscode-dotnet-runtime",
         "ms-azuretools.vscode-docker",
-        "ionic.ionic",
+        "WebNative.webnative",
         "mgmcdermott.vscode-language-babel",
         "humao.rest-client",
         "ms-dotnettools.csdevkit"
