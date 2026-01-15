@@ -46,6 +46,10 @@ export async function checkStoragePersistence(): Promise<StoragePersistenceStatu
  * Requests persistent storage permission from the browser
  * This helps prevent IndexedDB data from being cleared on mobile browsers
  *
+ * Note: Checks if already persisted before requesting to avoid unnecessary
+ * permission prompts. This is a one-time check at startup, so performance
+ * impact is negligible compared to the benefit of avoiding duplicate requests.
+ *
  * @returns Promise<boolean> - true if persistence was granted
  */
 export async function requestStoragePersistence(): Promise<boolean> {
@@ -56,7 +60,7 @@ export async function requestStoragePersistence(): Promise<boolean> {
 	}
 
 	try {
-		// First check if already persisted
+		// First check if already persisted to avoid unnecessary permission prompts
 		const alreadyPersisted = await navigator.storage.persisted()
 		if (alreadyPersisted) {
 			console.log("Storage is already persistent")
