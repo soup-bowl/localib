@@ -24,11 +24,11 @@ jobs:
       matrix:
         include:
           - dockerfile: Dockerfile.Worker
-            variant: bookworm-slim
+            variant: noble
             tag: worker
           - dockerfile: Dockerfile.API
             tag: api
-            variant: bookworm-slim
+            variant: noble
           - dockerfile: Dockerfile.Worker
             variant: alpine
             tag: worker

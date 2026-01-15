@@ -1,5 +1,5 @@
 ARG DOTNET_VERSION=10.0
-ARG BASE_VARIANT=bookworm-slim
+ARG BASE_VARIANT=noble
 
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:${DOTNET_VERSION}-${BASE_VARIANT} AS build
 ARG TARGETARCH
@@ -17,8 +17,15 @@ FROM mcr.microsoft.com/dotnet/aspnet:${DOTNET_VERSION}-${BASE_VARIANT} AS runtim
 WORKDIR /app
 COPY --from=build /publish /app
 
-RUN addgroup --system discapp && adduser --system --ingroup discapp discapp && \
-	chown -R discapp:discapp /app
+RUN set -eux; \
+    if command -v addgroup >/dev/null 2>&1; then \
+        addgroup --system discapp; \
+        adduser  --system --ingroup discapp discapp; \
+    else \
+        groupadd --system discapp; \
+        useradd  --system --gid discapp --create-home --shell /sbin/nologin discapp; \
+    fi; \
+    chown -R discapp:discapp /app
 
 USER discapp
 
