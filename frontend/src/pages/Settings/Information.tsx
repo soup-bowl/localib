@@ -49,9 +49,13 @@ const SettingsInformationPage: React.FC = () => {
 		}
 
 		// Check storage persistence status
-		checkStoragePersistence().then((status) => {
-			setPersistenceStatus(status)
-		})
+		checkStoragePersistence()
+			.then((status) => {
+				setPersistenceStatus(status)
+			})
+			.catch((error) => {
+				console.error("Failed to check storage persistence:", error)
+			})
 	}, [])
 
 	const collection = queryClient.getQueryData<IReleaseSet>([`${username}collectionv2`])
