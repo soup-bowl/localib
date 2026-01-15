@@ -98,13 +98,16 @@ const SettingsInformationPage: React.FC = () => {
 								slot="start"
 								icon={persistenceStatus.persisted ? shieldCheckmarkOutline : warningOutline}
 								color={persistenceStatus.persisted ? "success" : "warning"}
+								aria-label={persistenceStatus.persisted ? "Protected" : "Not Protected"}
 							/>
 							<IonLabel>
 								<h3>Data Persistence</h3>
 								<p>{persistenceStatus.persisted ? "Protected" : "Not Protected"}</p>
 							</IonLabel>
-							<IonLabel id="persistence-tooltip" slot="end">
-								{persistenceStatus.supported ? (persistenceStatus.persisted ? "✓" : "⚠") : "✗"}
+							<IonLabel id="persistence-tooltip" slot="end" aria-label="Click for more information">
+								<span aria-hidden="true">
+									{persistenceStatus.supported ? (persistenceStatus.persisted ? "✓" : "⚠") : "✗"}
+								</span>
 							</IonLabel>
 						</IonItem>
 					)}

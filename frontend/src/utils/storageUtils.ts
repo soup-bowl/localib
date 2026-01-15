@@ -84,7 +84,7 @@ export async function requestStoragePersistence(): Promise<boolean> {
  */
 export function getStoragePersistenceMessage(status: StoragePersistenceStatus): string {
 	if (!status.supported) {
-		return "Your browser doesn't support persistent storage. Data may be cleared after a period of inactivity. Consider adding this app to your home screen for better data retention."
+		return "Your browser doesn't support persistent storage. Data may be cleared after a period of inactivity. Adding this app to your home screen may improve data retention, but cannot guarantee persistence."
 	}
 
 	if (status.persisted) {
