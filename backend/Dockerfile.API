@@ -1,4 +1,4 @@
-ARG DOTNET_VERSION=8.0
+ARG DOTNET_VERSION=10.0
 ARG BASE_VARIANT=bookworm-slim
 
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:${DOTNET_VERSION}-${BASE_VARIANT} AS build

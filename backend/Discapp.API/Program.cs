@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Discapp.Shared.Data;
 using Discapp.API.Models;
 using Discapp.API.Services;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Discapp.API.Models.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
