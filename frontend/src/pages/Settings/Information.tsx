@@ -16,18 +16,26 @@ import {
 	IonCol,
 	IonGrid,
 	IonRow,
+	IonIcon,
 } from "@ionic/react"
+import { shieldCheckmarkOutline, warningOutline } from "ionicons/icons"
 import { useQueryClient } from "@tanstack/react-query"
 import { useState, useEffect } from "react"
 import { IReleaseSet } from "@/api"
 import { useAuth } from "@/hooks"
-import { formatBytes } from "@/utils"
+import {
+	formatBytes,
+	checkStoragePersistence,
+	getStoragePersistenceMessage,
+	type StoragePersistenceStatus,
+} from "@/utils"
 import { InfoBanners } from "@/components"
 
 const SettingsInformationPage: React.FC = () => {
 	const queryClient = useQueryClient()
 	const [{ username }] = useAuth()
 	const [storageInfo, setStorageInfo] = useState<{ usage: string; quota: string } | undefined>()
+	const [persistenceStatus, setPersistenceStatus] = useState<StoragePersistenceStatus | undefined>()
 	const ionConfig = getConfig()
 	const currentMode = ionConfig?.get("mode") ?? "ios"
 
@@ -39,6 +47,15 @@ const SettingsInformationPage: React.FC = () => {
 				}
 			})
 		}
+
+		// Check storage persistence status
+		checkStoragePersistence()
+			.then((status) => {
+				setPersistenceStatus(status)
+			})
+			.catch((error) => {
+				console.error("Failed to check storage persistence:", error)
+			})
 	}, [])
 
 	const collection = queryClient.getQueryData<IReleaseSet>([`${username}collectionv2`])
@@ -75,6 +92,25 @@ const SettingsInformationPage: React.FC = () => {
 							{storageInfo?.usage ?? "Unknown"} of {storageInfo?.quota ?? "Unknown"}
 						</IonLabel>
 					</IonItem>
+					{persistenceStatus && (
+						<IonItem color={lightMode}>
+							<IonIcon
+								slot="start"
+								icon={persistenceStatus.persisted ? shieldCheckmarkOutline : warningOutline}
+								color={persistenceStatus.persisted ? "success" : "warning"}
+								aria-label={persistenceStatus.persisted ? "Protected" : "Not Protected"}
+							/>
+							<IonLabel>
+								<h3>Data Persistence</h3>
+								<p>{persistenceStatus.persisted ? "Protected" : "Not Protected"}</p>
+							</IonLabel>
+							<IonLabel id="persistence-tooltip" slot="end" aria-label="Click for more information">
+								<span aria-hidden="true">
+									{persistenceStatus.supported ? (persistenceStatus.persisted ? "✓" : "⚠") : "✗"}
+								</span>
+							</IonLabel>
+						</IonItem>
+					)}
 					<IonItem color={lightMode}>
 						<IonLabel>Records stored</IonLabel>
 						<IonLabel id="reccount-tooltip" slot="end">
@@ -88,6 +124,13 @@ const SettingsInformationPage: React.FC = () => {
 						</IonLabel>
 					</IonItem>
 				</IonList>
+				{persistenceStatus && (
+					<IonPopover trigger="persistence-tooltip" triggerAction="click">
+						<IonContent class="ion-padding">
+							{getStoragePersistenceMessage(persistenceStatus)}
+						</IonContent>
+					</IonPopover>
+				)}
 				<IonPopover trigger="reccount-tooltip" triggerAction="click">
 					<IonContent class="ion-padding">
 						{inStorageInfo.collectionCount} collected, {inStorageInfo.wantedCount} wanted

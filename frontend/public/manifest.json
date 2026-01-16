@@ -67,6 +67,7 @@
 	],
 	"start_url": ".",
 	"display": "standalone",
+	"display_override": ["standalone", "fullscreen"],
 	"theme_color": "#0d0d0d",
 	"background_color": "#0d0d0d"
 }
