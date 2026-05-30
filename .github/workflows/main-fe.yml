@@ -7,6 +7,10 @@ on:
     paths:
       - "frontend/**"
       - ".github/workflows/main-fe.yml"
+  pull_request:
+    paths:
+      - "frontend/**"
+      - ".github/workflows/main-fe.yml"
   release:
     types:
       - published
@@ -55,8 +59,14 @@ jobs:
           GIT_COMMIT=$(git rev-parse --short HEAD)
           echo "VITE_VER=${VERSION}-${GIT_COMMIT}" >> frontend/.env.production
 
+      - name: 📦 Install Dependencies
+        run: cd frontend && npm ci
+
+      - name: 🧪 Run Unit Tests
+        run: cd frontend && npm run test.unit:run
+
       - name: 📦 Build Site
-        run: cd frontend && npm ci && npm run build:ion
+        run: cd frontend && npm run build:ion
 
       - name: 🚛 Publish Site
         uses: cloudflare/wrangler-action@v3
