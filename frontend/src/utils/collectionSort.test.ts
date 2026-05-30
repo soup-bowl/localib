@@ -59,15 +59,18 @@ describe("collectionSort", () => {
 	})
 
 	it("groups artist and label entries without duplicating a release", () => {
-		const releases = [createRelease(1, "2024-01-01T00:00:00.000Z", ["Artist A", "Artist A"], ["Label A", "Label A"])]
+		const releases = [
+			createRelease(1, "2024-01-01T00:00:00.000Z", ["Artist A", "Artist A"], ["Label A", "Label A"]),
+			createRelease(2, "2024-01-02T00:00:00.000Z", ["Artist A"], ["Label A"]),
+		]
 
 		const artistGroups = splitRecordsByArtist(releases)
 		const labelGroups = splitRecordsByLabel(releases)
 
 		expect(artistGroups).toHaveLength(1)
-		expect(artistGroups[0][1]).toHaveLength(1)
+		expect(artistGroups[0][1].map((release) => release.id)).toEqual([1, 2])
 		expect(labelGroups).toHaveLength(1)
-		expect(labelGroups[0][1]).toHaveLength(1)
+		expect(labelGroups[0][1].map((release) => release.id)).toEqual([1, 2])
 	})
 
 	it("returns unsorted records when no sort is selected", () => {

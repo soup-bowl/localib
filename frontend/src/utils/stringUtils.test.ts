@@ -18,6 +18,8 @@ describe("stringUtils", () => {
 	it("formats currency for known and unknown symbols", () => {
 		expect(formatCurrency(12.5, "usd")).toBe("$12.50")
 		expect(formatCurrency(8, "gbp")).toBe("£8.00")
+		expect(formatCurrency(0, "eur")).toBe("€0.00")
+		expect(formatCurrency(-1.25, "usd")).toBe("$-1.25")
 		expect(formatCurrency(3.25, "unknown")).toBe("?3.25")
 	})
 })
