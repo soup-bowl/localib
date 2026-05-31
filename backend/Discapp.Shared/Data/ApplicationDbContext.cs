@@ -7,6 +7,9 @@ namespace Discapp.Shared.Data
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            if (optionsBuilder.IsConfigured)
+                return;
+
             var dbHost = Environment.GetEnvironmentVariable("LOCALIB_DB_HOST") ?? "localhost";
             var dbPort = Environment.GetEnvironmentVariable("LOCALIB_DB_PORT") ?? "5432";
             var dbName = Environment.GetEnvironmentVariable("LOCALIB_DB_NAME") ?? "postgres";

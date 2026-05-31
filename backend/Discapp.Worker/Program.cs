@@ -30,6 +30,12 @@ builder.Services.Configure<PathSettings>(options =>
 {
     options.ImagePath = imageStoragePath;
 });
+builder.Services.AddHttpClient("Discogs", (sp, client) =>
+{
+    client.BaseAddress = new Uri("https://api.discogs.com");
+    client.DefaultRequestHeaders.Add("User-Agent", "DiscappWorker/1.0");
+    client.DefaultRequestHeaders.Add("Authorization", $"Discogs key={ClientKey}, secret={ClientSecret}");
+});
 builder.Services.AddHostedService<Worker>();
 
 var host = builder.Build();

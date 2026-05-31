@@ -17,7 +17,29 @@ permissions:
   packages: write
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Codebase
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.x"
+
+      - name: Restore dependencies
+        run: dotnet restore backend/Discapp.sln
+
+      - name: Build
+        run: dotnet build backend/Discapp.sln --no-restore
+
+      - name: Run tests
+        run: dotnet test backend/Discapp.sln --no-build --verbosity normal
+
   build:
+    needs: test
     runs-on: ubuntu-latest
 
     strategy:

@@ -7,28 +7,23 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Formats.Webp;
 
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Discapp.Worker.Tests")]
+
 namespace Discapp.Worker;
 
 public class Worker : BackgroundService
 {
 	private readonly ILogger<Worker> _logger;
 	private readonly IServiceScopeFactory _scopeFactory;
-	private readonly DiscogsOptions _discogsOptions;
 	private readonly PathSettings _pathOptions;
 	private readonly HttpClient _httpClient;
 
-	public Worker(ILogger<Worker> logger, IServiceScopeFactory scopeFactory, IOptions<DiscogsOptions> discogsOptions, IOptions<PathSettings> pathOptions)
+	public Worker(ILogger<Worker> logger, IServiceScopeFactory scopeFactory, IOptions<PathSettings> pathOptions, IHttpClientFactory httpClientFactory)
 	{
 		_logger = logger;
 		_scopeFactory = scopeFactory;
-		_discogsOptions = discogsOptions.Value;
 		_pathOptions = pathOptions.Value;
-		_httpClient = new HttpClient
-		{
-			BaseAddress = new Uri("https://api.discogs.com")
-		};
-		_httpClient.DefaultRequestHeaders.Add("User-Agent", "DiscappWorker/1.0");
-		_httpClient.DefaultRequestHeaders.Add("Authorization", $"Discogs key={_discogsOptions.ConsumerKey}, secret={_discogsOptions.ConsumerSecret}");
+		_httpClient = httpClientFactory.CreateClient("Discogs");
 	}
 
 	protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -51,7 +46,7 @@ public class Worker : BackgroundService
 		}
 	}
 
-	private async Task ProcessQueue(ApplicationDbContext dbContext, CancellationToken stoppingToken)
+	internal async Task ProcessQueue(ApplicationDbContext dbContext, CancellationToken stoppingToken)
 	{
 		Queue? queueItem = await dbContext.Queue.FirstOrDefaultAsync(stoppingToken);
 
@@ -132,7 +127,7 @@ public class Worker : BackgroundService
 		}
 	}
 
-	private async Task FilterOldRecords(ApplicationDbContext dbContext, CancellationToken stoppingToken)
+	internal async Task FilterOldRecords(ApplicationDbContext dbContext, CancellationToken stoppingToken)
 	{
 		DateTime decay = DateTime.Now.AddMonths(-3);
 		List<Record> oldRecords = await dbContext.Records
