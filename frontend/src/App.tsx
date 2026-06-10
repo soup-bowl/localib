@@ -15,6 +15,7 @@ import {
 	IonTabs,
 	setupIonicReact,
 } from "@ionic/react"
+import { iosTransitionAnimation, popoverEnterAnimation, popoverLeaveAnimation } from "@rdlabo/ionic-theme-ios26"
 import { IonReactRouter } from "@ionic/react-router"
 import { discOutline, searchOutline, settingsOutline, cogOutline } from "ionicons/icons"
 import {
@@ -55,6 +56,11 @@ import "@ionic/react/css/display.css"
 
 import "@ionic/react/css/palettes/dark.always.css"
 
+/* iOS 26 theme */
+import "@rdlabo/ionic-theme-ios26/dist/css/default-variables.css"
+import "@rdlabo/ionic-theme-ios26/dist/css/ionic-theme-ios26.css"
+import "@rdlabo/ionic-theme-ios26/dist/css/ionic-theme-ios26-dark-always.css"
+
 /* Theme variables */
 import "./theme/variables.css"
 
@@ -66,8 +72,14 @@ const getDeviceMode = (): DeviceMode => {
 	return validItem
 }
 
+const deviceMode = getDeviceMode()
 setupIonicReact({
-	mode: getDeviceMode(),
+	mode: deviceMode,
+	...(deviceMode === "ios" && {
+		navAnimation: iosTransitionAnimation,
+		popoverEnter: popoverEnterAnimation,
+		popoverLeave: popoverLeaveAnimation,
+	}),
 })
 
 const queryClient = new QueryClient({
