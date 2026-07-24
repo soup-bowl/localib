@@ -76,10 +76,15 @@ localStorage.setItem("mode", ionicMode)
 
 if (deviceMode === "ios26") {
 	document.documentElement.setAttribute("data-theme", "ios26")
-	const style = document.createElement("style")
+
+	const existing = document.getElementById("ios26-theme")
+	const style = existing instanceof HTMLStyleElement ? existing : document.createElement("style")
 	style.id = "ios26-theme"
-	style.textContent = ios26DefaultVars + "\n" + ios26Theme + "\n" + ios26DarkAlways
-	document.head.appendChild(style)
+	style.textContent = [ios26DefaultVars, ios26Theme, ios26DarkAlways].join("\n")
+
+	if (!existing) {
+		document.head.appendChild(style)
+	}
 }
 
 setupIonicReact({
