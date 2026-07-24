@@ -56,10 +56,10 @@ import "@ionic/react/css/display.css"
 
 import "@ionic/react/css/palettes/dark.always.css"
 
-/* iOS 26 theme */
-import "@rdlabo/ionic-theme-ios26/dist/css/default-variables.css"
-import "@rdlabo/ionic-theme-ios26/dist/css/ionic-theme-ios26.css"
-import "@rdlabo/ionic-theme-ios26/dist/css/ionic-theme-ios26-dark-always.css"
+/* iOS 26 theme — loaded conditionally when "ios26" mode is active */
+import ios26DefaultVars from "@rdlabo/ionic-theme-ios26/dist/css/default-variables.css?inline"
+import ios26Theme from "@rdlabo/ionic-theme-ios26/dist/css/ionic-theme-ios26.css?inline"
+import ios26DarkAlways from "@rdlabo/ionic-theme-ios26/dist/css/ionic-theme-ios26-dark-always.css?inline"
 
 /* Theme variables */
 import "./theme/variables.css"
@@ -67,15 +67,24 @@ import "./theme/variables.css"
 const getDeviceMode = (): DeviceMode => {
 	const item = localStorage.getItem("DeviceTheme")
 	const parsedItem = item ? JSON.parse(item) : "ios"
-	const validItem = parsedItem ? (parsedItem as DeviceMode) : "ios"
-	localStorage.setItem("mode", validItem)
-	return validItem
+	return (parsedItem as DeviceMode) ?? "ios"
 }
 
 const deviceMode = getDeviceMode()
+const ionicMode = deviceMode === "ios26" ? "ios" : (deviceMode as "ios" | "md")
+localStorage.setItem("mode", ionicMode)
+
+if (deviceMode === "ios26") {
+	document.documentElement.setAttribute("data-theme", "ios26")
+	const style = document.createElement("style")
+	style.id = "ios26-theme"
+	style.textContent = ios26DefaultVars + "\n" + ios26Theme + "\n" + ios26DarkAlways
+	document.head.appendChild(style)
+}
+
 setupIonicReact({
-	mode: deviceMode,
-	...(deviceMode === "ios" && {
+	mode: ionicMode,
+	...(deviceMode === "ios26" && {
 		navAnimation: iosTransitionAnimation,
 		popoverEnter: popoverEnterAnimation,
 		popoverLeave: popoverLeaveAnimation,

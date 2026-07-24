@@ -105,6 +105,7 @@ const SettingsHomePage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> =
 							}}
 						>
 							<IonSelectOption value="ios">Apple</IonSelectOption>
+							<IonSelectOption value="ios26">Apple (beta)</IonSelectOption>
 							<IonSelectOption value="md">Android (beta)</IonSelectOption>
 						</IonSelect>
 					</IonItem>

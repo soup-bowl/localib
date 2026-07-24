@@ -10,3 +10,10 @@ http://ionicframework.com/docs/theming/ */
 .info-banner ion-title {
 	font-size: 12px;
 }
+
+/* Center iOS Tab bar when there's no Floating Action Button
+https://github.com/rdlabo-team/ionic-theme-ios26/issues/73#issuecomment-3572019816 */
+[data-theme="ios26"] ion-tabs:not(:has(.ion-page:not([aria-hidden="true"]) ion-fab)) ion-tab-bar.ios {
+	left: 50% !important;
+	transform: translateX(-50%) !important;
+}

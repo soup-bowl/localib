@@ -12,4 +12,4 @@ export type IStatDisplay = {
 	label: string
 }
 
-export type DeviceMode = "ios" | "md"
+export type DeviceMode = "ios" | "ios26" | "md"

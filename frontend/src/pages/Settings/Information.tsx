@@ -126,9 +126,7 @@ const SettingsInformationPage: React.FC = () => {
 				</IonList>
 				{persistenceStatus && (
 					<IonPopover trigger="persistence-tooltip" triggerAction="click">
-						<IonContent class="ion-padding">
-							{getStoragePersistenceMessage(persistenceStatus)}
-						</IonContent>
+						<IonContent class="ion-padding">{getStoragePersistenceMessage(persistenceStatus)}</IonContent>
 					</IonPopover>
 				)}
 				<IonPopover trigger="reccount-tooltip" triggerAction="click">

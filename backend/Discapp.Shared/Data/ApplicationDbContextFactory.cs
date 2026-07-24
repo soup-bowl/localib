@@ -17,7 +17,7 @@ namespace Discapp.Shared.Data
 				?? $"Host={dbHost};Port={dbPort};Database={dbName};Username={dbUser};Password={dbPassword};";
 
 			var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
-			optionsBuilder.UseNpgsql(connectionString);
+			optionsBuilder.UseNpgsql(connectionString, b => b.MigrationsAssembly("Discapp.API"));
 
 			return new ApplicationDbContext(optionsBuilder.Options);
 		}
