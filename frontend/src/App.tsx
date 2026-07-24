@@ -56,7 +56,7 @@ import "@ionic/react/css/display.css"
 
 import "@ionic/react/css/palettes/dark.always.css"
 
-/* iOS 26 theme — loaded conditionally when "ios26" mode is active */
+/* iOS 26 theme — injected conditionally when "ios26" mode is active */
 import ios26DefaultVars from "@rdlabo/ionic-theme-ios26/dist/css/default-variables.css?inline"
 import ios26Theme from "@rdlabo/ionic-theme-ios26/dist/css/ionic-theme-ios26.css?inline"
 import ios26DarkAlways from "@rdlabo/ionic-theme-ios26/dist/css/ionic-theme-ios26-dark-always.css?inline"
