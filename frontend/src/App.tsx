@@ -64,10 +64,16 @@ import ios26DarkAlways from "@rdlabo/ionic-theme-ios26/dist/css/ionic-theme-ios2
 /* Theme variables */
 import "./theme/variables.css"
 
+const VALID_DEVICE_MODES: DeviceMode[] = ["ios", "ios26", "md"]
+
 const getDeviceMode = (): DeviceMode => {
-	const item = localStorage.getItem("DeviceTheme")
-	const parsedItem = item ? JSON.parse(item) : "ios"
-	return (parsedItem as DeviceMode) ?? "ios"
+	try {
+		const item = localStorage.getItem("DeviceTheme")
+		const parsedItem = item ? JSON.parse(item) : "ios"
+		return VALID_DEVICE_MODES.includes(parsedItem) ? parsedItem : "ios"
+	} catch {
+		return "ios"
+	}
 }
 
 const deviceMode = getDeviceMode()
