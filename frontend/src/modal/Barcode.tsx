@@ -1,6 +1,7 @@
 import { IonModal, IonHeader, IonToolbar, IonButtons, IonButton, IonTitle, IonContent } from "@ionic/react"
 import { BarcodeScanner, DetectedBarcode } from "react-barcode-scanner"
 import "react-barcode-scanner/polyfill"
+import { deviceMode } from "@/theme/deviceTheme"
 
 interface DisplayProps {
 	open: boolean
@@ -10,7 +11,7 @@ interface DisplayProps {
 
 const BarcodeScanDialog: React.FC<DisplayProps> = ({ open, onClose, onSuccess }) => (
 	<IonModal isOpen={open} onDidDismiss={() => onClose()}>
-		<IonHeader>
+		<IonHeader translucent={deviceMode === "ios26"}>
 			<IonToolbar>
 				<IonTitle>Scanner</IonTitle>
 				<IonButtons slot="start">

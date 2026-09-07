@@ -29,7 +29,8 @@ import {
 	getStoragePersistenceMessage,
 	type StoragePersistenceStatus,
 } from "@/utils"
-import { InfoBanners } from "@/components"
+import { InfoBanners, ThemeItemGroup } from "@/components"
+import { deviceMode } from "@/theme/deviceTheme"
 
 const SettingsInformationPage: React.FC = () => {
 	const queryClient = useQueryClient()
@@ -75,7 +76,7 @@ const SettingsInformationPage: React.FC = () => {
 
 	return (
 		<IonPage>
-			<IonHeader>
+			<IonHeader translucent={deviceMode === "ios26"}>
 				<IonToolbar>
 					<IonButtons slot="start" collapse={true}>
 						<IonBackButton />
@@ -86,49 +87,49 @@ const SettingsInformationPage: React.FC = () => {
 			</IonHeader>
 			<IonContent className="ion-padding">
 				<IonList inset={true}>
-					<IonItem color={lightMode}>
-						<IonLabel>Storage used</IonLabel>
-						<IonLabel slot="end">
-							{storageInfo?.usage ?? "Unknown"} of {storageInfo?.quota ?? "Unknown"}
-						</IonLabel>
-					</IonItem>
-					{persistenceStatus && (
+					<ThemeItemGroup>
 						<IonItem color={lightMode}>
-							<IonIcon
-								slot="start"
-								icon={persistenceStatus.persisted ? shieldCheckmarkOutline : warningOutline}
-								color={persistenceStatus.persisted ? "success" : "warning"}
-								aria-label={persistenceStatus.persisted ? "Protected" : "Not Protected"}
-							/>
-							<IonLabel>
-								<h3>Data Persistence</h3>
-								<p>{persistenceStatus.persisted ? "Protected" : "Not Protected"}</p>
-							</IonLabel>
-							<IonLabel id="persistence-tooltip" slot="end" aria-label="Click for more information">
-								<span aria-hidden="true">
-									{persistenceStatus.supported ? (persistenceStatus.persisted ? "✓" : "⚠") : "✗"}
-								</span>
+							<IonLabel>Storage used</IonLabel>
+							<IonLabel slot="end">
+								{storageInfo?.usage ?? "Unknown"} of {storageInfo?.quota ?? "Unknown"}
 							</IonLabel>
 						</IonItem>
-					)}
-					<IonItem color={lightMode}>
-						<IonLabel>Records stored</IonLabel>
-						<IonLabel id="reccount-tooltip" slot="end">
-							{inStorageInfo.totalCount}
-						</IonLabel>
-					</IonItem>
-					<IonItem color={lightMode}>
-						<IonLabel>Records unsynced</IonLabel>
-						<IonLabel id="missing-tooltip" slot="end">
-							{inStorageInfo.totalMissing}
-						</IonLabel>
-					</IonItem>
+						{persistenceStatus && (
+							<IonItem color={lightMode}>
+								<IonIcon
+									slot="start"
+									icon={persistenceStatus.persisted ? shieldCheckmarkOutline : warningOutline}
+									color={persistenceStatus.persisted ? "success" : "warning"}
+									aria-label={persistenceStatus.persisted ? "Protected" : "Not Protected"}
+								/>
+								<IonLabel>
+									<h3>Data Persistence</h3>
+									<p>{persistenceStatus.persisted ? "Protected" : "Not Protected"}</p>
+								</IonLabel>
+								<IonLabel id="persistence-tooltip" slot="end" aria-label="Click for more information">
+									<span aria-hidden="true">
+										{persistenceStatus.supported ? (persistenceStatus.persisted ? "✓" : "⚠") : "✗"}
+									</span>
+								</IonLabel>
+							</IonItem>
+						)}
+						<IonItem color={lightMode}>
+							<IonLabel>Records stored</IonLabel>
+							<IonLabel id="reccount-tooltip" slot="end">
+								{inStorageInfo.totalCount}
+							</IonLabel>
+						</IonItem>
+						<IonItem color={lightMode}>
+							<IonLabel>Records unsynced</IonLabel>
+							<IonLabel id="missing-tooltip" slot="end">
+								{inStorageInfo.totalMissing}
+							</IonLabel>
+						</IonItem>
+					</ThemeItemGroup>
 				</IonList>
 				{persistenceStatus && (
 					<IonPopover trigger="persistence-tooltip" triggerAction="click">
-						<IonContent class="ion-padding">
-							{getStoragePersistenceMessage(persistenceStatus)}
-						</IonContent>
+						<IonContent class="ion-padding">{getStoragePersistenceMessage(persistenceStatus)}</IonContent>
 					</IonPopover>
 				)}
 				<IonPopover trigger="reccount-tooltip" triggerAction="click">
@@ -146,9 +147,11 @@ const SettingsInformationPage: React.FC = () => {
 					time, so try reloading in a few hours to see it change.
 				</IonNote>
 				<IonList inset={true}>
-					<IonItem color={lightMode} button href="https://github.com/soup-bowl/Localib" target="_blank">
-						<IonLabel>Source code</IonLabel>
-					</IonItem>
+					<ThemeItemGroup>
+						<IonItem color={lightMode} button href="https://github.com/soup-bowl/Localib" target="_blank">
+							<IonLabel>Source code</IonLabel>
+						</IonItem>
+					</ThemeItemGroup>
 				</IonList>
 
 				<IonGrid>

@@ -1,6 +1,7 @@
 import { IProfile, getProfile } from "@/api"
-import { FullpageInfo, FullpageLoading, InfoBanners } from "@/components"
+import { FullpageInfo, FullpageLoading, InfoBanners, ThemeItemGroup } from "@/components"
 import { useAuth } from "@/hooks"
+import { deviceMode } from "@/theme/deviceTheme"
 import {
 	IonContent,
 	IonAvatar,
@@ -82,7 +83,7 @@ const SettingsProfilePage: React.FC = () => {
 
 	return (
 		<IonPage>
-			<IonHeader>
+			<IonHeader translucent={deviceMode === "ios26"}>
 				<IonToolbar>
 					<IonButtons slot="start" collapse={true}>
 						<IonBackButton />
@@ -117,23 +118,27 @@ const SettingsProfilePage: React.FC = () => {
 					<br />
 				</ToCardOrNotToCard>
 				<IonList inset={true}>
-					<IonItem color={lightMode}>
-						<IonLabel>Registered</IonLabel>
-						<IonLabel slot="end">{yearJoined}</IonLabel>
-					</IonItem>
-					<IonItem color={lightMode}>
-						<IonLabel>Collected</IonLabel>
-						<IonLabel slot="end">{data?.num_collection}</IonLabel>
-					</IonItem>
-					<IonItem color={lightMode}>
-						<IonLabel>Wanted</IonLabel>
-						<IonLabel slot="end">{data?.num_wantlist}</IonLabel>
-					</IonItem>
+					<ThemeItemGroup>
+						<IonItem color={lightMode}>
+							<IonLabel>Registered</IonLabel>
+							<IonLabel slot="end">{yearJoined}</IonLabel>
+						</IonItem>
+						<IonItem color={lightMode}>
+							<IonLabel>Collected</IonLabel>
+							<IonLabel slot="end">{data?.num_collection}</IonLabel>
+						</IonItem>
+						<IonItem color={lightMode}>
+							<IonLabel>Wanted</IonLabel>
+							<IonLabel slot="end">{data?.num_wantlist}</IonLabel>
+						</IonItem>
+					</ThemeItemGroup>
 				</IonList>
 				<IonList inset={true}>
-					<IonItem id="present-logout" color={lightMode} button detail={false}>
-						<IonLabel color="danger">Log out</IonLabel>
-					</IonItem>
+					<ThemeItemGroup>
+						<IonItem id="present-logout" color={lightMode} button detail={false}>
+							<IonLabel color="danger">Log out</IonLabel>
+						</IonItem>
+					</ThemeItemGroup>
 				</IonList>
 				<IonAlert
 					header="Do you want to log out?"

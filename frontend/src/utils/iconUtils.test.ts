@@ -18,16 +18,20 @@ import { getFilterIcon, getLayoutIcon } from "./iconUtils"
 describe("iconUtils", () => {
 	it("returns filter icons by filter and platform", () => {
 		expect(getFilterIcon("label", "ios")).toBe(pricetagOutline)
+		expect(getFilterIcon("label", "ios26")).toBe(pricetagOutline)
 		expect(getFilterIcon("artist", "md")).toBe(personSharp)
 		expect(getFilterIcon("release", "ios")).toBe(timeOutline)
 		expect(getFilterIcon("none", "md")).toBe(filterSharp)
 		expect(getFilterIcon("unknown", "ios")).toBe(filterOutline)
+		expect(getFilterIcon("unknown", "ios26")).toBe(filterOutline)
 	})
 
 	it("returns layout icons by layout and platform", () => {
 		expect(getLayoutIcon("list", "ios")).toBe(listOutline)
+		expect(getLayoutIcon("list", "ios26")).toBe(listOutline)
 		expect(getLayoutIcon("list", "md")).toBe(listSharp)
 		expect(getLayoutIcon("grid", "ios")).toBe(gridOutline)
 		expect(getLayoutIcon("unknown", "md")).toBe(gridSharp)
+		expect(getLayoutIcon("grid", "ios26")).toBe(gridOutline)
 	})
 })

@@ -18,8 +18,9 @@ import {
 } from "@ionic/react"
 import { useState } from "react"
 import { useAuth, useSettings } from "@/hooks"
-import { InfoBanners } from "@/components"
+import { InfoBanners, ThemeItemGroup } from "@/components"
 import { DeviceMode } from "@/types"
+import { deviceMode } from "@/theme/deviceTheme"
 import { getProfile, getStartToken, IProfile } from "@/api"
 import { useQuery } from "@tanstack/react-query"
 
@@ -44,7 +45,7 @@ const SettingsHomePage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> =
 
 	return (
 		<IonPage>
-			<IonHeader>
+			<IonHeader translucent={deviceMode === "ios26"}>
 				<IonToolbar>
 					<IonTitle>Settings</IonTitle>
 				</IonToolbar>
@@ -52,92 +53,101 @@ const SettingsHomePage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> =
 			</IonHeader>
 			<IonContent className="ion-padding">
 				<IonList inset={true}>
-					{username ? (
-						<IonItem color={lightMode} button routerLink="/settings/profile">
-							{data?.avatar_base64 && (
-								<IonAvatar aria-hidden="true" slot="start">
-									<img alt="" src={data?.avatar_base64} />
-								</IonAvatar>
-							)}
-							<IonLabel>
-								<h2>{username}</h2>
-								<p>Discogs Account</p>
-							</IonLabel>
-						</IonItem>
-					) : (
-						<IonItem
-							color={lightMode}
-							button
-							onClick={async () => {
-								try {
-									const callink = await getStartToken()
-									setOauthSecretLogin(callink.tokenSecret)
-									window.location.href = callink.redirectUrl
-								} catch (error) {
-									setOauthSecretLogin("")
-									console.error(error)
-								}
-							}}
-						>
-							<IonLabel>Login to Discogs</IonLabel>
-						</IonItem>
-					)}
+					<ThemeItemGroup>
+						{username ? (
+							<IonItem color={lightMode} button routerLink="/settings/profile">
+								{data?.avatar_base64 && (
+									<IonAvatar aria-hidden="true" slot="start">
+										<img alt="" src={data?.avatar_base64} />
+									</IonAvatar>
+								)}
+								<IonLabel>
+									<h2>{username}</h2>
+									<p>Discogs Account</p>
+								</IonLabel>
+							</IonItem>
+						) : (
+							<IonItem
+								color={lightMode}
+								button
+								onClick={async () => {
+									try {
+										const callink = await getStartToken()
+										setOauthSecretLogin(callink.tokenSecret)
+										window.location.href = callink.redirectUrl
+									} catch (error) {
+										setOauthSecretLogin("")
+										console.error(error)
+									}
+								}}
+							>
+								<IonLabel>Login to Discogs</IonLabel>
+							</IonItem>
+						)}
+					</ThemeItemGroup>
 				</IonList>
 				<IonList inset={true}>
-					<IonItem color={lightMode}>
-						<IonToggle checked={imageQuality} onIonChange={(e) => setImageQuality(e.detail.checked)}>
-							Increase image quality
-						</IonToggle>
-					</IonItem>
+					<ThemeItemGroup>
+						<IonItem color={lightMode}>
+							<IonToggle checked={imageQuality} onIonChange={(e) => setImageQuality(e.detail.checked)}>
+								Increase image quality
+							</IonToggle>
+						</IonItem>
+					</ThemeItemGroup>
 				</IonList>
 				<IonNote color="medium" class="ion-margin-horizontal" style={{ display: "block" }}>
 					If you have a large library, you may experience issues with this.
 				</IonNote>
 				<IonList inset={true}>
-					<IonItem color={lightMode}>
-						<IonSelect
-							label="Theme mode"
-							interface="action-sheet"
-							value={deviceTheme}
-							onIonChange={(e) => {
-								setDeviceTheme(e.detail.value)
-								setRestartAlert(true)
-							}}
-						>
-							<IonSelectOption value="ios">Apple</IonSelectOption>
-							<IonSelectOption value="md">Android (beta)</IonSelectOption>
-						</IonSelect>
-					</IonItem>
+					<ThemeItemGroup>
+						<IonItem color={lightMode}>
+							<IonSelect
+								label="Theme mode"
+								interface="action-sheet"
+								value={deviceTheme}
+								onIonChange={(e) => {
+									setDeviceTheme(e.detail.value)
+									setRestartAlert(true)
+								}}
+							>
+								<IonSelectOption value="ios">Apple</IonSelectOption>
+								<IonSelectOption value="ios26">Apple (beta)</IonSelectOption>
+								<IonSelectOption value="md">Android (beta)</IonSelectOption>
+							</IonSelect>
+						</IonItem>
+					</ThemeItemGroup>
 				</IonList>
 				<IonList inset={true}>
-					<IonItem color={lightMode}>
-						<IonLabel>App version</IonLabel>
-						<IonLabel slot="end">
-							{appVersion}
-							{hasUpdate && (
-								<IonButton
-									onClick={onUpdate}
-									color="primary"
-									size="small"
-									style={{ marginLeft: "10px" }}
-								>
-									Update
-								</IonButton>
-							)}
-						</IonLabel>
-					</IonItem>
-					<IonItem color={lightMode} button routerLink="/settings/info">
-						<IonLabel>Information</IonLabel>
-					</IonItem>
-					<IonItem
-						color={lightMode}
-						button
-						detail={false}
-						href="https://www.buymeacoffee.com/soupbowl"
-						target="_blank"
-					>
-						<IonLabel>Donate</IonLabel>
-					</IonItem>
+					<ThemeItemGroup>
+						<IonItem color={lightMode}>
+							<IonLabel>App version</IonLabel>
+							<IonLabel slot="end">
+								{appVersion}
+								{hasUpdate && (
+									<IonButton
+										onClick={onUpdate}
+										color="primary"
+										size="small"
+										style={{ marginLeft: "10px" }}
+									>
+										Update
+									</IonButton>
+								)}
+							</IonLabel>
+						</IonItem>
+						<IonItem color={lightMode} button routerLink="/settings/info">
+							<IonLabel>Information</IonLabel>
+						</IonItem>
+						<IonItem
+							color={lightMode}
+							button
+							detail={false}
+							href="https://www.buymeacoffee.com/soupbowl"
+							target="_blank"
+						>
+							<IonLabel>Donate</IonLabel>
+						</IonItem>
+					</ThemeItemGroup>
 				</IonList>
 
 				<IonAlert

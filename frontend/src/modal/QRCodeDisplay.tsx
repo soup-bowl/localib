@@ -1,5 +1,6 @@
 import { IonModal, IonHeader, IonToolbar, IonButtons, IonButton, IonTitle, IonContent, IonCard } from "@ionic/react"
 import { QRCodeSVG } from "qrcode.react"
+import { deviceMode } from "@/theme/deviceTheme"
 
 interface DisplayProps {
 	title: string
@@ -10,7 +11,7 @@ interface DisplayProps {
 
 const QRCodeDialog: React.FC<DisplayProps> = ({ title, codeContent, open, onClose }) => (
 	<IonModal isOpen={open} onDidDismiss={() => onClose()}>
-		<IonHeader>
+		<IonHeader translucent={deviceMode === "ios26"}>
 			<IonToolbar>
 				<IonTitle>{title}</IonTitle>
 				<IonButtons slot="start">

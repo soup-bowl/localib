@@ -24,6 +24,7 @@ import { ViewAlbumDetails } from "@/modal"
 import { useAuth, useSettings } from "@/hooks"
 import { getFilterIcon, getLayoutIcon, masterSort } from "@/utils"
 import { IReleaseTuple } from "@/types"
+import { deviceMode } from "@/theme/deviceTheme"
 
 const filterActionButtons = [
 	{
@@ -116,7 +117,7 @@ const CollectionPage: React.FC = () => {
 
 	return (
 		<IonPage>
-			<IonHeader>
+			<IonHeader translucent={deviceMode === "ios26"}>
 				<IonToolbar>
 					<IonButtons slot="primary">
 						<IonButton

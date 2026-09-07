@@ -15,6 +15,7 @@ import {
 	IonTabs,
 	setupIonicReact,
 } from "@ionic/react"
+import { iosTransitionAnimation, popoverEnterAnimation, popoverLeaveAnimation } from "@rdlabo/ionic-theme-ios26"
 import { IonReactRouter } from "@ionic/react-router"
 import { discOutline, searchOutline, settingsOutline, cogOutline } from "ionicons/icons"
 import {
@@ -26,7 +27,7 @@ import {
 	SettingsProfilePage,
 } from "@/pages"
 import { createIDBPersister } from "@/persister"
-import { DeviceMode } from "@/types"
+import { deviceMode, toIonicMode } from "@/theme/deviceTheme"
 import { useAuth } from "@/hooks"
 import { FullpageInfo } from "@/components"
 
@@ -55,19 +56,37 @@ import "@ionic/react/css/display.css"
 
 import "@ionic/react/css/palettes/dark.always.css"
 
+/* iOS 26 theme — injected conditionally when "ios26" mode is active */
+import ios26DefaultVars from "@rdlabo/ionic-theme-ios26/dist/css/default-variables.css?inline"
+import ios26Theme from "@rdlabo/ionic-theme-ios26/dist/css/ionic-theme-ios26.css?inline"
+import ios26DarkAlways from "@rdlabo/ionic-theme-ios26/dist/css/ionic-theme-ios26-dark-always.css?inline"
+
 /* Theme variables */
 import "./theme/variables.css"
 
-const getDeviceMode = (): DeviceMode => {
-	const item = localStorage.getItem("DeviceTheme")
-	const parsedItem = item ? JSON.parse(item) : "ios"
-	const validItem = parsedItem ? (parsedItem as DeviceMode) : "ios"
-	localStorage.setItem("mode", validItem)
-	return validItem
+const ionicMode = toIonicMode(deviceMode)
+localStorage.setItem("mode", ionicMode)
+
+document.documentElement.setAttribute("data-theme", deviceMode)
+
+if (deviceMode === "ios26") {
+	const existing = document.getElementById("ios26-theme")
+	const style = existing instanceof HTMLStyleElement ? existing : document.createElement("style")
+	style.id = "ios26-theme"
+	style.textContent = [ios26DefaultVars, ios26Theme, ios26DarkAlways].join("\n")
+
+	if (!existing) {
+		document.head.appendChild(style)
+	}
 }
 
 setupIonicReact({
-	mode: getDeviceMode(),
+	mode: ionicMode,
+	...(deviceMode === "ios26" && {
+		navAnimation: iosTransitionAnimation,
+		popoverEnter: popoverEnterAnimation,
+		popoverLeave: popoverLeaveAnimation,
+	}),
 })
 
 const queryClient = new QueryClient({

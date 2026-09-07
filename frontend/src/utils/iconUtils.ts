@@ -15,25 +15,27 @@ import {
 } from "ionicons/icons"
 
 export const getFilterIcon = (filter: string, platform: DeviceMode = "ios") => {
+	const isMaterial = platform === "md"
 	switch (filter) {
 		case "label":
-			return platform === "ios" ? pricetagOutline : pricetagSharp
+			return isMaterial ? pricetagSharp : pricetagOutline
 		case "artist":
-			return platform === "ios" ? personOutline : personSharp
+			return isMaterial ? personSharp : personOutline
 		case "release":
-			return platform === "ios" ? timeOutline : timeSharp
+			return isMaterial ? timeSharp : timeOutline
 		case "none":
 		default:
-			return platform === "ios" ? filterOutline : filterSharp
+			return isMaterial ? filterSharp : filterOutline
 	}
 }
 
 export const getLayoutIcon = (item: string, platform: DeviceMode = "ios") => {
+	const isMaterial = platform === "md"
 	switch (item) {
 		case "list":
-			return platform === "ios" ? listOutline : listSharp
+			return isMaterial ? listSharp : listOutline
 		case "grid":
 		default:
-			return platform === "ios" ? gridOutline : gridSharp
+			return isMaterial ? gridSharp : gridOutline
 	}
 }

@@ -2,12 +2,7 @@ import { IReleases } from "@/api"
 import { describe, expect, it } from "vitest"
 import { masterSort, splitRecordsByArtist, splitRecordsByLabel, splitRecordsByYear } from "./collectionSort"
 
-const createRelease = (
-	id: number,
-	date: string,
-	artists: string[],
-	labels: string[]
-): IReleases => ({
+const createRelease = (id: number, date: string, artists: string[], labels: string[]): IReleases => ({
 	id,
 	instance_id: id,
 	folder_id: 1,
