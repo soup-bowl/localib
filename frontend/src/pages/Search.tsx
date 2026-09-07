@@ -16,6 +16,7 @@ import { IReleaseSet, IReleases, getCollectionAndWants } from "@/api"
 import { AlbumList, FullpageInfo, FullpageLoading, InfoBanners } from "@/components"
 import { BarcodeScanDialog, ViewAlbumDetails } from "@/modal"
 import { useAuth, useSettings } from "@/hooks"
+import { deviceMode } from "@/theme/deviceTheme"
 
 const searchFilter = (item: IReleases, lowerCaseSearchTerm: string) =>
 	item.basic_information.title.toLowerCase().includes(lowerCaseSearchTerm) ||
@@ -74,7 +75,7 @@ const SearchPage: React.FC = () => {
 
 	return (
 		<IonPage>
-			<IonHeader>
+			<IonHeader translucent={deviceMode === "ios26"}>
 				<IonToolbar>
 					<IonTitle>Search</IonTitle>
 					<IonButtons slot="end">
