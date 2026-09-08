@@ -72,6 +72,17 @@ If you want to test the PWA functionality locally, you can add the following to 
 devOptions: { enabled: true },
 ```
 
+### Frontend E2E Testing
+
+Browser end-to-end tests are available in `frontend/e2e` via Playwright.
+
+```bash
+cd frontend
+npm run test.e2e
+```
+
+These tests mock Localib API responses in-browser, so they do not require the backend or Discogs API to be running.
+
 ## Logo
 
 The temporary logo utilises the **album-collection** icon from [Free icons](https://free-icons.github.io/free-icons/).

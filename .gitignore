@@ -11,6 +11,8 @@ node_modules
 
 # testing
 coverage
+frontend/playwright-report
+frontend/test-results
 
 # production
 dev-dist
