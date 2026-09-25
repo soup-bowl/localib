@@ -46,7 +46,7 @@
 		"@types/react-dom": "^18.0.10",
 		"@vitejs/plugin-legacy": "^7.2.1",
 		"@vitejs/plugin-react": "^5.1.4",
-		"eslint": "^8.35.0",
+		"eslint": "^10.10.0",
 		"eslint-plugin-react": "^7.37.5",
 		"jsdom": "^28.1.0",
 		"prettier": "^3.8.1",
