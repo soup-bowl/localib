@@ -156,4 +156,65 @@ public class DiscogsControllerTests
 		Assert.NotNull(returned.Releases[0].Vinyl);
 		Assert.Equal("data:image/jpeg;base64,abc", returned.Releases[0].Vinyl!.Image);
 	}
+
+	[Fact]
+	public async Task GetProfile_WithAvatarAndBanner_InlinesImagesAsValidDataUris()
+	{
+		byte[] avatarBytes = [0x89, 0x50, 0x4E, 0x47];
+		byte[] bannerBytes = [0xFF, 0xD8, 0xFF, 0xE0];
+		string profileJson = JsonSerializer.Serialize(new DiscogsProfile
+		{
+			Id = 1,
+			AvatarUrl = "https://img.example/avatar.png",
+			BannerUrl = "https://img.example/banner",
+		});
+
+		var handler = new RoutingHttpMessageHandler(request => request.RequestUri!.Host switch
+		{
+			"img.example" when request.RequestUri.AbsolutePath == "/avatar.png" => ImageResponse(avatarBytes, "image/png"),
+			"img.example" => ImageResponse(bannerBytes, null),
+			_ => new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(profileJson, Encoding.UTF8, "application/json") },
+		});
+		var controller = CreateController(CreateAuthServiceWithValidToken().Object, new Mock<IImageProcessService>().Object, handler);
+
+		ActionResult<DiscogsProfile> result = await controller.GetProfile("testuser", "token");
+
+		OkObjectResult ok = Assert.IsType<OkObjectResult>(result.Result);
+		DiscogsProfile returned = Assert.IsType<DiscogsProfile>(ok.Value);
+		Assert.Equal($"data:image/png;base64,{Convert.ToBase64String(avatarBytes)}", returned.AvatarBase64);
+		// No usable Content-Type from upstream, so it falls back to JPEG.
+		Assert.Equal($"data:image/jpeg;base64,{Convert.ToBase64String(bannerBytes)}", returned.BannerBase64);
+	}
+
+	[Fact]
+	public async Task GetProfile_UsernameWithPathCharacters_IsEscapedInDiscogsUrl()
+	{
+		var handler = new RoutingHttpMessageHandler(_ =>
+			new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("{}", Encoding.UTF8, "application/json") });
+		var controller = CreateController(CreateAuthServiceWithValidToken().Object, new Mock<IImageProcessService>().Object, handler);
+
+		await controller.GetProfile("../oauth/identity", "token");
+
+		Uri requested = Assert.Single(handler.Requests);
+		Assert.Equal("/users/..%2Foauth%2Fidentity", requested.AbsolutePath);
+	}
+
+	private static HttpResponseMessage ImageResponse(byte[] bytes, string? contentType)
+	{
+		ByteArrayContent content = new(bytes);
+		if (contentType is not null)
+			content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(contentType);
+		return new HttpResponseMessage(HttpStatusCode.OK) { Content = content };
+	}
+}
+
+internal class RoutingHttpMessageHandler(Func<HttpRequestMessage, HttpResponseMessage> respond) : HttpMessageHandler
+{
+	public List<Uri> Requests { get; } = [];
+
+	protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+	{
+		Requests.Add(request.RequestUri!);
+		return Task.FromResult(respond(request));
+	}
 }
