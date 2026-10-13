@@ -33,15 +33,17 @@ public class Worker : BackgroundService
 			if (_logger.IsEnabled(LogLevel.Information))
 			{
 				_logger.LogInformation("Worker running at: {Time}", DateTimeOffset.Now);
+			}
 
-				using IServiceScope scope = _scopeFactory.CreateScope();
-
+			using (IServiceScope scope = _scopeFactory.CreateScope())
+			{
 				ApplicationDbContext dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
 				await FilterOldRecords(dbContext, stoppingToken);
 
 				await ProcessQueue(dbContext, stoppingToken);
 			}
+
 			await Task.Delay(1000, stoppingToken);
 		}
 	}
@@ -54,15 +56,15 @@ public class Worker : BackgroundService
 		{
 			try
 			{
-				HttpResponseMessage response = await GetApiResponseWithRetryAsync($"releases/{queueItem.RecordID}", 3, 1000, stoppingToken);
-				response.EnsureSuccessStatusCode();
+				using HttpResponseMessage response = await GetApiResponseWithRetryAsync($"releases/{queueItem.RecordID}", 3, 1000, stoppingToken);
 
 				DiscogsRelease? releaseData = await response.Content.ReadFromJsonAsync<DiscogsRelease>(cancellationToken: stoppingToken);
 
 				if (!string.IsNullOrEmpty(releaseData?.Thumb))
 				{
 					string imageUrl = releaseData.Thumb;
-					byte[] imageBytes = await GetApiResponseWithRetryAsync(imageUrl, 3, 1000, stoppingToken).Result.Content.ReadAsByteArrayAsync(stoppingToken);
+					using HttpResponseMessage imageResponse = await GetApiResponseWithRetryAsync(imageUrl, 3, 1000, stoppingToken);
+					byte[] imageBytes = await imageResponse.Content.ReadAsByteArrayAsync(stoppingToken);
 
 					string filePath = Path.Combine(_pathOptions.ImagePath, queueItem.RecordID.ToString() + "_thumb.jpg");
 					await File.WriteAllBytesAsync(filePath, imageBytes, stoppingToken);
@@ -78,7 +80,8 @@ public class Worker : BackgroundService
 						.FirstOrDefault() ?? "";
 					if (!string.IsNullOrEmpty(mainCoverUri))
 					{
-						byte[] mainCover = await GetApiResponseWithRetryAsync(mainCoverUri, 3, 1000, stoppingToken).Result.Content.ReadAsByteArrayAsync(stoppingToken);
+						using HttpResponseMessage coverResponse = await GetApiResponseWithRetryAsync(mainCoverUri, 3, 1000, stoppingToken);
+						byte[] mainCover = await coverResponse.Content.ReadAsByteArrayAsync(stoppingToken);
 						byte[] conversionOut = await ConvertImage(mainCover, 300, 300);
 						await File.WriteAllBytesAsync(Path.Combine(_pathOptions.ImagePath, queueItem.RecordID.ToString() + "_w3.webp"), conversionOut, stoppingToken);
 					}
@@ -102,7 +105,7 @@ public class Worker : BackgroundService
 						dbContext.Records.Add(newRecord);
 					}
 
-					dbContext.Queue.Remove(queueItem);
+					await RemoveFromQueueAsync(dbContext, queueItem.RecordID, stoppingToken);
 					await dbContext.SaveChangesAsync(stoppingToken);
 
 					_logger.LogInformation("Processed and removed Queue item with ID {QueueId}, saved image to {FilePath}", queueItem.Id, filePath);
@@ -110,14 +113,19 @@ public class Worker : BackgroundService
 				else
 				{
 					_logger.LogWarning("No thumbnail found for release ID {RecordID}", queueItem.RecordID);
-					dbContext.Queue.Remove(queueItem);
+					await RemoveFromQueueAsync(dbContext, queueItem.RecordID, stoppingToken);
 					await dbContext.SaveChangesAsync(stoppingToken);
 				}
+			}
+			catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+			{
+				// Shutting down - leave the item queued so it is picked up on the next run.
+				throw;
 			}
 			catch (Exception ex)
 			{
 				_logger.LogError(ex, "An error occurred while processing the queue ID {QueueItemId}.", queueItem.Id);
-				dbContext.Queue.Remove(queueItem);
+				await RemoveFromQueueAsync(dbContext, queueItem.RecordID, stoppingToken);
 				await dbContext.SaveChangesAsync(stoppingToken);
 			}
 		}
@@ -167,7 +175,7 @@ public class Worker : BackgroundService
 				_logger.LogWarning("Received 429 Too Many Requests. Retrying after delay...");
 				await Task.Delay(delayMilliseconds, stoppingToken);
 				retryCount++;
-				delayMilliseconds += 1000; // Exponential backoff
+				delayMilliseconds += 1000; // Linear backoff
 			}
 			else
 			{
@@ -176,6 +184,18 @@ public class Worker : BackgroundService
 			}
 		}
 		throw new HttpRequestException("Maximum retry attempts exceeded.");
+	}
+
+	/// <summary>
+	/// Removes every queue entry for the record, clearing out any duplicates queued alongside it.
+	/// </summary>
+	private static async Task RemoveFromQueueAsync(ApplicationDbContext dbContext, int recordId, CancellationToken stoppingToken)
+	{
+		List<Queue> entries = await dbContext.Queue
+			.Where(q => q.RecordID == recordId)
+			.ToListAsync(stoppingToken);
+
+		dbContext.Queue.RemoveRange(entries);
 	}
 
 	private async static Task<byte[]> ConvertImage(byte[] inputImageBytes, int width, int height)
