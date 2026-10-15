@@ -147,7 +147,7 @@ public class WorkerProcessQueueTests : IDisposable
 		pathOptions.Setup(p => p.Value).Returns(new PathSettings { ImagePath = _tempImagePath });
 
 		var httpClientFactory = new Mock<IHttpClientFactory>();
-		httpClientFactory.Setup(f => f.CreateClient("Discogs")).Returns(new HttpClient(handler));
+		httpClientFactory.Setup(f => f.CreateClient("Discogs")).Returns(new HttpClient(handler) { BaseAddress = new Uri("https://api.example") });
 
 		return new Worker(logger.Object, scopeFactory.Object, pathOptions.Object, httpClientFactory.Object);
 	}
@@ -192,6 +192,99 @@ public class WorkerProcessQueueTests : IDisposable
 		await worker.ProcessQueue(_dbContext, CancellationToken.None);
 
 		Assert.Equal(0, await _dbContext.Queue.CountAsync());
+	}
+
+	[Fact]
+	public async Task ProcessQueue_DuplicateQueueEntries_RemovesAllEntriesForRecord()
+	{
+		_dbContext.Queue.AddRange(
+			new Queue { RecordID = 12 },
+			new Queue { RecordID = 12 },
+			new Queue { RecordID = 13 }
+		);
+		await _dbContext.SaveChangesAsync();
+
+		string releaseJson = """{"thumb":"","identifiers":[],"images":[]}""";
+		var worker = CreateWorkerWithHandler(new FakeHttpMessageHandler(System.Net.HttpStatusCode.OK, releaseJson));
+
+		await worker.ProcessQueue(_dbContext, CancellationToken.None);
+
+		Queue remaining = Assert.Single(await _dbContext.Queue.ToListAsync());
+		Assert.Equal(13, remaining.RecordID);
+	}
+
+	[Fact]
+	public async Task ProcessQueue_CancelledDuringShutdown_LeavesItemQueued()
+	{
+		_dbContext.Queue.Add(new Queue { RecordID = 14 });
+		await _dbContext.SaveChangesAsync();
+
+		using var cts = new CancellationTokenSource();
+		var worker = CreateWorkerWithHandler(new CancellingHttpHandler(cts));
+
+		await Assert.ThrowsAnyAsync<OperationCanceledException>(() => worker.ProcessQueue(_dbContext, cts.Token));
+
+		Assert.Equal(1, await _dbContext.Queue.CountAsync());
+	}
+}
+
+public class WorkerExecuteTests
+{
+	[Fact]
+	public async Task ExecuteAsync_InformationLoggingDisabled_StillProcessesQueue()
+	{
+		string databaseName = Guid.NewGuid().ToString();
+		ServiceProvider services = new ServiceCollection()
+			.AddDbContext<ApplicationDbContext>(o => o.UseInMemoryDatabase(databaseName))
+			.BuildServiceProvider();
+
+		using (IServiceScope seedScope = services.CreateScope())
+		{
+			ApplicationDbContext seedContext = seedScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+			seedContext.Queue.Add(new Queue { RecordID = 20 });
+			await seedContext.SaveChangesAsync();
+		}
+
+		var logger = new Mock<ILogger<Worker>>();
+		logger.Setup(l => l.IsEnabled(It.IsAny<LogLevel>())).Returns(false);
+
+		var pathOptions = new Mock<IOptions<PathSettings>>();
+		pathOptions.Setup(p => p.Value).Returns(new PathSettings { ImagePath = Path.GetTempPath() });
+
+		string releaseJson = """{"thumb":"","identifiers":[],"images":[]}""";
+		var httpClientFactory = new Mock<IHttpClientFactory>();
+		httpClientFactory.Setup(f => f.CreateClient("Discogs"))
+			.Returns(new HttpClient(new FakeHttpMessageHandler(System.Net.HttpStatusCode.OK, releaseJson)) { BaseAddress = new Uri("https://api.example") });
+
+		var worker = new Worker(logger.Object, services.GetRequiredService<IServiceScopeFactory>(), pathOptions.Object, httpClientFactory.Object);
+
+		await worker.StartAsync(CancellationToken.None);
+		try
+		{
+			int remaining = 1;
+			for (int attempt = 0; attempt < 50 && remaining > 0; attempt++)
+			{
+				await Task.Delay(100);
+				using IServiceScope checkScope = services.CreateScope();
+				remaining = await checkScope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Queue.CountAsync();
+			}
+
+			Assert.Equal(0, remaining);
+		}
+		finally
+		{
+			await worker.StopAsync(CancellationToken.None);
+			await services.DisposeAsync();
+		}
+	}
+}
+
+internal class CancellingHttpHandler(CancellationTokenSource cts) : HttpMessageHandler
+{
+	protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+	{
+		cts.Cancel();
+		throw new OperationCanceledException(cts.Token);
 	}
 }
 
