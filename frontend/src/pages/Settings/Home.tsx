@@ -95,7 +95,7 @@ const SettingsHomePage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> =
 						</IonItem>
 					</ThemeItemGroup>
 				</IonList>
-				<IonNote color="medium" class="ion-margin-horizontal" style={{ display: "block" }}>
+				<IonNote color="medium" className="ion-margin-horizontal" style={{ display: "block" }}>
 					If you have a large library, you may experience issues with this.
 				</IonNote>
 				<IonList inset={true}>

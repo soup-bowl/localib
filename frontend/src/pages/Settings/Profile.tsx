@@ -27,7 +27,7 @@ import {
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { qrCodeOutline, qrCodeSharp } from "ionicons/icons"
 import "./Profile.css"
-import { useHistory } from "react-router"
+import { useNavigate } from "react-router-dom"
 import { QRCodeDialog } from "@/modal"
 import { ReactNode, useState } from "react"
 
@@ -50,7 +50,7 @@ const ToCardOrNotToCard = ({ background = undefined, children }: { background?: 
 
 const SettingsProfilePage: React.FC = () => {
 	const queryClient = useQueryClient()
-	const history = useHistory()
+	const navigate = useNavigate()
 	const [{ username, accessToken, secretToken }, _, clearAuth] = useAuth()
 	const ionConfig = getConfig()
 	const [openScanner, setOpenScanner] = useState<boolean>(false)
@@ -77,7 +77,7 @@ const SettingsProfilePage: React.FC = () => {
 	const deleteData = () => {
 		queryClient.clear()
 		clearAuth()
-		history.push("/")
+		navigate("/")
 		window.location.reload()
 	}
 

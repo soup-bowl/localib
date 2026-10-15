@@ -1,4 +1,4 @@
-import { Redirect, Route } from "react-router-dom"
+import { Navigate, Route } from "react-router-dom"
 import { useRegisterSW } from "virtual:pwa-register/react"
 import { QueryClient } from "@tanstack/react-query"
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client"
@@ -140,25 +140,24 @@ const App: React.FC = () => {
 				<IonReactRouter>
 					<IonTabs>
 						<IonRouterOutlet>
-							<Route exact path="/collection">
-								{username && accessToken ? <CollectionPage /> : <NotLoggedIn />}
-							</Route>
-							<Route path="/search">{username ? <SearchPage /> : <NotLoggedIn />}</Route>
-							<Route exact path="/settings/info">
-								<SettingsInformationPage />
-							</Route>
-							<Route exact path="/settings/profile">
-								<SettingsProfilePage />
-							</Route>
-							<Route exact path="/settings">
-								<SettingsHomePage hasUpdate={needRefresh} onUpdate={() => updateServiceWorker(true)} />
-							</Route>
-							<Route exact path="/callback">
-								<CallbackLoginPage />
-							</Route>
-							<Route exact path="/">
-								<Redirect to="/collection" />
-							</Route>
+							<Route
+								path="/collection"
+								element={username && accessToken ? <CollectionPage /> : <NotLoggedIn />}
+							/>
+							<Route path="/search/*" element={username ? <SearchPage /> : <NotLoggedIn />} />
+							<Route path="/settings/info" element={<SettingsInformationPage />} />
+							<Route path="/settings/profile" element={<SettingsProfilePage />} />
+							<Route
+								path="/settings"
+								element={
+									<SettingsHomePage
+										hasUpdate={needRefresh}
+										onUpdate={() => updateServiceWorker(true)}
+									/>
+								}
+							/>
+							<Route path="/callback" element={<CallbackLoginPage />} />
+							<Route path="/" element={<Navigate to="/collection" replace />} />
 						</IonRouterOutlet>
 						<IonTabBar slot="bottom" translucent>
 							<IonTabButton tab="collection" href="/collection">

@@ -64,7 +64,7 @@ const ViewAlbumDetails: React.FC<DisplayProps> = ({ album, open, onClose }) => {
 									<IonIcon slot="icon-only" icon={cloudOfflineOutline} />
 								</IonButton>
 								<IonPopover trigger="not-downloaded-notice" triggerAction="click">
-									<IonContent class="ion-padding">
+									<IonContent className="ion-padding">
 										Image and additional details are still being collected, please reload a few
 										hours later.
 									</IonContent>
