@@ -10,22 +10,22 @@ updates:
     schedule:
       interval: "monthly"
     ignore:
-      # Issues with Ionic Framework
+      # @ionic/react-router 9 requires React Router ">=6.4.0 <7"
       - dependency-name: "react-router"
-        versions: [">=6.0.0"]
+        versions: [">=7.0.0"]
       - dependency-name: "react-router-dom"
-        versions: [">=6.0.0"]
-      # Ionic impact with 19 - https://github.com/ionic-team/ionic-framework/issues/29991
-      - dependency-name: "react"
-        versions: [">=19.0.0"]
-      - dependency-name: "react-dom"
-        versions: [">=19.0.0"]
-      - dependency-name: "@types/react"
-        versions: [">=19.0.0"]
-      - dependency-name: "@types/react-dom"
-        versions: [">=19.0.0"]
-      # Issues with Vite
+        versions: [">=7.0.0"]
+      # 9.4.2 hides the collapsed header back button in iOS 26 mode
+      - dependency-name: "@rdlabo/ionic-theme-ios26"
+        versions: ["9.4.2"]
+      # eslint-plugin-react does not yet support ESLint 10
       - dependency-name: "eslint"
+        versions: [">=10.0.0"]
+      - dependency-name: "@eslint/js"
+        versions: [">=10.0.0"]
+      # typescript-eslint supports TypeScript "<6.1.0" (TypeScript 7 has no JS compiler API)
+      - dependency-name: "typescript"
+        versions: [">=6.1.0"]
     labels:
       - "frontend"
       - "enhancement"
@@ -37,6 +37,13 @@ updates:
     directory: "/backend"
     schedule:
       interval: "monthly"
+    ignore:
+      # Swashbuckle.AspNetCore requires Microsoft.OpenApi "<3.0.0"
+      - dependency-name: "Microsoft.OpenApi"
+        versions: [">=3.0.0"]
+      # 3.2.0+ fails Release builds without a Six Labors license key
+      - dependency-name: "SixLabors.ImageSharp"
+        versions: [">=3.2.0"]
     labels:
       - "backend"
       - "enhancement"

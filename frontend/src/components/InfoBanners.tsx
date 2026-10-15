@@ -9,12 +9,20 @@ const InfoBanners: React.FC = () => {
 	return (
 		<>
 			{betaBanner && (
-				<IonToolbar className="info-banner" color="warning" style={{ "--min-height": "30px" }}>
+				<IonToolbar
+					className="info-banner"
+					color="warning"
+					style={{ "--min-height": "30px" } as React.CSSProperties}
+				>
 					<IonTitle>{betaBanner}</IonTitle>
 				</IonToolbar>
 			)}
 			{!isOnline && (
-				<IonToolbar className="info-banner" color="dark" style={{ "--min-height": "30px" }}>
+				<IonToolbar
+					className="info-banner"
+					color="dark"
+					style={{ "--min-height": "30px" } as React.CSSProperties}
+				>
 					<IonTitle>Offline</IonTitle>
 				</IonToolbar>
 			)}
