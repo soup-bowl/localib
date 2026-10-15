@@ -24,5 +24,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Discapp.Shared\Discapp.Shared.csproj" />
+    <ProjectReference Include="..\Discapp.Worker\Discapp.Worker.csproj" />
   </ItemGroup>
 </Project>

@@ -26,7 +26,12 @@ Once visited or installed, pop into Settings and log into your Discogs account (
 
 This project has a counterpart API service (internally referenced as the **Vinyl Service**). This service is charged with proxying your requests to the Discogs API in a secure manner, and also - where possible and necessary - scraping and storing image data from Discogs to aid in the off-network persistence.
 
-The API consists of two separate applications - a REST API, and a worker service that collects all the records passing through the system, and downloads the artwork for it. This service will scrape the dominant album art, and store both the thumbnail and a heavily-optimised larger image to allow for optional higher-quality album art persistence.
+The API consists of a REST API, and a worker service that collects all the records passing through the system, and downloads the artwork for it. This service will scrape the dominant album art, and store both the thumbnail and a heavily-optimised larger image to allow for optional higher-quality album art persistence.
+
+Both run from the same application and image. By default the worker runs in-process alongside the API. To run them separately (for example, several API instances sharing one worker), set `LOCALIB_WORKER_ENABLED=false` on the API-only instances, and run a single instance with the worker enabled. Only **one** instance should run the worker at a time, otherwise records will be processed more than once. All instances need access to the same database and image path.
+
+> [!NOTE]
+> Previous releases shipped a separate `worker` image. This is no longer published - if you were running it, remove that container, as the API image now runs the worker by default.
 
 Configuration is via environment variables:
 
@@ -43,6 +48,7 @@ Configuration is via environment variables:
 | `LOCALIB_DISCOGS_CONSUMER_SECRET` | Both    | Consumer Secret from [Discogs Developer Application][dcd], used by both the API and the worker.   |
 | `LOCALIB_DISCOGS_CALLBACK_URL`    | API     | Callback to the frontend's `/callback` URL to handle OAuth flow.                                  |
 | `LOCALIB_CORS_ALLOWED_ORIGINS`    | API     | CORS restriction policy, optional, API only.                                                      |
+| `LOCALIB_WORKER_ENABLED`          | Worker  | Run the artwork worker in this instance. Default `true`, set to `false` for API-only instances.   |
 
 Example:
 

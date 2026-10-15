@@ -45,15 +45,9 @@ jobs:
     strategy:
       matrix:
         include:
-          - dockerfile: Dockerfile.Worker
-            variant: noble
-            tag: worker
           - dockerfile: Dockerfile.API
             tag: api
             variant: noble
-          - dockerfile: Dockerfile.Worker
-            variant: alpine
-            tag: worker
           - dockerfile: Dockerfile.API
             tag: api
             variant: alpine

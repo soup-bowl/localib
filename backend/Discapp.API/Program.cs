@@ -4,6 +4,7 @@ using Discapp.API.Models;
 using Discapp.API.Services;
 using Microsoft.OpenApi;
 using Discapp.API.Models.Auth;
+using Discapp.Worker;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +20,7 @@ var imageStoragePath = Environment.GetEnvironmentVariable("LOCALIB_IMAGE_PATH") 
 var ClientKey = Environment.GetEnvironmentVariable("LOCALIB_DISCOGS_CONSUMER_KEY");
 var ClientSecret = Environment.GetEnvironmentVariable("LOCALIB_DISCOGS_CONSUMER_SECRET");
 var CallbackURL = Environment.GetEnvironmentVariable("LOCALIB_DISCOGS_CALLBACK_URL");
+var workerEnabled = WorkerServiceExtensions.IsWorkerEnabled(Environment.GetEnvironmentVariable("LOCALIB_WORKER_ENABLED"));
 
 // --- CORS ---
 string? allowedOrigins = Environment.GetEnvironmentVariable("LOCALIB_CORS_ALLOWED_ORIGINS");
@@ -61,6 +63,11 @@ builder.Services.AddSingleton(new AuthSettings
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IImageProcessService, ImageProcessService>();
+
+// --- Worker ---
+// Runs in-process by default. Set LOCALIB_WORKER_ENABLED=false on instances that should only serve the API.
+if (workerEnabled)
+    builder.Services.AddLocalibWorker(imageStoragePath, ClientKey ?? "", ClientSecret ?? "");
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
