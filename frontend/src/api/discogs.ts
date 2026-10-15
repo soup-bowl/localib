@@ -24,13 +24,15 @@ export const getStartToken = async (): Promise<OAuthResponse> => {
 }
 
 export const getAccessToken = async (input: OAuthInput): Promise<OAuthTokens> => {
-	const response = await fetch(
-		`${VINYL_URL}/api/Auth/Callback?OauthToken=${input.oauthToken}&OauthSecret=${input.oauthSecret}&OauthVerifier=${input.oauthVerifier}`,
-		{
-			method: "GET",
-			headers: { "Content-Type": "application/json" },
-		}
-	)
+	const params = new URLSearchParams({
+		OauthToken: input.oauthToken,
+		OauthSecret: input.oauthSecret,
+		OauthVerifier: input.oauthVerifier,
+	})
+	const response = await fetch(`${VINYL_URL}/api/Auth/Callback?${params.toString()}`, {
+		method: "GET",
+		headers: { "Content-Type": "application/json" },
+	})
 	if (!response.ok) {
 		throw new Error("Localib API responded with an unexpected error.")
 	}
