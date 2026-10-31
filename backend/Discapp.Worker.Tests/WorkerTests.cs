@@ -319,6 +319,17 @@ public class WorkerConvertImageTests
 	}
 
 	[Fact]
+	public async Task ConvertImage_UnsupportedFormat_ThrowsHelpfulError()
+	{
+		byte[] svg = System.Text.Encoding.UTF8.GetBytes("<svg xmlns=\"http://www.w3.org/2000/svg\"/>");
+
+		InvalidDataException exception = await Assert.ThrowsAsync<InvalidDataException>(
+			() => Worker.ConvertImage(svg, 300, 300));
+
+		Assert.Contains("malformed or uses an unsupported format", exception.Message);
+	}
+
+	[Fact]
 	public async Task ConvertImage_OversizedInput_RejectsBeforeDecoding()
 	{
 		byte[] oversized = new byte[20 * 1024 * 1024 + 1];
