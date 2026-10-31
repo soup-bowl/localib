@@ -41,9 +41,6 @@ updates:
       # Swashbuckle.AspNetCore requires Microsoft.OpenApi "<3.0.0"
       - dependency-name: "Microsoft.OpenApi"
         versions: [">=3.0.0"]
-      # 3.2.0+ fails Release builds without a Six Labors license key
-      - dependency-name: "SixLabors.ImageSharp"
-        versions: [">=3.2.0"]
     labels:
       - "backend"
       - "enhancement"

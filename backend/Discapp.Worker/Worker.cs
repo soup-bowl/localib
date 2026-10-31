@@ -3,9 +3,7 @@ using Discapp.Shared.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Processing;
-using SixLabors.ImageSharp.Formats.Webp;
+using SkiaSharp;
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Discapp.Worker.Tests")]
 
@@ -13,6 +11,10 @@ namespace Discapp.Worker;
 
 public class Worker : BackgroundService
 {
+	private const int MaxImageInputBytes = 20 * 1024 * 1024;
+	private const int MaxImageDimension = 10_000;
+	private const long MaxImagePixels = 20_000_000;
+
 	private readonly ILogger<Worker> _logger;
 	private readonly IServiceScopeFactory _scopeFactory;
 	private readonly PathSettings _pathOptions;
@@ -198,12 +200,38 @@ public class Worker : BackgroundService
 		dbContext.Queue.RemoveRange(entries);
 	}
 
-	private async static Task<byte[]> ConvertImage(byte[] inputImageBytes, int width, int height)
+	internal static Task<byte[]> ConvertImage(byte[] inputImageBytes, int width, int height)
 	{
-		using Image image = Image.Load(inputImageBytes);
-		image.Mutate(x => x.Resize(width, height));
-		using var outputStream = new MemoryStream();
-		await image.SaveAsync(outputStream, new WebpEncoder());
-		return outputStream.ToArray();
+		ArgumentNullException.ThrowIfNull(inputImageBytes);
+		ValidateDimensions(width, height);
+
+		if (inputImageBytes.Length > MaxImageInputBytes)
+			throw new InvalidDataException($"Image input exceeds the {MaxImageInputBytes}-byte limit.");
+
+		using SKData encodedData = SKData.CreateCopy(inputImageBytes);
+		using SKCodec codec = SKCodec.Create(encodedData)
+			?? throw new InvalidDataException("Image input is malformed or uses an unsupported format.");
+		SKImageInfo sourceInfo = codec.Info;
+		ValidateDimensions(sourceInfo.Width, sourceInfo.Height);
+
+		using SKBitmap sourceBitmap = SKBitmap.Decode(codec)
+			?? throw new InvalidDataException("Image input could not be decoded.");
+		using SKBitmap resizedBitmap = new(new SKImageInfo(width, height, SKColorType.Rgba8888, SKAlphaType.Premul));
+		using (SKCanvas canvas = new(resizedBitmap))
+		{
+			canvas.DrawBitmap(sourceBitmap, new SKRect(0, 0, width, height), new SKSamplingOptions(SKCubicResampler.CatmullRom));
+		}
+
+		using SKImage resizedImage = SKImage.FromBitmap(resizedBitmap);
+		using SKData webpData = resizedImage.Encode(SKEncodedImageFormat.Webp, 75)
+			?? throw new InvalidDataException("Image could not be encoded as WebP.");
+		return Task.FromResult(webpData.ToArray());
+	}
+
+	private static void ValidateDimensions(int width, int height)
+	{
+		if (width <= 0 || height <= 0 || width > MaxImageDimension || height > MaxImageDimension ||
+			(long)width * height > MaxImagePixels)
+			throw new InvalidDataException($"Image dimensions must be positive, no larger than {MaxImageDimension} per side, and no more than {MaxImagePixels} pixels.");
 	}
 }

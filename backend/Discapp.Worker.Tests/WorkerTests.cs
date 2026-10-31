@@ -6,6 +6,7 @@ using Discapp.Worker;
 using Discapp.Worker.Models;
 using Discapp.Shared.Data;
 using Microsoft.Extensions.DependencyInjection;
+using SkiaSharp;
 using DataRecord = Discapp.Shared.Data.Record;
 
 namespace Discapp.Worker.Tests;
@@ -276,6 +277,96 @@ public class WorkerExecuteTests
 			await worker.StopAsync(CancellationToken.None);
 			await services.DisposeAsync();
 		}
+	}
+}
+
+public class WorkerConvertImageTests
+{
+	[Fact]
+	public async Task ConvertImage_ValidJpeg_ProducesDecodable300By300Webp()
+	{
+		byte[] jpeg = CreateJpeg(80, 60, (x, y) => x < 40 ? SKColors.Red : SKColors.Blue);
+
+		byte[] webp = await Worker.ConvertImage(jpeg, 300, 300);
+		using SKData data = SKData.CreateCopy(webp);
+		using SKCodec codec = SKCodec.Create(data) ?? throw new InvalidOperationException("Output was not a decodable image.");
+
+		Assert.Equal(SKEncodedImageFormat.Webp, codec.EncodedFormat);
+		Assert.Equal(300, codec.Info.Width);
+		Assert.Equal(300, codec.Info.Height);
+	}
+
+	[Fact]
+	public async Task ConvertImage_NonSquareInput_StretchesToRequestedDimensions()
+	{
+		byte[] jpeg = CreateJpeg(100, 20, (x, y) => x < 50 ? SKColors.Red : SKColors.Blue);
+
+		byte[] webp = await Worker.ConvertImage(jpeg, 300, 300);
+		using SKBitmap bitmap = SKBitmap.Decode(webp) ?? throw new InvalidOperationException("Output was not a decodable image.");
+
+		Assert.True(bitmap.GetPixel(75, 150).Red > bitmap.GetPixel(75, 150).Blue);
+		Assert.True(bitmap.GetPixel(225, 150).Blue > bitmap.GetPixel(225, 150).Red);
+		Assert.Equal(150, FindColorTransition(bitmap));
+	}
+
+	[Fact]
+	public async Task ConvertImage_MalformedInput_ThrowsHelpfulError()
+	{
+		InvalidDataException exception = await Assert.ThrowsAsync<InvalidDataException>(
+			() => Worker.ConvertImage([1, 2, 3, 4], 300, 300));
+
+		Assert.Contains("malformed or uses an unsupported format", exception.Message);
+	}
+
+	[Fact]
+	public async Task ConvertImage_OversizedInput_RejectsBeforeDecoding()
+	{
+		byte[] oversized = new byte[20 * 1024 * 1024 + 1];
+
+		InvalidDataException exception = await Assert.ThrowsAsync<InvalidDataException>(
+			() => Worker.ConvertImage(oversized, 300, 300));
+
+		Assert.Contains("byte limit", exception.Message);
+	}
+
+	[Fact]
+	public async Task ConvertImage_OversizedDimensions_RejectsBeforeDecoding()
+	{
+		using SKBitmap oversized = new(new SKImageInfo(10_001, 1, SKColorType.Rgba8888, SKAlphaType.Premul));
+		using SKImage image = SKImage.FromBitmap(oversized);
+		using SKData oversizedJpeg = image.Encode(SKEncodedImageFormat.Jpeg, 100)
+			?? throw new InvalidOperationException("Test input could not be encoded.");
+
+		InvalidDataException exception = await Assert.ThrowsAsync<InvalidDataException>(
+			() => Worker.ConvertImage(oversizedJpeg.ToArray(), 300, 300));
+
+		Assert.Contains("Image dimensions", exception.Message);
+	}
+
+	private static byte[] CreateJpeg(int width, int height, Func<int, int, SKColor> colorAt)
+	{
+		using SKBitmap bitmap = new(new SKImageInfo(width, height, SKColorType.Rgba8888, SKAlphaType.Premul));
+		for (int y = 0; y < height; y++)
+			for (int x = 0; x < width; x++)
+				bitmap.SetPixel(x, y, colorAt(x, y));
+
+		using SKImage image = SKImage.FromBitmap(bitmap);
+		using SKData data = image.Encode(SKEncodedImageFormat.Jpeg, 100)
+			?? throw new InvalidOperationException("Test input could not be encoded.");
+		return data.ToArray();
+	}
+
+	private static int FindColorTransition(SKBitmap bitmap)
+	{
+		for (int x = 1; x < bitmap.Width; x++)
+		{
+			SKColor previous = bitmap.GetPixel(x - 1, bitmap.Height / 2);
+			SKColor current = bitmap.GetPixel(x, bitmap.Height / 2);
+			if (previous.Red > previous.Blue && current.Blue > current.Red)
+				return x;
+		}
+
+		return -1;
 	}
 }
 
