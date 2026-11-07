@@ -30,11 +30,4 @@ public static class WorkerServiceExtensions
 
 		return services;
 	}
-
-	/// <summary>
-	/// Interprets the LOCALIB_WORKER_ENABLED value. The Worker runs unless explicitly disabled.
-	/// </summary>
-	public static bool IsWorkerEnabled(string? value) =>
-		string.IsNullOrWhiteSpace(value)
-		|| !(value.Trim().Equals("false", StringComparison.OrdinalIgnoreCase) || value.Trim() == "0");
 }

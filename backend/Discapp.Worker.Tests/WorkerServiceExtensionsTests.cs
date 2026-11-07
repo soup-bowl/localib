@@ -9,20 +9,6 @@ namespace Discapp.Worker.Tests;
 
 public class WorkerServiceExtensionsTests
 {
-	[Theory]
-	[InlineData(null, true)]
-	[InlineData("", true)]
-	[InlineData("true", true)]
-	[InlineData("1", true)]
-	[InlineData("false", false)]
-	[InlineData("FALSE", false)]
-	[InlineData(" false ", false)]
-	[InlineData("0", false)]
-	public void IsWorkerEnabled_InterpretsValue(string? value, bool expected)
-	{
-		Assert.Equal(expected, WorkerServiceExtensions.IsWorkerEnabled(value));
-	}
-
 	[Fact]
 	public void AddLocalibWorker_RegistersHostedWorker()
 	{
