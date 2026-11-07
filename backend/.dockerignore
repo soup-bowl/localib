@@ -14,3 +14,5 @@ Dockerfile*
 appsettings.*.json
 appsettings.json
 Images/*
+
+!docker-entrypoint.sh
