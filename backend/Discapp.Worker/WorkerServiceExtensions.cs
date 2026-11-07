@@ -1,5 +1,7 @@
 using Discapp.Worker.Models;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Discapp.Worker;
 
@@ -26,6 +28,11 @@ public static class WorkerServiceExtensions
 			// Unvalidated, so empty credentials do not stop the host from starting.
 			client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Discogs key={consumerKey}, secret={consumerSecret}");
 		});
+		// Exposed so the debug endpoint can run the same processing the Worker does.
+		services.AddTransient(sp => new ArtworkProcessor(
+			sp.GetRequiredService<ILoggerFactory>().CreateLogger<ArtworkProcessor>(),
+			sp.GetRequiredService<IOptions<PathSettings>>().Value,
+			sp.GetRequiredService<IHttpClientFactory>().CreateClient("Discogs")));
 		services.AddHostedService<Worker>();
 
 		return services;

@@ -20,6 +20,7 @@ var imageStoragePath = Environment.GetEnvironmentVariable("LOCALIB_IMAGE_PATH") 
 var ClientKey = Environment.GetEnvironmentVariable("LOCALIB_DISCOGS_CONSUMER_KEY");
 var ClientSecret = Environment.GetEnvironmentVariable("LOCALIB_DISCOGS_CONSUMER_SECRET");
 var CallbackURL = Environment.GetEnvironmentVariable("LOCALIB_DISCOGS_CALLBACK_URL");
+var debugEndpointsEnabled = string.Equals(Environment.GetEnvironmentVariable("LOCALIB_ENABLE_DEBUG_ENDPOINTS"), "true", StringComparison.OrdinalIgnoreCase);
 
 // --- CORS ---
 string? allowedOrigins = Environment.GetEnvironmentVariable("LOCALIB_CORS_ALLOWED_ORIGINS");
@@ -59,6 +60,8 @@ builder.Services.AddSingleton(new AuthSettings
     ConsumerSecret = ClientSecret ?? "",
     CallbackURL = CallbackURL ?? ""
 });
+
+builder.Services.AddSingleton(new DebugSettings { Enabled = debugEndpointsEnabled });
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IImageProcessService, ImageProcessService>();

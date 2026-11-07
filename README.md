@@ -48,6 +48,7 @@ Configuration is via environment variables:
 | `LOCALIB_DISCOGS_CONSUMER_SECRET` | Both    | Consumer Secret from [Discogs Developer Application][dcd], used by both the API and the worker.   |
 | `LOCALIB_DISCOGS_CALLBACK_URL`    | API     | Callback to the frontend's `/callback` URL to handle OAuth flow.                                  |
 | `LOCALIB_CORS_ALLOWED_ORIGINS`    | API     | CORS restriction policy, optional, API only.                                                      |
+| `LOCALIB_ENABLE_DEBUG_ENDPOINTS`  | API     | Set to `true` to enable the `/api/Debug` artwork diagnostics (see below). Off by default.         |
 | `PUID` / `PGID`                   | Both    | Docker only. User/group ID the app runs as, and that owns the image volume. Default `1000`.       |
 
 Example:
@@ -66,6 +67,18 @@ docker run --rm \
   -v "$(pwd)/Images:/Images" \
   -p 8080:8080 \
   ghcr.io/soup-bowl/localib:edge
+```
+
+### Debugging artwork
+
+With `LOCALIB_ENABLE_DEBUG_ENDPOINTS=true`, the API exposes endpoints for checking a single release's artwork without going through the queue. They are unauthenticated and make Discogs requests with the server's key, so only enable them while debugging.
+
+- `GET /api/Debug/Artwork/{id}`: what is stored for the release (database record, queue entry, and image files on disk).
+- `POST /api/Debug/Artwork/{id}`: processes the release immediately, exactly as the worker would, and returns each step taken alongside the before and after state.
+- `GET /api/Debug/Artwork/{id}/thumb` or `/w3`: serves the stored thumbnail or high quality image, to view in a browser.
+
+```bash
+curl -X POST http://localhost:8080/api/Debug/Artwork/32833284
 ```
 
 On startup the container fixes the ownership of the image volume (`/Images`) and then drops root privileges, so a fresh bind mount works without a manual `chown`. The app runs as UID/GID `1000` by default, which matches the first user on most Linux hosts. If your host user has different IDs, pass them, e.g. `-e PUID=$(id -u) -e PGID=$(id -g)`.
