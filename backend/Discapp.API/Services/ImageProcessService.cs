@@ -38,12 +38,21 @@ namespace Discapp.API.Services
 				});
 			}
 
+			HashSet<int> alreadyQueuedIds = [.. await _context.Queue
+				.Where(q => input.Contains(q.RecordID))
+				.Select(q => q.RecordID)
+				.ToListAsync()];
+
 			// Shoutout to Missing Records in Glasgow.
 			IEnumerable<int> missingRecordIds = input.Except(existingRecordIds);
 			foreach (int recordId in missingRecordIds)
 			{
-				Queue myEntity = new() { RecordID = recordId };
-				_context.Queue.Add(myEntity);
+				if (!alreadyQueuedIds.Contains(recordId))
+				{
+					Queue myEntity = new() { RecordID = recordId };
+					_context.Queue.Add(myEntity);
+				}
+
 				records.Queued.Add(recordId);
 			}
 

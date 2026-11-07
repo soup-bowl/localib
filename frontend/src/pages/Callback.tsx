@@ -4,11 +4,11 @@ import { useAuth, useSettings } from "@/hooks"
 import { IonPage } from "@ionic/react"
 import { useQueryClient } from "@tanstack/react-query"
 import { useEffect } from "react"
-import { useHistory, useLocation } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 
 const CallbackLoginPage: React.FC = () => {
 	const queryClient = useQueryClient()
-	const history = useHistory()
+	const navigate = useNavigate()
 	const location = useLocation()
 	const searchParams = new URLSearchParams(location.search)
 	const [oauthSecretLogin, setOauthSecretLogin] = useSettings<string | undefined>("Callink", undefined)
@@ -22,7 +22,7 @@ const CallbackLoginPage: React.FC = () => {
 		const authorizeUser = async () => {
 			if (wasDenied) {
 				setOauthSecretLogin("")
-				history.push("/")
+				navigate("/")
 				return
 			}
 
@@ -38,12 +38,12 @@ const CallbackLoginPage: React.FC = () => {
 					saveAuth(whoami.username, response.accessToken, response.secretToken)
 					setOauthSecretLogin("")
 					queryClient.clear()
-					history.push("/")
+					navigate("/")
 					window.location.reload()
 				} catch (error) {
 					console.error(error)
 					setOauthSecretLogin("")
-					history.push("/")
+					navigate("/")
 				}
 			}
 		}

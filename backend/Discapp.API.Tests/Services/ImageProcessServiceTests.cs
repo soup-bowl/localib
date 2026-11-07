@@ -93,10 +93,22 @@ public class ImageProcessServiceTests : IDisposable
 		int[] input = [401];
 
 		await service.PostMyEntity(input);
-		await service.PostMyEntity(input);
+		RecordReply second = await service.PostMyEntity(input);
 
-		// Second call: 401 is still not in Records, so it gets added again to queue
+		// 401 is still not in Records, but it is already queued, so it is reported without being re-added
+		Assert.Equal(1, await _dbContext.Queue.CountAsync());
+		Assert.Equal([401], second.Queued);
+	}
+
+	[Fact]
+	public async Task PostMyEntity_DuplicateIdsInInput_QueuesOnce()
+	{
+		var service = CreateService();
+
+		RecordReply result = await service.PostMyEntity([402, 402, 403]);
+
 		Assert.Equal(2, await _dbContext.Queue.CountAsync());
+		Assert.Equal(2, result.Queued.Count);
 	}
 
 	[Fact]

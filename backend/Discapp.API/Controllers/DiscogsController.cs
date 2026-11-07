@@ -22,14 +22,13 @@ namespace Discapp.API.Controllers
 
 		[HttpGet("Profile")]
 		public Task<ActionResult<DiscogsProfile>> GetProfile([FromQuery] string username, [FromHeader(Name = "Authorization")] string token) =>
-			SendDiscogsRequestAsync<DiscogsProfile>($"users/{username}", _authService.ExtractToken(token), async data =>
+			SendDiscogsRequestAsync<DiscogsProfile>($"users/{Uri.EscapeDataString(username)}", _authService.ExtractToken(token), async data =>
 			{
 				if (!string.IsNullOrEmpty(data.AvatarUrl))
 				{
 					try
 					{
-						byte[] imageBytes = await _httpClient.GetByteArrayAsync(data.AvatarUrl);
-						data.AvatarBase64 = $"data:jpeg;base64,{Convert.ToBase64String(imageBytes)}";
+						data.AvatarBase64 = await FetchImageAsDataUriAsync(data.AvatarUrl);
 					}
 					catch (Exception ex)
 					{
@@ -42,8 +41,7 @@ namespace Discapp.API.Controllers
 				{
 					try
 					{
-						byte[] imageBytes = await _httpClient.GetByteArrayAsync(data.BannerUrl);
-						data.BannerBase64 = $"data:jpeg;base64,{Convert.ToBase64String(imageBytes)}";
+						data.BannerBase64 = await FetchImageAsDataUriAsync(data.BannerUrl);
 					}
 					catch (Exception ex)
 					{
@@ -61,7 +59,7 @@ namespace Discapp.API.Controllers
 
 		[HttpGet("Collections")]
 		public Task<ActionResult<DiscogsCollectionsReturn>> GetCollections([FromQuery] string username, [FromHeader(Name = "Authorization")] string token, [FromQuery] CollectionControls controls) =>
-			SendDiscogsRequestAsync<DiscogsCollectionsReturn>($"users/{username}/collection/folders/0/releases?page={controls.Page}&per_page={controls.PerPage}", _authService.ExtractToken(token), async data =>
+			SendDiscogsRequestAsync<DiscogsCollectionsReturn>($"users/{Uri.EscapeDataString(username)}/collection/folders/0/releases?page={controls.Page}&per_page={controls.PerPage}", _authService.ExtractToken(token), async data =>
 			{
 				var updateDict = (await _imageService.PostMyEntity(
 					[.. data.Releases.Select(release => release.Id)])
@@ -75,7 +73,7 @@ namespace Discapp.API.Controllers
 
 		[HttpGet("Wants")]
 		public Task<ActionResult<DiscogsWantsReturn>> GetWants([FromQuery] string username, [FromHeader(Name = "Authorization")] string token, [FromQuery] CollectionControls controls) =>
-			SendDiscogsRequestAsync<DiscogsWantsReturn>($"users/{username}/wants?page={controls.Page}&per_page={controls.PerPage}", _authService.ExtractToken(token), async data =>
+			SendDiscogsRequestAsync<DiscogsWantsReturn>($"users/{Uri.EscapeDataString(username)}/wants?page={controls.Page}&per_page={controls.PerPage}", _authService.ExtractToken(token), async data =>
 			{
 				var updateDict = (await _imageService.PostMyEntity(
 					[.. data.Wants.Select(release => release.Id)])
@@ -114,6 +112,22 @@ namespace Discapp.API.Controllers
 			}
 
 			return result is not null ? Ok(result) : BadRequest(new { message = "Failed to parse response." });
+		}
+
+		/// <summary>
+		/// Downloads an image and inlines it as a data URI, so the client can store it for offline use.
+		/// </summary>
+		private async Task<string> FetchImageAsDataUriAsync(string url)
+		{
+			using HttpResponseMessage response = await _httpClient.GetAsync(url);
+			response.EnsureSuccessStatusCode();
+
+			byte[] imageBytes = await response.Content.ReadAsByteArrayAsync();
+			string mimeType = response.Content.Headers.ContentType?.MediaType is string type && type.StartsWith("image/")
+				? type
+				: "image/jpeg";
+
+			return $"data:{mimeType};base64,{Convert.ToBase64String(imageBytes)}";
 		}
 
 		private static readonly JsonSerializerOptions s_exportDiscogsData = new()

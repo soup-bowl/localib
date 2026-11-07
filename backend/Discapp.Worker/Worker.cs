@@ -6,9 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Processing;
-using SixLabors.ImageSharp.Formats.Webp;
+using SkiaSharp;
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Discapp.Worker.Tests")]
 
@@ -16,6 +14,10 @@ namespace Discapp.Worker;
 
 public class Worker : BackgroundService
 {
+	private const int MaxImageInputBytes = 20 * 1024 * 1024;
+	private const int MaxImageDimension = 10_000;
+	private const long MaxImagePixels = 20_000_000;
+
 	private readonly ILogger<Worker> _logger;
 	private readonly IServiceScopeFactory _scopeFactory;
 	private readonly PathSettings _pathOptions;
@@ -66,15 +68,15 @@ public class Worker : BackgroundService
 		{
 			try
 			{
-				HttpResponseMessage response = await GetApiResponseWithRetryAsync($"releases/{queueItem.RecordID}", 3, 1000, stoppingToken);
-				response.EnsureSuccessStatusCode();
+				using HttpResponseMessage response = await GetApiResponseWithRetryAsync($"releases/{queueItem.RecordID}", 3, 1000, stoppingToken);
 
 				DiscogsRelease? releaseData = await response.Content.ReadFromJsonAsync<DiscogsRelease>(cancellationToken: stoppingToken);
 
 				if (!string.IsNullOrEmpty(releaseData?.Thumb))
 				{
 					string imageUrl = releaseData.Thumb;
-					byte[] imageBytes = await GetApiResponseWithRetryAsync(imageUrl, 3, 1000, stoppingToken).Result.Content.ReadAsByteArrayAsync(stoppingToken);
+					using HttpResponseMessage imageResponse = await GetApiResponseWithRetryAsync(imageUrl, 3, 1000, stoppingToken);
+					byte[] imageBytes = await imageResponse.Content.ReadAsByteArrayAsync(stoppingToken);
 
 					string filePath = Path.Combine(_pathOptions.ImagePath, queueItem.RecordID.ToString() + "_thumb.jpg");
 					await File.WriteAllBytesAsync(filePath, imageBytes, stoppingToken);
@@ -90,7 +92,8 @@ public class Worker : BackgroundService
 						.FirstOrDefault() ?? "";
 					if (!string.IsNullOrEmpty(mainCoverUri))
 					{
-						byte[] mainCover = await GetApiResponseWithRetryAsync(mainCoverUri, 3, 1000, stoppingToken).Result.Content.ReadAsByteArrayAsync(stoppingToken);
+						using HttpResponseMessage coverResponse = await GetApiResponseWithRetryAsync(mainCoverUri, 3, 1000, stoppingToken);
+						byte[] mainCover = await coverResponse.Content.ReadAsByteArrayAsync(stoppingToken);
 						byte[] conversionOut = await ConvertImage(mainCover, 300, 300);
 						await File.WriteAllBytesAsync(Path.Combine(_pathOptions.ImagePath, queueItem.RecordID.ToString() + "_w3.webp"), conversionOut, stoppingToken);
 					}
@@ -114,7 +117,7 @@ public class Worker : BackgroundService
 						dbContext.Records.Add(newRecord);
 					}
 
-					dbContext.Queue.Remove(queueItem);
+					await RemoveFromQueueAsync(dbContext, queueItem.RecordID, stoppingToken);
 					await dbContext.SaveChangesAsync(stoppingToken);
 
 					_logger.LogInformation("Processed and removed Queue item with ID {QueueId}, saved image to {FilePath}", queueItem.Id, filePath);
@@ -122,14 +125,19 @@ public class Worker : BackgroundService
 				else
 				{
 					_logger.LogWarning("No thumbnail found for release ID {RecordID}", queueItem.RecordID);
-					dbContext.Queue.Remove(queueItem);
+					await RemoveFromQueueAsync(dbContext, queueItem.RecordID, stoppingToken);
 					await dbContext.SaveChangesAsync(stoppingToken);
 				}
+			}
+			catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+			{
+				// Shutting down - leave the item queued so it is picked up on the next run.
+				throw;
 			}
 			catch (Exception ex)
 			{
 				_logger.LogError(ex, "An error occurred while processing the queue ID {QueueItemId}.", queueItem.Id);
-				dbContext.Queue.Remove(queueItem);
+				await RemoveFromQueueAsync(dbContext, queueItem.RecordID, stoppingToken);
 				await dbContext.SaveChangesAsync(stoppingToken);
 			}
 		}
@@ -179,7 +187,7 @@ public class Worker : BackgroundService
 				_logger.LogWarning("Received 429 Too Many Requests. Retrying after delay...");
 				await Task.Delay(delayMilliseconds, stoppingToken);
 				retryCount++;
-				delayMilliseconds += 1000; // Exponential backoff
+				delayMilliseconds += 1000; // Linear backoff
 			}
 			else
 			{
@@ -190,12 +198,50 @@ public class Worker : BackgroundService
 		throw new HttpRequestException("Maximum retry attempts exceeded.");
 	}
 
-	private async static Task<byte[]> ConvertImage(byte[] inputImageBytes, int width, int height)
+	/// <summary>
+	/// Removes every queue entry for the record, clearing out any duplicates queued alongside it.
+	/// </summary>
+	private static async Task RemoveFromQueueAsync(ApplicationDbContext dbContext, int recordId, CancellationToken stoppingToken)
 	{
-		using Image image = Image.Load(inputImageBytes);
-		image.Mutate(x => x.Resize(width, height));
-		using var outputStream = new MemoryStream();
-		await image.SaveAsync(outputStream, new WebpEncoder());
-		return outputStream.ToArray();
+		List<Queue> entries = await dbContext.Queue
+			.Where(q => q.RecordID == recordId)
+			.ToListAsync(stoppingToken);
+
+		dbContext.Queue.RemoveRange(entries);
+	}
+
+	internal static Task<byte[]> ConvertImage(byte[] inputImageBytes, int width, int height)
+	{
+		ArgumentNullException.ThrowIfNull(inputImageBytes);
+		ValidateDimensions(width, height);
+
+		if (inputImageBytes.Length > MaxImageInputBytes)
+			throw new InvalidDataException($"Image input exceeds the {MaxImageInputBytes}-byte limit.");
+
+		using SKData encodedData = SKData.CreateCopy(inputImageBytes);
+		using SKCodec codec = SKCodec.Create(encodedData)
+			?? throw new InvalidDataException("Image input is malformed or uses an unsupported format.");
+		SKImageInfo sourceInfo = codec.Info;
+		ValidateDimensions(sourceInfo.Width, sourceInfo.Height);
+
+		using SKBitmap sourceBitmap = SKBitmap.Decode(codec)
+			?? throw new InvalidDataException("Image input could not be decoded.");
+		using SKBitmap resizedBitmap = new(new SKImageInfo(width, height, SKColorType.Rgba8888, SKAlphaType.Premul));
+		using (SKCanvas canvas = new(resizedBitmap))
+		{
+			canvas.DrawBitmap(sourceBitmap, new SKRect(0, 0, width, height), new SKSamplingOptions(SKCubicResampler.CatmullRom));
+		}
+
+		using SKImage resizedImage = SKImage.FromBitmap(resizedBitmap);
+		using SKData webpData = resizedImage.Encode(SKEncodedImageFormat.Webp, 75)
+			?? throw new InvalidDataException("Image could not be encoded as WebP.");
+		return Task.FromResult(webpData.ToArray());
+	}
+
+	private static void ValidateDimensions(int width, int height)
+	{
+		if (width <= 0 || height <= 0 || width > MaxImageDimension || height > MaxImageDimension ||
+			(long)width * height > MaxImagePixels)
+			throw new InvalidDataException($"Image dimensions must be positive, no larger than {MaxImageDimension} per side, and no more than {MaxImagePixels} pixels.");
 	}
 }

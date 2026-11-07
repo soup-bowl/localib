@@ -129,20 +129,22 @@ const SettingsInformationPage: React.FC = () => {
 				</IonList>
 				{persistenceStatus && (
 					<IonPopover trigger="persistence-tooltip" triggerAction="click">
-						<IonContent class="ion-padding">{getStoragePersistenceMessage(persistenceStatus)}</IonContent>
+						<IonContent className="ion-padding">
+							{getStoragePersistenceMessage(persistenceStatus)}
+						</IonContent>
 					</IonPopover>
 				)}
 				<IonPopover trigger="reccount-tooltip" triggerAction="click">
-					<IonContent class="ion-padding">
+					<IonContent className="ion-padding">
 						{inStorageInfo.collectionCount} collected, {inStorageInfo.wantedCount} wanted
 					</IonContent>
 				</IonPopover>
 				<IonPopover trigger="missing-tooltip" triggerAction="click">
-					<IonContent class="ion-padding">
+					<IonContent className="ion-padding">
 						{inStorageInfo.collectionMissing} collected, {inStorageInfo.wantedMissing} wanted
 					</IonContent>
 				</IonPopover>
-				<IonNote color="medium" class="ion-margin-horizontal" style={{ display: "block" }}>
+				<IonNote color="medium" className="ion-margin-horizontal" style={{ display: "block" }}>
 					For some records, we need to collect further information from the Discogs system. This can take some
 					time, so try reloading in a few hours to see it change.
 				</IonNote>
@@ -155,7 +157,7 @@ const SettingsInformationPage: React.FC = () => {
 				</IonList>
 
 				<IonGrid>
-					<IonRow class="ion-justify-content-center">
+					<IonRow className="ion-justify-content-center">
 						<IonCol size="auto">
 							<IonButton onClick={() => window.location.reload()} color="primary">
 								Reload app
