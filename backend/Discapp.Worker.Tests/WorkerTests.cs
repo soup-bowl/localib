@@ -309,6 +309,51 @@ public class WorkerExecuteTests
 	}
 }
 
+public class WorkerSelectMainCoverUriTests
+{
+	[Fact]
+	public void SelectMainCoverUri_PrimaryPresent_ReturnsPrimary()
+	{
+		List<DiscogsImages> images =
+		[
+			new() { Type = "secondary", Uri = "https://img/secondary.jpg" },
+			new() { Type = "primary", Uri = "https://img/primary.jpg" },
+		];
+
+		Assert.Equal("https://img/primary.jpg", Worker.SelectMainCoverUri(images));
+	}
+
+	[Fact]
+	public void SelectMainCoverUri_OnlySecondaryImages_FallsBackToFirst()
+	{
+		List<DiscogsImages> images =
+		[
+			new() { Type = "secondary", Uri = "https://img/first.jpg" },
+			new() { Type = "secondary", Uri = "https://img/second.jpg" },
+		];
+
+		Assert.Equal("https://img/first.jpg", Worker.SelectMainCoverUri(images));
+	}
+
+	[Fact]
+	public void SelectMainCoverUri_SkipsImagesWithoutUri()
+	{
+		List<DiscogsImages> images =
+		[
+			new() { Type = "primary", Uri = "" },
+			new() { Type = "secondary", Uri = "https://img/usable.jpg" },
+		];
+
+		Assert.Equal("https://img/usable.jpg", Worker.SelectMainCoverUri(images));
+	}
+
+	[Fact]
+	public void SelectMainCoverUri_NoImages_ReturnsEmpty()
+	{
+		Assert.Equal("", Worker.SelectMainCoverUri([]));
+	}
+}
+
 public class WorkerConvertImageTests
 {
 	[Fact]
