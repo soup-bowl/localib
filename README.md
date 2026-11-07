@@ -68,7 +68,7 @@ docker run --rm \
   ghcr.io/soup-bowl/localib/api:edge
 ```
 
-On startup the container fixes the ownership of the image volume (`/Images`) and then drop root privileges, so a fresh bind mount works without a manual `chown`. The app runs as UID/GID `1000` by default, which matches the first user on most Linux hosts. If your host user has different IDs, pass them, e.g. `-e PUID=$(id -u) -e PGID=$(id -g)`.
+On startup the container fixes the ownership of the image volume (`/Images`) and then drops root privileges, so a fresh bind mount works without a manual `chown`. The app runs as UID/GID `1000` by default, which matches the first user on most Linux hosts. If your host user has different IDs, pass them, e.g. `-e PUID=$(id -u) -e PGID=$(id -g)`.
 
 Want to use a connection string? Replace all the DB fields with `-e LOCALIB_CONNECTION_STRING="Host=localhost;Database=postgres;Username=postgres;Password=password;"`.
 
