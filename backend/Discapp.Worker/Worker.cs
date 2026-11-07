@@ -1,6 +1,9 @@
 using Discapp.Worker.Models;
 using Discapp.Shared.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
 using SkiaSharp;
@@ -32,20 +35,27 @@ public class Worker : BackgroundService
 	{
 		while (!stoppingToken.IsCancellationRequested)
 		{
-			if (_logger.IsEnabled(LogLevel.Information))
+			// An unhandled exception here would stop the whole host, which takes the API down with it.
+			try
 			{
-				_logger.LogInformation("Worker running at: {Time}", DateTimeOffset.Now);
-			}
+				_logger.LogDebug("Worker running at: {Time}", DateTimeOffset.Now);
 
-			using (IServiceScope scope = _scopeFactory.CreateScope())
-			{
+				using IServiceScope scope = _scopeFactory.CreateScope();
+
 				ApplicationDbContext dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
 				await FilterOldRecords(dbContext, stoppingToken);
 
 				await ProcessQueue(dbContext, stoppingToken);
 			}
-
+			catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+			{
+				break;
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Worker iteration failed, will retry.");
+			}
 			await Task.Delay(1000, stoppingToken);
 		}
 	}
@@ -133,7 +143,7 @@ public class Worker : BackgroundService
 		}
 		else
 		{
-			_logger.LogInformation("Nothing in the queue.");
+			_logger.LogDebug("Nothing in the queue.");
 		}
 	}
 

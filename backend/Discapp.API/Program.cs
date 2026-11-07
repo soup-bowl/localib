@@ -4,6 +4,7 @@ using Discapp.API.Models;
 using Discapp.API.Services;
 using Microsoft.OpenApi;
 using Discapp.API.Models.Auth;
+using Discapp.Worker;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -61,6 +62,10 @@ builder.Services.AddSingleton(new AuthSettings
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IImageProcessService, ImageProcessService>();
+
+// --- Worker ---
+// Runs in-process alongside the API.
+builder.Services.AddLocalibWorker(imageStoragePath, ClientKey ?? "", ClientSecret ?? "");
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

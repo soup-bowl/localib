@@ -7,6 +7,7 @@ ARG TARGETARCH
 WORKDIR /src
 COPY Discapp.API/*.csproj Discapp.API/
 COPY Discapp.Shared/*.csproj Discapp.Shared/
+COPY Discapp.Worker/*.csproj Discapp.Worker/
 
 RUN dotnet restore "Discapp.API/Discapp.API.csproj" -a "$TARGETARCH"
 COPY . . 

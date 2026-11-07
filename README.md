@@ -26,7 +26,12 @@ Once visited or installed, pop into Settings and log into your Discogs account (
 
 This project has a counterpart API service (internally referenced as the **Vinyl Service**). This service is charged with proxying your requests to the Discogs API in a secure manner, and also - where possible and necessary - scraping and storing image data from Discogs to aid in the off-network persistence.
 
-The API consists of two separate applications - a REST API, and a worker service that collects all the records passing through the system, and downloads the artwork for it. This service will scrape the dominant album art, and store both the thumbnail and a heavily-optimised larger image to allow for optional higher-quality album art persistence.
+The API consists of a REST API, and a worker service that collects all the records passing through the system, and downloads the artwork for it. This service will scrape the dominant album art, and store both the thumbnail and a heavily-optimised larger image to allow for optional higher-quality album art persistence.
+
+Both run from the same application and image, with the worker running in-process alongside the API. Run a single instance, as each instance runs its own worker and records would otherwise be processed more than once.
+
+> [!NOTE]
+> Previous releases shipped separate `localib/api` and `localib/worker` images. These are no longer published - switch to the single `ghcr.io/soup-bowl/localib` image, which runs both. Tags follow the same pattern (`edge`, `latest`, release versions, with an `-alpine` suffix for the Alpine variant).
 
 Configuration is via environment variables:
 
@@ -60,10 +65,10 @@ docker run --rm \
   -e LOCALIB_DISCOGS_CALLBACK_URL=https://localib.app/callback \
   -v "$(pwd)/Images:/Images" \
   -p 8080:8080 \
-  ghcr.io/soup-bowl/localib/api:edge
+  ghcr.io/soup-bowl/localib:edge
 ```
 
-On startup the containers fix the ownership of the image volume (`/Images`) and then drop root privileges, so a fresh bind mount works without a manual `chown`. The app runs as UID/GID `1000` by default, which matches the first user on most Linux hosts. If your host user has different IDs, pass them, e.g. `-e PUID=$(id -u) -e PGID=$(id -g)`. Use the same values for the API and the Worker, since they share the volume.
+On startup the container fixes the ownership of the image volume (`/Images`) and then drops root privileges, so a fresh bind mount works without a manual `chown`. The app runs as UID/GID `1000` by default, which matches the first user on most Linux hosts. If your host user has different IDs, pass them, e.g. `-e PUID=$(id -u) -e PGID=$(id -g)`.
 
 Want to use a connection string? Replace all the DB fields with `-e LOCALIB_CONNECTION_STRING="Host=localhost;Database=postgres;Username=postgres;Password=password;"`.
 

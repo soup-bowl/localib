@@ -17,9 +17,9 @@ if [ "$(id -u)" = "0" ]; then
 	PUID="${PUID:-$(id -u discapp)}"
 	PGID="${PGID:-$(id -g discapp)}"
 
-	# Failures here are not fatal: the mount may be read-only (e.g. on the API,
-	# which only reads images) or on storage where root cannot chown (e.g. NFS
-	# with root_squash). In those cases, leave ownership to the user.
+	# Failures here are not fatal: the mount may be read-only or on storage
+	# where root cannot chown (e.g. NFS with root_squash). In those cases, leave
+	# ownership to the user.
 	mkdir -p "$IMAGE_PATH" 2>/dev/null \
 		|| echo "Warning: could not create $IMAGE_PATH" >&2
 
