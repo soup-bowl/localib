@@ -16,14 +16,19 @@ if [ "$(id -u)" = "0" ]; then
 	PUID="${PUID:-$(id -u discapp)}"
 	PGID="${PGID:-$(id -g discapp)}"
 
-	mkdir -p "$IMAGE_PATH"
+	# Failures here are not fatal: the mount may be read-only (e.g. on the API,
+	# which only reads images) or on storage where root cannot chown (e.g. NFS
+	# with root_squash). In those cases, leave ownership to the user.
+	mkdir -p "$IMAGE_PATH" 2>/dev/null \
+		|| echo "Warning: could not create $IMAGE_PATH" >&2
 
 	# Only walk the tree when ownership is wrong, so restarts stay fast on
 	# large image libraries.
 	if [ "$(stat -c '%u:%g' "$IMAGE_PATH")" != "$PUID:$PGID" ] \
-		|| [ -n "$(find "$IMAGE_PATH" \( ! -user "$PUID" -o ! -group "$PGID" \) -print -quit)" ]; then
+		|| [ -n "$(find "$IMAGE_PATH" \( ! -user "$PUID" -o ! -group "$PGID" \) -print -quit 2>/dev/null)" ]; then
 		echo "Setting ownership of $IMAGE_PATH to $PUID:$PGID"
-		chown -R "$PUID:$PGID" "$IMAGE_PATH"
+		chown -R "$PUID:$PGID" "$IMAGE_PATH" 2>/dev/null \
+			|| echo "Warning: could not change ownership of $IMAGE_PATH; it may be read-only or not owned by this host." >&2
 	fi
 
 	if [ "$PUID" = "$(id -u discapp)" ]; then
