@@ -86,11 +86,12 @@ public class Worker : BackgroundService
 						.Select(id => id.Value.Replace(" ", ""))
 						.FirstOrDefault() ?? "";
 
-					string mainCoverUri = releaseData.Images
-						.Where(id => id.Type.Equals("primary", StringComparison.CurrentCultureIgnoreCase))
-						.Select(id => id.Uri)
-						.FirstOrDefault() ?? "";
-					if (!string.IsNullOrEmpty(mainCoverUri))
+					string mainCoverUri = SelectMainCoverUri(releaseData.Images);
+					if (string.IsNullOrEmpty(mainCoverUri))
+					{
+						_logger.LogWarning("No cover image found for release ID {RecordID}, skipping high quality image.", queueItem.RecordID);
+					}
+					else
 					{
 						using HttpResponseMessage coverResponse = await GetApiResponseWithRetryAsync(mainCoverUri, 3, 1000, stoppingToken);
 						byte[] mainCover = await coverResponse.Content.ReadAsByteArrayAsync(stoppingToken);
@@ -196,6 +197,18 @@ public class Worker : BackgroundService
 			}
 		}
 		throw new HttpRequestException("Maximum retry attempts exceeded.");
+	}
+
+	/// <summary>
+	/// Picks the primary image, falling back to the first image with a URI. Releases with no image marked as
+	/// primary still have a thumbnail (Discogs derives it from the first image), so they need a cover too.
+	/// </summary>
+	internal static string SelectMainCoverUri(IEnumerable<DiscogsImages> images)
+	{
+		List<DiscogsImages> usable = [.. images.Where(image => !string.IsNullOrEmpty(image.Uri))];
+
+		return (usable.FirstOrDefault(image => image.Type.Equals("primary", StringComparison.OrdinalIgnoreCase))
+			?? usable.FirstOrDefault())?.Uri ?? "";
 	}
 
 	/// <summary>
