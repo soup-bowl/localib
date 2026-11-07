@@ -6,8 +6,9 @@
 # root if Docker has to create them), so the unprivileged app user cannot
 # write to them. Starting as root lets us fix that once, then step down.
 #
-# Set PUID / PGID to run the application as a specific host user/group, so
-# files written to the bind mount are owned by that user on the host.
+# The app runs as UID/GID 1000 (the discapp user) by default. Set PUID / PGID
+# to run it as a different host user/group instead; the image directory is
+# always re-owned to whichever IDs the app runs as, so it stays writable.
 set -eu
 
 IMAGE_PATH="${LOCALIB_IMAGE_PATH:-/Images}"

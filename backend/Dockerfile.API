@@ -26,13 +26,21 @@ RUN set -eux; \
 WORKDIR /app
 COPY --from=build /publish /app
 
+# UID/GID 1000 matches the first user on most Linux hosts, so files written to
+# a bind-mounted image directory stay owned by that user. Override at runtime
+# with PUID/PGID. Ubuntu images ship an "ubuntu" user on 1000, so remove it.
+ARG APP_UID=1000
+ARG APP_GID=1000
+
 RUN set -eux; \
-    if command -v addgroup >/dev/null 2>&1; then \
-        addgroup --system discapp; \
-        adduser  --system --ingroup discapp discapp; \
+    if command -v apk >/dev/null 2>&1; then \
+        addgroup -S -g "$APP_GID" discapp; \
+        adduser  -S -D -u "$APP_UID" -G discapp -s /sbin/nologin discapp; \
     else \
-        groupadd --system discapp; \
-        useradd  --system --gid discapp --create-home --shell /sbin/nologin discapp; \
+        if id ubuntu >/dev/null 2>&1; then userdel --remove ubuntu; fi; \
+        if getent group ubuntu >/dev/null; then groupdel ubuntu; fi; \
+        groupadd --gid "$APP_GID" discapp; \
+        useradd  --uid "$APP_UID" --gid discapp --create-home --shell /usr/sbin/nologin discapp; \
     fi; \
     mkdir -p /Images; \
     chown -R discapp:discapp /app /Images
