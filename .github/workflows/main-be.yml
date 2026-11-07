@@ -44,13 +44,9 @@ jobs:
 
     strategy:
       matrix:
-        include:
-          - dockerfile: Dockerfile.API
-            tag: api
-            variant: noble
-          - dockerfile: Dockerfile.API
-            tag: api
-            variant: alpine
+        variant:
+          - noble
+          - alpine
 
     steps:
       - name: Checkout Codebase
@@ -75,12 +71,12 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: ghcr.io/${{ github.repository }}/${{ matrix.tag }}:edge${{ matrix.variant == 'alpine' && '-alpine' || '' }}
+          tags: ghcr.io/${{ github.repository }}:edge${{ matrix.variant == 'alpine' && '-alpine' || '' }}
           platforms: >
             linux/amd64,
             linux/arm64
           context: backend
-          file: backend/${{ matrix.dockerfile }}
+          file: backend/Dockerfile
           build-args: |
             BASE_VARIANT=${{ matrix.variant }}
           cache-from: type=gha
@@ -92,13 +88,13 @@ jobs:
         with:
           push: true
           tags: >
-            ghcr.io/${{ github.repository }}/${{ matrix.tag }}:${{ github.event.release.tag_name }}${{ matrix.variant == 'alpine' && '-alpine' || '' }},
-            ghcr.io/${{ github.repository }}/${{ matrix.tag }}:latest${{ matrix.variant == 'alpine' && '-alpine' || '' }}
+            ghcr.io/${{ github.repository }}:${{ github.event.release.tag_name }}${{ matrix.variant == 'alpine' && '-alpine' || '' }},
+            ghcr.io/${{ github.repository }}:latest${{ matrix.variant == 'alpine' && '-alpine' || '' }}
           platforms: >
             linux/amd64,
             linux/arm64
           context: backend
-          file: backend/${{ matrix.dockerfile }}
+          file: backend/Dockerfile
           build-args: |
             BASE_VARIANT=${{ matrix.variant }}
           cache-from: type=gha
