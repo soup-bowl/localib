@@ -43,6 +43,7 @@ Configuration is via environment variables:
 | `LOCALIB_DISCOGS_CONSUMER_SECRET` | Both    | Consumer Secret from [Discogs Developer Application][dcd], used by both the API and the worker.   |
 | `LOCALIB_DISCOGS_CALLBACK_URL`    | API     | Callback to the frontend's `/callback` URL to handle OAuth flow.                                  |
 | `LOCALIB_CORS_ALLOWED_ORIGINS`    | API     | CORS restriction policy, optional, API only.                                                      |
+| `PUID` / `PGID`                   | Both    | Docker only. User/group ID the app runs as, and that owns the image volume. Default `1000`.       |
 
 Example:
 
@@ -61,6 +62,8 @@ docker run --rm \
   -p 8080:8080 \
   ghcr.io/soup-bowl/localib/api:edge
 ```
+
+On startup the containers fix the ownership of the image volume (`/Images`) and then drop root privileges, so a fresh bind mount works without a manual `chown`. The app runs as UID/GID `1000` by default, which matches the first user on most Linux hosts. If your host user has different IDs, pass them, e.g. `-e PUID=$(id -u) -e PGID=$(id -g)`. Use the same values for the API and the Worker, since they share the volume.
 
 Want to use a connection string? Replace all the DB fields with `-e LOCALIB_CONNECTION_STRING="Host=localhost;Database=postgres;Username=postgres;Password=password;"`.
 
