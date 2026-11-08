@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Net.Http.Json;
 using SkiaSharp;
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Discapp.Worker.Tests")]
@@ -20,15 +19,13 @@ public class Worker : BackgroundService
 
 	private readonly ILogger<Worker> _logger;
 	private readonly IServiceScopeFactory _scopeFactory;
-	private readonly PathSettings _pathOptions;
-	private readonly HttpClient _httpClient;
+	private readonly ArtworkProcessor _processor;
 
 	public Worker(ILogger<Worker> logger, IServiceScopeFactory scopeFactory, IOptions<PathSettings> pathOptions, IHttpClientFactory httpClientFactory)
 	{
 		_logger = logger;
 		_scopeFactory = scopeFactory;
-		_pathOptions = pathOptions.Value;
-		_httpClient = httpClientFactory.CreateClient("Discogs");
+		_processor = new ArtworkProcessor(logger, pathOptions.Value, httpClientFactory.CreateClient("Discogs"));
 	}
 
 	protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -64,87 +61,13 @@ public class Worker : BackgroundService
 	{
 		Queue? queueItem = await dbContext.Queue.FirstOrDefaultAsync(stoppingToken);
 
-		if (queueItem != null)
-		{
-			try
-			{
-				using HttpResponseMessage response = await GetApiResponseWithRetryAsync($"releases/{queueItem.RecordID}", 3, 1000, stoppingToken);
-
-				DiscogsRelease? releaseData = await response.Content.ReadFromJsonAsync<DiscogsRelease>(cancellationToken: stoppingToken);
-
-				if (!string.IsNullOrEmpty(releaseData?.Thumb))
-				{
-					string imageUrl = releaseData.Thumb;
-					using HttpResponseMessage imageResponse = await GetApiResponseWithRetryAsync(imageUrl, 3, 1000, stoppingToken);
-					byte[] imageBytes = await imageResponse.Content.ReadAsByteArrayAsync(stoppingToken);
-
-					string filePath = Path.Combine(_pathOptions.ImagePath, queueItem.RecordID.ToString() + "_thumb.jpg");
-					await File.WriteAllBytesAsync(filePath, imageBytes, stoppingToken);
-
-					string recordBarcode = releaseData.Identifiers
-						.Where(id => id.Type == "Barcode")
-						.Select(id => id.Value.Replace(" ", ""))
-						.FirstOrDefault() ?? "";
-
-					string mainCoverUri = releaseData.Images
-						.Where(id => id.Type.Equals("primary", StringComparison.CurrentCultureIgnoreCase))
-						.Select(id => id.Uri)
-						.FirstOrDefault() ?? "";
-					if (!string.IsNullOrEmpty(mainCoverUri))
-					{
-						using HttpResponseMessage coverResponse = await GetApiResponseWithRetryAsync(mainCoverUri, 3, 1000, stoppingToken);
-						byte[] mainCover = await coverResponse.Content.ReadAsByteArrayAsync(stoppingToken);
-						byte[] conversionOut = await ConvertImage(mainCover, 300, 300);
-						await File.WriteAllBytesAsync(Path.Combine(_pathOptions.ImagePath, queueItem.RecordID.ToString() + "_w3.webp"), conversionOut, stoppingToken);
-					}
-
-					Record? existingRecord = await dbContext.Records
-						.FirstOrDefaultAsync(r => r.RecordID == queueItem.RecordID, stoppingToken);
-
-					if (existingRecord != null)
-					{
-						existingRecord.Recorded = DateTime.Now;
-						dbContext.Records.Update(existingRecord);
-					}
-					else
-					{
-						Record newRecord = new()
-						{
-							RecordID = queueItem.RecordID,
-							Barcode = recordBarcode,
-							Recorded = DateTime.Now
-						};
-						dbContext.Records.Add(newRecord);
-					}
-
-					await RemoveFromQueueAsync(dbContext, queueItem.RecordID, stoppingToken);
-					await dbContext.SaveChangesAsync(stoppingToken);
-
-					_logger.LogInformation("Processed and removed Queue item with ID {QueueId}, saved image to {FilePath}", queueItem.Id, filePath);
-				}
-				else
-				{
-					_logger.LogWarning("No thumbnail found for release ID {RecordID}", queueItem.RecordID);
-					await RemoveFromQueueAsync(dbContext, queueItem.RecordID, stoppingToken);
-					await dbContext.SaveChangesAsync(stoppingToken);
-				}
-			}
-			catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
-			{
-				// Shutting down - leave the item queued so it is picked up on the next run.
-				throw;
-			}
-			catch (Exception ex)
-			{
-				_logger.LogError(ex, "An error occurred while processing the queue ID {QueueItemId}.", queueItem.Id);
-				await RemoveFromQueueAsync(dbContext, queueItem.RecordID, stoppingToken);
-				await dbContext.SaveChangesAsync(stoppingToken);
-			}
-		}
-		else
+		if (queueItem == null)
 		{
 			_logger.LogDebug("Nothing in the queue.");
+			return;
 		}
+
+		await _processor.ProcessAsync(dbContext, queueItem.RecordID, stoppingToken);
 	}
 
 	internal async Task FilterOldRecords(ApplicationDbContext dbContext, CancellationToken stoppingToken)
@@ -176,38 +99,16 @@ public class Worker : BackgroundService
 		}
 	}
 
-	private async Task<HttpResponseMessage> GetApiResponseWithRetryAsync(string requestUri, int maxRetries, int delayMilliseconds, CancellationToken stoppingToken)
-	{
-		int retryCount = 0;
-		while (retryCount < maxRetries)
-		{
-			HttpResponseMessage response = await _httpClient.GetAsync(requestUri, stoppingToken);
-			if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
-			{
-				_logger.LogWarning("Received 429 Too Many Requests. Retrying after delay...");
-				await Task.Delay(delayMilliseconds, stoppingToken);
-				retryCount++;
-				delayMilliseconds += 1000; // Linear backoff
-			}
-			else
-			{
-				response.EnsureSuccessStatusCode();
-				return response;
-			}
-		}
-		throw new HttpRequestException("Maximum retry attempts exceeded.");
-	}
-
 	/// <summary>
-	/// Removes every queue entry for the record, clearing out any duplicates queued alongside it.
+	/// Picks the primary image, falling back to the first image with a URI. Releases with no image marked as
+	/// primary still have a thumbnail (Discogs derives it from the first image), so they need a cover too.
 	/// </summary>
-	private static async Task RemoveFromQueueAsync(ApplicationDbContext dbContext, int recordId, CancellationToken stoppingToken)
+	internal static string SelectMainCoverUri(IEnumerable<DiscogsImages> images)
 	{
-		List<Queue> entries = await dbContext.Queue
-			.Where(q => q.RecordID == recordId)
-			.ToListAsync(stoppingToken);
+		List<DiscogsImages> usable = [.. images.Where(image => !string.IsNullOrEmpty(image.Uri))];
 
-		dbContext.Queue.RemoveRange(entries);
+		return (usable.FirstOrDefault(image => image.Type.Equals("primary", StringComparison.OrdinalIgnoreCase))
+			?? usable.FirstOrDefault())?.Uri ?? "";
 	}
 
 	internal static Task<byte[]> ConvertImage(byte[] inputImageBytes, int width, int height)

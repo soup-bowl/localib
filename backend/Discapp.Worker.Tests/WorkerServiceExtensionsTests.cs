@@ -20,5 +20,6 @@ public class WorkerServiceExtensionsTests
 		using ServiceProvider provider = services.BuildServiceProvider();
 		Assert.Equal("/images", provider.GetRequiredService<IOptions<PathSettings>>().Value.ImagePath);
 		Assert.Equal("https://api.discogs.com/", provider.GetRequiredService<IHttpClientFactory>().CreateClient("Discogs").BaseAddress?.ToString());
+		Assert.NotNull(provider.GetRequiredService<ArtworkProcessor>());
 	}
 }
