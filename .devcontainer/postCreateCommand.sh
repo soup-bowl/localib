@@ -1,11 +1,20 @@
 #! /bin/env bash
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 if [ ! -z ${GITPOD_HOST+x} ]; then
 	FE_URL="https://5000-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}"
 elif [ ! -z ${CODESPACE_NAME+x} ]; then
-	FE_URL="https://${CODESPACE_NAME}-5000.app.github.dev"
+	FE_URL="https://${CODESPACE_NAME}-5000.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN:-app.github.dev}"
 else
 	FE_URL="http://localhost:5000"
 fi
+
+# Load the LOCALIB_* environment (Codespaces secrets, image path, callback URL) in every shell.
+for RC in ~/.bashrc ~/.zshrc; do
+	if [ -f "$RC" ] && ! grep -q "localib-env.sh" "$RC"; then
+		echo "[ -f \"${SCRIPT_DIR}/localib-env.sh\" ] && . \"${SCRIPT_DIR}/localib-env.sh\"" >> "$RC"
+	fi
+done
 
 git update-index --assume-unchanged .devcontainer/devcontainer.env
 npm run back:deps
