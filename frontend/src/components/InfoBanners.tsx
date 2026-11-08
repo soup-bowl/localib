@@ -1,10 +1,13 @@
 import React from "react"
 import { IonToolbar, IonTitle } from "@ionic/react"
 import { useOnlineStatus } from "@/hooks"
+import { deviceMode } from "@/theme/deviceTheme"
 
 const InfoBanners: React.FC = () => {
 	const isOnline = useOnlineStatus()
-	const betaBanner = import.meta.env.VITE_BETA_BANNER
+	// The iOS 26 theme strips toolbar backgrounds inside translucent headers, so the
+	// coloured beta banner can't render properly there. Hide it in that mode.
+	const betaBanner = deviceMode === "ios26" ? undefined : import.meta.env.VITE_BETA_BANNER
 
 	return (
 		<>
