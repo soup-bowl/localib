@@ -16,7 +16,6 @@ for RC in ~/.bashrc ~/.zshrc; do
 	fi
 done
 
-git update-index --assume-unchanged .devcontainer/devcontainer.env
 npm run back:deps
 npm run front:install
 npm run back:restore
