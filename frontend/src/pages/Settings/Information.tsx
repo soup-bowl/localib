@@ -85,7 +85,7 @@ const SettingsInformationPage: React.FC = () => {
 				</IonToolbar>
 				<InfoBanners />
 			</IonHeader>
-			<IonContent className="ion-padding">
+			<IonContent className="ion-padding" fullscreen={deviceMode === "ios26"}>
 				<IonList inset={true}>
 					<ThemeItemGroup>
 						<IonItem color={lightMode}>
