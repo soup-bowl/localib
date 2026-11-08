@@ -19,12 +19,26 @@ https://github.com/rdlabo-team/ionic-theme-ios26/issues/73#issuecomment-35720198
 }
 
 /* The iOS 26 theme makes every toolbar in a translucent header transparent. Restore the
-background on info banners (e.g. Offline) so they stay readable. */
+background on info banners and shape them as rounded pills to match the rest of the UI. */
 [data-theme="ios26"] ion-header.header-translucent ion-toolbar.info-banner {
 	--background: var(--ion-color-base);
+	--min-height: 28px;
+	--padding-top: 4px;
+	--padding-bottom: 4px;
+	width: auto;
+	margin: 4px 16px;
+	border-radius: 999px;
+	overflow: hidden;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
 }
 
 [data-theme="ios26"] ion-header.header-translucent ion-toolbar.info-banner::part(background) {
 	--opacity: 1;
 	opacity: 1;
+	border-radius: 999px;
+}
+
+[data-theme="ios26"] ion-header.header-translucent ion-toolbar.info-banner ion-title {
+	font-size: 13px;
+	font-weight: 600;
 }
