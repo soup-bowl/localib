@@ -1,7 +1,9 @@
+import { memo } from "react"
 import { IonCol, IonGrid, IonIcon, IonRow, IonText } from "@ionic/react"
 import { cloudOfflineOutline } from "ionicons/icons"
 import { IReleases } from "@/api"
 import { IReleaseTuple } from "@/types"
+import { getAlbumImage, hasLocalImage, joinArtists } from "@/utils"
 import "./AlbumGrid.css"
 
 interface AlbumProps {
@@ -9,8 +11,9 @@ interface AlbumProps {
 	onClickAlbum: (album: IReleases) => void
 }
 
-const AlbumGridEntry: React.FC<AlbumProps> = ({ album, onClickAlbum }) => (
-	<IonCol size="6" sizeMd="4" sizeLg="3" key={album.instance_id}>
+// Memoised so that state changes in the parent page don't re-render every album in large collections.
+const AlbumGridEntry: React.FC<AlbumProps> = memo(({ album, onClickAlbum }) => (
+	<IonCol size="6" sizeMd="4" sizeLg="3">
 		<div
 			className="album-art-container"
 			role="button"
@@ -23,16 +26,17 @@ const AlbumGridEntry: React.FC<AlbumProps> = ({ album, onClickAlbum }) => (
 				}
 			}}
 		>
-			<img src={album.image_base64 ?? album.basic_information.thumb} className="album-art" alt="" />
-			{!album.image_base64 && (
+			<img src={getAlbumImage(album)} className="album-art" alt="" loading="lazy" decoding="async" />
+			{!hasLocalImage(album) && (
 				<IonIcon className="nodl" aria-hidden="true" icon={cloudOfflineOutline} size="large" />
 			)}
 		</div>
 		<strong style={{ margin: 0 }}>{album.basic_information.title}</strong>
 		<br />
-		<IonText>{album.basic_information.artists.map((artist) => artist.name).join(", ")}</IonText>
+		<IonText>{joinArtists(album)}</IonText>
 	</IonCol>
-)
+))
+AlbumGridEntry.displayName = "AlbumGridEntry"
 
 interface CollectionProps {
 	data: IReleaseTuple
@@ -41,12 +45,12 @@ interface CollectionProps {
 
 const AlbumGrid: React.FC<CollectionProps> = ({ data, onClickAlbum }) => (
 	<>
-		{data.map((options) => (
-			<div key={options[0]} className="album-art-div">
-				<h2>{options[0]}</h2>
+		{data.map(([group, albums]) => (
+			<div key={group} className="album-art-div">
+				<h2>{group}</h2>
 				<IonGrid>
 					<IonRow>
-						{options[1].map((album) => (
+						{albums.map((album) => (
 							<AlbumGridEntry key={album.instance_id} album={album} onClickAlbum={onClickAlbum} />
 						))}
 					</IonRow>

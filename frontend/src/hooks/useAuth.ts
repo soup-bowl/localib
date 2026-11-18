@@ -1,15 +1,6 @@
-import { useState } from "react"
-
-// Helper function to get data from localStorage
-const getLocalStorageItem = (key: string): string | null => {
-	const item = localStorage.getItem(key)
-	return item ? JSON.parse(item) : null
-}
-
-// Helper function to set data to localStorage
-const setLocalStorageItem = (key: string, value: string): void => {
-	localStorage.setItem(key, JSON.stringify(value))
-}
+import { useCallback } from "react"
+import { removeStored, writeStored } from "@/utils/localStore"
+import useSettings from "./useSettings"
 
 interface AuthData {
 	username: string | null
@@ -18,31 +9,19 @@ interface AuthData {
 }
 
 const useAuth = (): [AuthData, (username: string, accessToken: string, secretToken: string) => void, () => void] => {
-	// Initialize state with values from localStorage
-	const [auth, setAuth] = useState<AuthData>({
-		username: getLocalStorageItem("username"),
-		accessToken: getLocalStorageItem("accessToken"),
-		secretToken: getLocalStorageItem("secretToken"),
-	})
+	const [username] = useSettings<string | null>("username", null)
+	const [accessToken] = useSettings<string | null>("accessToken", null)
+	const [secretToken] = useSettings<string | null>("secretToken", null)
 
-	// Function to update username and token in state and localStorage
-	const saveAuth = (username: string, accessToken: string, secretToken: string): void => {
-		setLocalStorageItem("username", username)
-		setLocalStorageItem("accessToken", accessToken)
-		setLocalStorageItem("secretToken", secretToken)
+	const saveAuth = useCallback((username: string, accessToken: string, secretToken: string): void => {
+		writeStored("username", username)
+		writeStored("accessToken", accessToken)
+		writeStored("secretToken", secretToken)
+	}, [])
 
-		setAuth({ username, accessToken, secretToken })
-	}
+	const clearAuth = useCallback((): void => removeStored("username", "accessToken", "secretToken"), [])
 
-	// Function to clear username and token from state and localStorage
-	const clearAuth = (): void => {
-		localStorage.removeItem("username")
-		localStorage.removeItem("accessToken")
-		localStorage.removeItem("secretToken")
-		setAuth({ username: null, accessToken: null, secretToken: null })
-	}
-
-	return [auth, saveAuth, clearAuth]
+	return [{ username, accessToken, secretToken }, saveAuth, clearAuth]
 }
 
 export default useAuth
