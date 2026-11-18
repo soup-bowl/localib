@@ -13,14 +13,12 @@ import {
 	IonToggle,
 	IonSelectOption,
 	IonSelect,
-	getConfig,
 	IonAvatar,
 } from "@ionic/react"
 import { useState } from "react"
-import { useAuth, useSettings } from "@/hooks"
+import { useAuth, useDeviceTheme, useSettings } from "@/hooks"
 import { InfoBanners, ThemeItemGroup } from "@/components"
 import { DeviceMode } from "@/types"
-import { deviceMode } from "@/theme/deviceTheme"
 import { getProfile, getStartToken, IProfile } from "@/api"
 import { useQuery } from "@tanstack/react-query"
 
@@ -28,14 +26,13 @@ const SettingsHomePage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> =
 	const [{ username, accessToken, secretToken }] = useAuth()
 	const [imageQuality, setImageQuality] = useSettings<boolean>("ImagesAreHQ", false)
 	const [deviceTheme, setDeviceTheme] = useSettings<DeviceMode>("DeviceTheme", "ios")
-	const [__, setOauthSecretLogin] = useSettings<string>("Callink", "")
+	const [, setOauthSecretLogin] = useSettings<string>("Callink", "")
 	const [restartAlert, setRestartAlert] = useState<boolean>(false)
 	const appVersion = import.meta.env.VITE_VER ?? "Unknown"
-	const ionConfig = getConfig()
-	const currentMode = ionConfig?.get("mode") ?? "ios"
+	const { isIos26, itemColor: lightMode } = useDeviceTheme()
 
-	const lightMode = currentMode === "ios" ? "light" : undefined
-
+	// Tokens are deliberately left out of the query key - they don't change what data is returned.
+	// eslint-disable-next-line @tanstack/query/exhaustive-deps
 	const { data } = useQuery<IProfile>({
 		queryKey: [`${username}profile`],
 		queryFn: () => getProfile(username ?? "", accessToken ?? "", secretToken ?? ""),
@@ -45,7 +42,7 @@ const SettingsHomePage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> =
 
 	return (
 		<IonPage>
-			<IonHeader translucent={deviceMode === "ios26"}>
+			<IonHeader translucent={isIos26}>
 				<IonToolbar>
 					<IonTitle>Settings</IonTitle>
 				</IonToolbar>

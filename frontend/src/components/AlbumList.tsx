@@ -1,3 +1,4 @@
+import { memo } from "react"
 import {
 	IonAvatar,
 	IonChip,
@@ -13,39 +14,48 @@ import {
 import { disc } from "ionicons/icons"
 import { IReleases } from "@/api"
 import { IReleaseTuple } from "@/types"
+import { getAlbumImage, joinArtists } from "@/utils"
 import "./AlbumList.css"
 
+// Memoised so that state changes in the parent page don't re-render every album in large collections.
 const AlbumListItem: React.FC<{
 	album: IReleases
 	onClickAlbum: (album: IReleases) => void
-}> = ({ album, onClickAlbum }) => (
-	<IonItem className="album-list-item" onClick={() => onClickAlbum(album)}>
-		<IonAvatar aria-hidden="true" slot="start">
-			<img alt="" src={album.image_base64 ?? album.basic_information.thumb} />
-		</IonAvatar>
-		<IonLabel>
-			<strong>{album.basic_information.title}</strong>
-			<br />
-			<IonText>{album.basic_information.artists.map((artist) => artist.name).join(", ")}</IonText>
-		</IonLabel>
-		<IonChip slot="end">
-			<IonIcon icon={disc} />
-			<IonLabel>{album.basic_information.formats[0].name}</IonLabel>
-		</IonChip>
-	</IonItem>
-)
+}> = memo(({ album, onClickAlbum }) => {
+	const format = album.basic_information.formats?.[0]?.name
+
+	return (
+		<IonItem className="album-list-item" onClick={() => onClickAlbum(album)}>
+			<IonAvatar aria-hidden="true" slot="start">
+				<img alt="" src={getAlbumImage(album)} loading="lazy" decoding="async" />
+			</IonAvatar>
+			<IonLabel>
+				<strong>{album.basic_information.title}</strong>
+				<br />
+				<IonText>{joinArtists(album)}</IonText>
+			</IonLabel>
+			{format && (
+				<IonChip slot="end">
+					<IonIcon icon={disc} />
+					<IonLabel>{format}</IonLabel>
+				</IonChip>
+			)}
+		</IonItem>
+	)
+})
+AlbumListItem.displayName = "AlbumListItem"
 
 export const AlbumListGroups: React.FC<{
 	data: IReleaseTuple
 	onClickAlbum: (album: IReleases) => void
 }> = ({ data, onClickAlbum }) => (
 	<>
-		{data.map((options) => (
-			<IonItemGroup key={options[0]}>
+		{data.map(([group, albums]) => (
+			<IonItemGroup key={group}>
 				<IonItemDivider>
-					<IonLabel>{options[0]}</IonLabel>
+					<IonLabel>{group}</IonLabel>
 				</IonItemDivider>
-				{options[1].map((album) => (
+				{albums.map((album) => (
 					<AlbumListItem key={album.instance_id} album={album} onClickAlbum={onClickAlbum} />
 				))}
 			</IonItemGroup>
@@ -65,7 +75,7 @@ export const AlbumList: React.FC<{
 			</IonListHeader>
 		)}
 		{data.map((album) => (
-			<AlbumListItem key={`${album.instance_id}`} album={album} onClickAlbum={onClickAlbum} />
+			<AlbumListItem key={album.instance_id} album={album} onClickAlbum={onClickAlbum} />
 		))}
 	</IonList>
 )

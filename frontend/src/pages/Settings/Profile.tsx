@@ -1,7 +1,6 @@
 import { IProfile, getProfile } from "@/api"
 import { FullpageInfo, FullpageLoading, InfoBanners, ThemeItemGroup } from "@/components"
-import { useAuth } from "@/hooks"
-import { deviceMode } from "@/theme/deviceTheme"
+import { useAuth, useDeviceTheme } from "@/hooks"
 import {
 	IonContent,
 	IonAvatar,
@@ -19,7 +18,6 @@ import {
 	IonLabel,
 	IonList,
 	IonAlert,
-	getConfig,
 	IonCardContent,
 	IonButton,
 	IonIcon,
@@ -27,7 +25,6 @@ import {
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { qrCodeOutline, qrCodeSharp } from "ionicons/icons"
 import "./Profile.css"
-import { useNavigate } from "react-router-dom"
 import { QRCodeDialog } from "@/modal"
 import { ReactNode, useState } from "react"
 
@@ -50,26 +47,34 @@ const ToCardOrNotToCard = ({ background = undefined, children }: { background?: 
 
 const SettingsProfilePage: React.FC = () => {
 	const queryClient = useQueryClient()
-	const navigate = useNavigate()
-	const [{ username, accessToken, secretToken }, _, clearAuth] = useAuth()
-	const ionConfig = getConfig()
+	const [{ username, accessToken, secretToken }, , clearAuth] = useAuth()
+	const { isIos26, itemColor: lightMode } = useDeviceTheme()
 	const [openScanner, setOpenScanner] = useState<boolean>(false)
-	const currentMode = ionConfig?.get("mode") ?? "ios"
 
-	const lightMode = currentMode === "ios" ? "light" : undefined
-
+	// Tokens are deliberately left out of the query key - they don't change what data is returned.
+	// eslint-disable-next-line @tanstack/query/exhaustive-deps
 	const { data, isLoading, isError } = useQuery<IProfile>({
 		queryKey: [`${username}profile`],
 		queryFn: () => getProfile(username ?? "", accessToken ?? "", secretToken ?? ""),
 		staleTime: Infinity,
+		enabled: Boolean(username && accessToken && secretToken),
 	})
 
+	// Ionic pages must always be wrapped in IonPage, otherwise page transitions can paint incorrectly.
 	if (!username || isError) {
-		return <FullpageInfo text="An error occurred when loading information." />
+		return (
+			<IonPage>
+				<FullpageInfo text="An error occurred when loading information." />
+			</IonPage>
+		)
 	}
 
 	if (isLoading) {
-		return <FullpageLoading />
+		return (
+			<IonPage>
+				<FullpageLoading />
+			</IonPage>
+		)
 	}
 
 	const yearJoined = new Date(data?.registered ?? 0).getFullYear()
@@ -77,13 +82,12 @@ const SettingsProfilePage: React.FC = () => {
 	const deleteData = () => {
 		queryClient.clear()
 		clearAuth()
-		navigate("/")
-		window.location.reload()
+		window.location.replace(import.meta.env.BASE_URL)
 	}
 
 	return (
 		<IonPage>
-			<IonHeader translucent={deviceMode === "ios26"}>
+			<IonHeader translucent={isIos26}>
 				<IonToolbar>
 					<IonButtons slot="start" collapse={true}>
 						<IonBackButton />

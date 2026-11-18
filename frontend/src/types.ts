@@ -6,10 +6,4 @@ export type IReleasesSort = {
 
 export type IReleaseTuple = [string, IReleases[]][]
 
-export type IStatDisplay = {
-	icon: string
-	value?: number
-	label: string
-}
-
 export type DeviceMode = "ios" | "ios26" | "md"

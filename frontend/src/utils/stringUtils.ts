@@ -22,32 +22,3 @@ export const formatBytes = (bytes: number, decimals: number = 2): string => {
 
 	return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i]
 }
-
-export const isNullOrBlank = (str: string | null | undefined): boolean => {
-	return !str || str.trim() === ""
-}
-
-export const formatCurrency = (amount: number, currency: string): string => {
-	const currencySymbols: { [key: string]: string } = {
-		USD: "$",
-		GBP: "£",
-		EUR: "€",
-		CAD: "C$",
-		AUD: "A$",
-		JPY: "¥",
-		CHF: "CHF",
-		MXN: "Mex$",
-		BRL: "R$",
-		NZD: "NZ$",
-		SEK: "kr",
-		ZAR: "R",
-	}
-
-	const symbol = currencySymbols[currency.toUpperCase()]
-
-	if (!symbol) {
-		return `?${amount.toFixed(2)}`
-	}
-
-	return `${symbol}${amount.toFixed(2)}`
-}

@@ -9,7 +9,6 @@ import {
 	IonList,
 	IonNote,
 	IonPopover,
-	getConfig,
 	IonBackButton,
 	IonButtons,
 	IonButton,
@@ -22,23 +21,23 @@ import { shieldCheckmarkOutline, warningOutline } from "ionicons/icons"
 import { useQueryClient } from "@tanstack/react-query"
 import { useState, useEffect } from "react"
 import { IReleaseSet } from "@/api"
-import { useAuth } from "@/hooks"
+import { collectionQueryKey, useAuth, useDeviceTheme, useSettings } from "@/hooks"
 import {
 	formatBytes,
+	hasLocalImage,
 	checkStoragePersistence,
 	getStoragePersistenceMessage,
 	type StoragePersistenceStatus,
 } from "@/utils"
 import { InfoBanners, ThemeItemGroup } from "@/components"
-import { deviceMode } from "@/theme/deviceTheme"
 
 const SettingsInformationPage: React.FC = () => {
 	const queryClient = useQueryClient()
 	const [{ username }] = useAuth()
 	const [storageInfo, setStorageInfo] = useState<{ usage: string; quota: string } | undefined>()
 	const [persistenceStatus, setPersistenceStatus] = useState<StoragePersistenceStatus | undefined>()
-	const ionConfig = getConfig()
-	const currentMode = ionConfig?.get("mode") ?? "ios"
+	const [imageQuality] = useSettings<boolean>("ImagesAreHQ", false)
+	const { isIos26, itemColor: lightMode } = useDeviceTheme()
 
 	useEffect(() => {
 		if ("storage" in navigator && "estimate" in navigator.storage) {
@@ -59,9 +58,9 @@ const SettingsInformationPage: React.FC = () => {
 			})
 	}, [])
 
-	const collection = queryClient.getQueryData<IReleaseSet>([`${username}collectionv2`])
-	const collectionMissing = collection?.collection.filter((obj) => obj.image_base64 === undefined).length ?? 0
-	const wantedMissing = collection?.wants.filter((obj) => obj.image_base64 === undefined).length ?? 0
+	const collection = queryClient.getQueryData<IReleaseSet>(collectionQueryKey(username, imageQuality))
+	const collectionMissing = collection?.collection.filter((obj) => !hasLocalImage(obj)).length ?? 0
+	const wantedMissing = collection?.wants.filter((obj) => !hasLocalImage(obj)).length ?? 0
 
 	const inStorageInfo = {
 		collectionCount: collection?.collection.length ?? 0,
@@ -72,11 +71,9 @@ const SettingsInformationPage: React.FC = () => {
 		totalMissing: collectionMissing + wantedMissing,
 	}
 
-	const lightMode = currentMode === "ios" ? "light" : undefined
-
 	return (
 		<IonPage>
-			<IonHeader translucent={deviceMode === "ios26"}>
+			<IonHeader translucent={isIos26}>
 				<IonToolbar>
 					<IonButtons slot="start" collapse={true}>
 						<IonBackButton />
