@@ -47,8 +47,6 @@ const AlbumDetails: React.FC<{ album: IReleases; onClose: () => void }> = ({ alb
 		queryKey: ["release", album.id],
 		queryFn: () => getReleaseInfo(accessToken ?? "", secretToken ?? "", album.id),
 		staleTime: ONE_MONTH,
-		// Don't keep every release ever viewed in the persisted cache forever.
-		gcTime: ONE_MONTH,
 		refetchOnWindowFocus: false,
 	})
 
