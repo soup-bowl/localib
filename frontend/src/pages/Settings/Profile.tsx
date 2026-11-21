@@ -101,7 +101,7 @@ const SettingsProfilePage: React.FC = () => {
 				</IonToolbar>
 				<InfoBanners />
 			</IonHeader>
-			<IonContent className="ion-padding">
+			<IonContent className="ion-padding" fullscreen={deviceMode === "ios26"}>
 				<ToCardOrNotToCard background={data?.banner_base64}>
 					<div className="profile-column">
 						<IonAvatar>
