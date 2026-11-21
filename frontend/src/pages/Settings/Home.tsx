@@ -48,7 +48,7 @@ const SettingsHomePage: React.FC<{ hasUpdate: boolean; onUpdate: () => void }> =
 				</IonToolbar>
 				<InfoBanners />
 			</IonHeader>
-			<IonContent className="ion-padding" fullscreen={deviceMode === "ios26"}>
+			<IonContent className="ion-padding" fullscreen={isIos26}>
 				<IonList inset={true}>
 					<ThemeItemGroup>
 						{username ? (
