@@ -1,9 +1,10 @@
 import { ReactNode } from "react"
 import { IonItemGroup } from "@ionic/react"
-import { getDeviceMode } from "@/theme/deviceTheme"
+import { deviceMode } from "@/theme/deviceTheme"
 
 const ThemeItemGroup: React.FC<{ children: ReactNode }> = ({ children }) => {
-	if (getDeviceMode() !== "ios26") {
+	// The theme is fixed until reload, so use the cached value rather than re-reading localStorage each render.
+	if (deviceMode !== "ios26") {
 		return <>{children}</>
 	}
 

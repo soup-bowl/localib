@@ -1,29 +1,13 @@
-import { useState } from "react"
-
-const getLocalStorageItem = <T>(key: string): T | null => {
-	const item = localStorage.getItem(key)
-	return item ? JSON.parse(item) : null
-}
-
-const setLocalStorageItem = <T>(key: string, value: T): void => {
-	localStorage.setItem(key, JSON.stringify(value))
-}
+import { useCallback, useMemo, useSyncExternalStore } from "react"
+import { parseStored, readRaw, removeStored, subscribeToStore, writeStored } from "@/utils/localStore"
 
 const useSettings = <T>(key: string, defaultValue: T): [T, (value: T) => void, () => void] => {
-	const [setting, setSetting] = useState<T>(() => {
-		const storedValue = getLocalStorageItem<T>(key)
-		return storedValue ?? defaultValue
-	})
+	// Snapshot is the raw string, which is stable between renders until the value actually changes.
+	const raw = useSyncExternalStore(subscribeToStore, () => readRaw(key))
+	const setting = useMemo(() => parseStored<T>(raw) ?? defaultValue, [raw, defaultValue])
 
-	const saveSetting = (value: T): void => {
-		setLocalStorageItem(key, value)
-		setSetting(value)
-	}
-
-	const clearSetting = (): void => {
-		localStorage.removeItem(key)
-		setSetting(defaultValue)
-	}
+	const saveSetting = useCallback((value: T) => writeStored(key, value), [key])
+	const clearSetting = useCallback(() => removeStored(key), [key])
 
 	return [setting, saveSetting, clearSetting]
 }

@@ -107,6 +107,10 @@ const NotLoggedIn: React.FC = () => (
 	</IonPage>
 )
 
+// Dev-only: periodically poll for service worker updates. Kept at module level so re-registration
+// replaces the existing timer instead of stacking another one.
+let swUpdateInterval: ReturnType<typeof setInterval> | undefined
+
 const App: React.FC = () => {
 	const [{ username, accessToken }] = useAuth()
 	// Insp: https://github.com/vite-pwa/vite-plugin-pwa/blob/main/examples/react-router/src/ReloadPrompt.tsx
@@ -115,22 +119,15 @@ const App: React.FC = () => {
 		needRefresh: [needRefresh],
 		updateServiceWorker,
 	} = useRegisterSW({
-		onRegisteredSW(swUrl, r) {
-			console.log(`Service Worker at: ${swUrl}`)
+		onRegisteredSW(_swUrl, registration) {
 			// @ts-expect-error TS isn't aware of the virtual value
-			if (reloadSW === "true") {
-				r &&
-					setInterval(() => {
-						console.log("Checking for sw update")
-						r.update()
-					}, 20000)
-			} else {
-				// eslint-disable-next-line prefer-template
-				console.log("SW Registered: " + r)
+			if (reloadSW === "true" && registration) {
+				clearInterval(swUpdateInterval)
+				swUpdateInterval = setInterval(() => registration.update(), 20000)
 			}
 		},
 		onRegisterError(error) {
-			console.log("SW registration error", error)
+			console.error("SW registration error", error)
 		},
 	})
 

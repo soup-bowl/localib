@@ -19,8 +19,11 @@ describe("iconUtils", () => {
 	it("returns filter icons by filter and platform", () => {
 		expect(getFilterIcon("label", "ios")).toBe(pricetagOutline)
 		expect(getFilterIcon("label", "ios26")).toBe(pricetagOutline)
+		expect(getFilterIcon("label", "md")).toBe(pricetagSharp)
+		expect(getFilterIcon("artist", "ios")).toBe(personOutline)
 		expect(getFilterIcon("artist", "md")).toBe(personSharp)
 		expect(getFilterIcon("release", "ios")).toBe(timeOutline)
+		expect(getFilterIcon("release", "md")).toBe(timeSharp)
 		expect(getFilterIcon("none", "md")).toBe(filterSharp)
 		expect(getFilterIcon("unknown", "ios")).toBe(filterOutline)
 		expect(getFilterIcon("unknown", "ios26")).toBe(filterOutline)

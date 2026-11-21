@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useMemo, useState } from "react"
 import {
 	IonButton,
 	IonButtons,
@@ -13,91 +13,45 @@ import {
 	IonSegmentButton,
 	IonToolbar,
 	RefresherEventDetail,
-	SegmentChangeEventDetail,
 	useIonActionSheet,
 } from "@ionic/react"
-import { OverlayEventDetail } from "@ionic/react/dist/types/components/react-component-lib/interfaces"
-import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { IReleaseSet, IReleases, getCollectionAndWants } from "@/api"
+import { useQueryClient } from "@tanstack/react-query"
 import { FullpageLoading, AlbumGrid, FullpageInfo, AlbumListGroups, InfoBanners } from "@/components"
 import { ViewAlbumDetails } from "@/modal"
-import { useAuth, useSettings } from "@/hooks"
-import { getFilterIcon, getLayoutIcon, masterSort } from "@/utils"
-import { IReleaseTuple } from "@/types"
-import { deviceMode } from "@/theme/deviceTheme"
+import { useAlbumModal, useAuth, useCollection, useDeviceTheme, useSettings } from "@/hooks"
+import { CollectionSort, getFilterIcon, getLayoutIcon, masterSort } from "@/utils"
 
 const filterActionButtons = [
-	{
-		text: "None",
-		data: {
-			action: "none",
-		},
-	},
-	{
-		text: "Artists",
-		data: {
-			action: "artist",
-		},
-	},
-	{
-		text: "Year Collected",
-		data: {
-			action: "release",
-		},
-	},
-	{
-		text: "Record Label",
-		data: {
-			action: "label",
-		},
-	},
-	{
-		text: "Cancel",
-		role: "cancel",
-		data: {
-			action: "cancel",
-		},
-	},
+	{ text: "None", data: { action: "none" } },
+	{ text: "Artists", data: { action: "artist" } },
+	{ text: "Year Collected", data: { action: "release" } },
+	{ text: "Record Label", data: { action: "label" } },
+	{ text: "Cancel", role: "cancel", data: { action: "cancel" } },
 ]
 
 const CollectionPage: React.FC = () => {
 	const queryClient = useQueryClient()
 	const [present] = useIonActionSheet()
-	const [imageQuality] = useSettings<boolean>("ImagesAreHQ", false)
-	const [filter, setFilter] = useSettings<"release" | "label" | "artist" | "none">("collectionFilter", "none")
+	const { isIos26 } = useDeviceTheme()
+	const [{ username }] = useAuth()
+	const [filter, setFilter] = useSettings<CollectionSort>("collectionFilter", "none")
 	const [layout, setLayout] = useSettings<"grid" | "list">("collectionLayout", "grid")
-	const [modalInfo, setModalInfo] = useState<IReleases | undefined>(undefined)
 	const [loading, setLoading] = useState<{ page: number; pages: number }>({ page: 0, pages: 0 })
 	const [viewState, setViewState] = useState<"collection" | "want">("collection")
-	const [dataSorted, setDataSorted] = useState<{
-		collected: IReleaseTuple
-		wanted: IReleaseTuple
-	}>()
+	const modal = useAlbumModal()
 
-	const [{ username, accessToken, secretToken }] = useAuth()
+	const { isLoading, isError, data } = useCollection((page, pages) => setLoading({ page, pages }))
+
+	// Only sort the list currently on screen, and only when the data, filter or tab changes.
+	const sorted = useMemo(() => {
+		const records = viewState === "collection" ? data?.collection : data?.wants
+		return masterSort(filter, records ?? [])
+	}, [filter, data, viewState])
 
 	const handleRefresh = async (event: CustomEvent<RefresherEventDetail>) => {
-		await queryClient.invalidateQueries({
-			queryKey: [`${username}collectionv2`],
-		})
+		await queryClient.invalidateQueries({ queryKey: [`${username}collectionv2`] })
 		event.detail.complete()
 	}
-
-	const { isLoading, isError, data } = useQuery<IReleaseSet>({
-		queryKey: [`${username}collectionv2`],
-		queryFn: () =>
-			getCollectionAndWants(username!, accessToken ?? "", secretToken ?? "", imageQuality, (page, pages) =>
-				setLoading({ page: page, pages: pages })
-			),
-		staleTime: Infinity,
-	})
-
-	useEffect(() => {
-		setDataSorted({
-			collected: masterSort(filter, data?.collection ?? []),
-			wanted: masterSort(filter, data?.wants ?? []),
-		})
-	}, [filter, data])
 
 	if (isLoading) {
 		return (
@@ -117,18 +71,10 @@ const CollectionPage: React.FC = () => {
 
 	return (
 		<IonPage>
-			<IonHeader translucent={deviceMode === "ios26"}>
+			<IonHeader translucent={isIos26}>
 				<IonToolbar>
 					<IonButtons slot="primary">
-						<IonButton
-							onClick={() => {
-								if (layout === "grid") {
-									setLayout("list")
-								} else {
-									setLayout("grid")
-								}
-							}}
-						>
+						<IonButton onClick={() => setLayout(layout === "grid" ? "list" : "grid")}>
 							<IonIcon
 								slot="icon-only"
 								ios={getLayoutIcon(layout, "ios")}
@@ -140,7 +86,7 @@ const CollectionPage: React.FC = () => {
 								present({
 									header: "Sorting",
 									buttons: filterActionButtons,
-									onDidDismiss: ({ detail }: CustomEvent<OverlayEventDetail>) => {
+									onDidDismiss: ({ detail }) => {
 										if (detail.data && detail.data.action !== "cancel") {
 											setFilter(detail.data.action)
 										}
@@ -157,14 +103,7 @@ const CollectionPage: React.FC = () => {
 					</IonButtons>
 					<IonSegment
 						value={viewState}
-						onIonChange={(e: CustomEvent<SegmentChangeEventDetail>) => {
-							const selectedValue = e.detail.value
-							if (selectedValue === "collection" || selectedValue === "want") {
-								setViewState(selectedValue)
-							} else {
-								setViewState("collection")
-							}
-						}}
+						onIonChange={(e) => setViewState(e.detail.value === "want" ? "want" : "collection")}
 					>
 						<IonSegmentButton value="collection">
 							<IonLabel>Collection</IonLabel>
@@ -180,36 +119,19 @@ const CollectionPage: React.FC = () => {
 				<IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
 					<IonRefresherContent />
 				</IonRefresher>
-				{viewState === "collection" && data && dataSorted && (
-					<>
-						{layout === "grid" ? (
-							<AlbumGrid data={dataSorted?.collected} onClickAlbum={(album) => setModalInfo(album)} />
-						) : (
-							<AlbumListGroups
-								data={dataSorted?.collected}
-								onClickAlbum={(album) => setModalInfo(album)}
-							/>
-						)}
-					</>
-				)}
+				{data &&
+					(layout === "grid" ? (
+						<AlbumGrid data={sorted} onClickAlbum={modal.show} />
+					) : (
+						<AlbumListGroups data={sorted} onClickAlbum={modal.show} />
+					))}
 
-				{viewState === "want" && data && dataSorted && (
-					<>
-						{layout === "grid" ? (
-							<AlbumGrid data={dataSorted?.wanted} onClickAlbum={(album) => setModalInfo(album)} />
-						) : (
-							<AlbumListGroups data={dataSorted?.wanted} onClickAlbum={(album) => setModalInfo(album)} />
-						)}
-					</>
-				)}
-
-				{modalInfo && (
-					<ViewAlbumDetails
-						album={modalInfo}
-						open={typeof modalInfo !== "undefined"}
-						onClose={() => setModalInfo(undefined)}
-					/>
-				)}
+				<ViewAlbumDetails
+					album={modal.album}
+					open={modal.open}
+					onClose={modal.close}
+					onDidDismiss={modal.dismissed}
+				/>
 			</IonContent>
 		</IonPage>
 	)

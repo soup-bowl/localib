@@ -14,51 +14,54 @@ import {
 	IonPopover,
 	IonSegment,
 	IonSegmentButton,
-	SegmentChangeEventDetail,
 	IonNote,
 } from "@ionic/react"
 import { cloudOfflineOutline, openOutline } from "ionicons/icons"
 import { useQuery } from "@tanstack/react-query"
 import { getReleaseInfo, IRelease, IReleases } from "@/api"
-import { useAuth } from "@/hooks"
+import { useAuth, useDeviceTheme } from "@/hooks"
 import { ThemeItemGroup } from "@/components"
-import { deviceMode } from "@/theme/deviceTheme"
+import { getAlbumImage, hasLocalImage, joinArtists } from "@/utils"
 
-enum TabSet {
-	Info,
-	Tracks,
-	Credits,
-	Notes,
-}
+type TabSet = "info" | "tracks" | "credits" | "notes"
 
-interface DisplayProps {
-	album: IReleases
-	open: boolean
-	onClose: () => void
-}
+const ONE_MONTH = 1000 * 60 * 60 * 24 * 30
 
-const ViewAlbumDetails: React.FC<DisplayProps> = ({ album, open, onClose }) => {
+const InfoItem: React.FC<{ heading: string; children: React.ReactNode }> = ({ heading, children }) => (
+	<IonItem>
+		<IonLabel>
+			<h2>{heading}</h2>
+			<p>{children}</p>
+		</IonLabel>
+	</IonItem>
+)
+
+const AlbumDetails: React.FC<{ album: IReleases; onClose: () => void }> = ({ album, onClose }) => {
 	const [{ accessToken, secretToken }] = useAuth()
-	const [tabState, setTabState] = useState<number>(0)
+	const { isIos26 } = useDeviceTheme()
+	const [tabState, setTabState] = useState<TabSet>("info")
 
+	// Tokens are deliberately left out of the query key - they don't change what data is returned.
+	// eslint-disable-next-line @tanstack/query/exhaustive-deps
 	const { data, isSuccess } = useQuery<IRelease>({
 		queryKey: ["release", album.id],
 		queryFn: () => getReleaseInfo(accessToken ?? "", secretToken ?? "", album.id),
-		staleTime: 1000 * 60 * 60 * 24 * 30, // 1 month
-		refetchOnMount: "always",
+		staleTime: ONE_MONTH,
 		refetchOnWindowFocus: false,
 	})
 
+	const info = album.basic_information
+
 	return (
-		<IonModal isOpen={open} onDidDismiss={() => onClose()}>
-			<IonHeader translucent={deviceMode === "ios26"}>
+		<>
+			<IonHeader translucent={isIos26}>
 				<IonToolbar>
 					<IonButtons slot="start">
-						<IonButton onClick={() => onClose()}>Close</IonButton>
+						<IonButton onClick={onClose}>Close</IonButton>
 					</IonButtons>
 
 					<IonButtons slot="end">
-						{!album.image_base64 && (
+						{!hasLocalImage(album) && (
 							<>
 								<IonButton id="not-downloaded-notice" color="dark">
 									<IonIcon slot="icon-only" icon={cloudOfflineOutline} />
@@ -76,122 +79,67 @@ const ViewAlbumDetails: React.FC<DisplayProps> = ({ album, open, onClose }) => {
 						</IonButton>
 					</IonButtons>
 
-					<IonTitle>{album.basic_information.title}</IonTitle>
+					<IonTitle>{info.title}</IonTitle>
 				</IonToolbar>
 			</IonHeader>
 			<IonContent className="ion-padding">
 				<div style={{ display: "flex", justifyContent: "center", marginBottom: 15 }}>
-					<img src={album.image_base64 ?? album.basic_information.thumb} alt="" />
+					<img src={getAlbumImage(album)} alt="" />
 				</div>
 				<IonSegment
 					value={tabState}
-					onIonChange={(e: CustomEvent<SegmentChangeEventDetail>) => {
-						// @ts-expect-error aaa
-						setTabState(parseInt(e.detail.value ?? "0"))
-					}}
+					onIonChange={(e) => setTabState((e.detail.value as TabSet | undefined) ?? "info")}
 					disabled={!isSuccess}
 				>
-					<IonSegmentButton value={TabSet.Info}>
+					<IonSegmentButton value="info">
 						<IonLabel>Info</IonLabel>
 					</IonSegmentButton>
-					<IonSegmentButton value={TabSet.Tracks}>
+					<IonSegmentButton value="tracks">
 						<IonLabel>Tracks</IonLabel>
 					</IonSegmentButton>
-					<IonSegmentButton value={TabSet.Credits}>
+					<IonSegmentButton value="credits">
 						<IonLabel>Credits</IonLabel>
 					</IonSegmentButton>
-					<IonSegmentButton value={TabSet.Notes}>
+					<IonSegmentButton value="notes">
 						<IonLabel>Notes</IonLabel>
 					</IonSegmentButton>
 				</IonSegment>
-				{tabState === TabSet.Info && (
+				{tabState === "info" && (
 					<>
 						<IonList inset>
 							<ThemeItemGroup>
-								<IonItem>
-									<IonLabel>
-										<h2>Title</h2>
-										<p>{album.basic_information.title}</p>
-									</IonLabel>
-								</IonItem>
-								<IonItem>
-									<IonLabel>
-										<h2>Artist</h2>
-										<p>{album.basic_information.artists.map((artist) => artist.name).join(", ")}</p>
-									</IonLabel>
-								</IonItem>
-								<IonItem>
-									<IonLabel>
-										<h2>Genre</h2>
-										<p>{album.basic_information.genres.map((genre) => genre).join(", ")}</p>
-									</IonLabel>
-								</IonItem>
-								<IonItem>
-									<IonLabel>
-										<h2>Label</h2>
-										<p>{album.basic_information.labels.map((label) => label.name).join(", ")}</p>
-									</IonLabel>
-								</IonItem>
-								<IonItem>
-									<IonLabel>
-										<h2>Styles</h2>
-										<p>{album.basic_information.styles.map((style) => style).join(", ")}</p>
-									</IonLabel>
-								</IonItem>
-								<IonItem>
-									<IonLabel>
-										<h2>Owned Formats</h2>
-										<p>
-											{album.basic_information.formats
-												.map((format) => `${format.name} (${format.qty})`)
-												.join(", ")}
-										</p>
-									</IonLabel>
-								</IonItem>
-								<IonItem>
-									<IonLabel>
-										<h2>Barcode</h2>
-										<p>{album.barcode ?? ""}&nbsp;</p>
-									</IonLabel>
-								</IonItem>
+								<InfoItem heading="Title">{info.title}</InfoItem>
+								<InfoItem heading="Artist">{joinArtists(album)}</InfoItem>
+								<InfoItem heading="Genre">{info.genres.join(", ")}</InfoItem>
+								<InfoItem heading="Label">{info.labels.map((label) => label.name).join(", ")}</InfoItem>
+								<InfoItem heading="Styles">{info.styles.join(", ")}</InfoItem>
+								<InfoItem heading="Owned Formats">
+									{info.formats.map((format) => `${format.name} (${format.qty})`).join(", ")}
+								</InfoItem>
+								<InfoItem heading="Barcode">{album.barcode ?? ""}&nbsp;</InfoItem>
 							</ThemeItemGroup>
 						</IonList>
 						{isSuccess && (
 							<IonList inset>
 								<ThemeItemGroup>
-									<IonItem>
-										<IonLabel>
-											<h2>Released</h2>
-											<p>
-												{data.released_formatted} {data.country}
-											</p>
-										</IonLabel>
-									</IonItem>
-									<IonItem>
-										<IonLabel>
-											<h2>Community</h2>
-											<p>
-												{data.community.have.toLocaleString()} have,{" "}
-												{data.community.want.toLocaleString()} want
-											</p>
-										</IonLabel>
-									</IonItem>
-									<IonItem>
-										<IonLabel>
-											<h2>Rating</h2>
-											<p>
-												{data.community.rating.average}/5 of{" "}
-												{data.community.rating.count.toLocaleString()} ratings
-											</p>
-										</IonLabel>
-									</IonItem>
+									<InfoItem heading="Released">
+										{data.released_formatted} {data.country}
+									</InfoItem>
+									<InfoItem heading="Community">
+										{data.community.have.toLocaleString()} have,{" "}
+										{data.community.want.toLocaleString()} want
+									</InfoItem>
+									<InfoItem heading="Rating">
+										{data.community.rating.average}/5 of{" "}
+										{data.community.rating.count.toLocaleString()} ratings
+									</InfoItem>
 								</ThemeItemGroup>
 							</IonList>
 						)}
 					</>
 				)}
 
-				{isSuccess && tabState === TabSet.Tracks && (
+				{isSuccess && tabState === "tracks" && (
 					<IonList inset>
 						<ThemeItemGroup>
 							{data.tracklist.map((track) => (
@@ -204,21 +152,16 @@ const ViewAlbumDetails: React.FC<DisplayProps> = ({ album, open, onClose }) => {
 						</ThemeItemGroup>
 					</IonList>
 				)}
-				{isSuccess && tabState === TabSet.Credits && (
+				{isSuccess && tabState === "credits" && (
 					<IonList inset>
 						<ThemeItemGroup>
 							{data.extraartists ? (
-								<>
-									{/* Only option to use i here - all items in the object can be duplicated. */}
-									{data.extraartists.map((artist, i) => (
-										<IonItem key={i}>
-											<IonLabel>
-												<h2>{artist.name}</h2>
-												<p>{artist.role}</p>
-											</IonLabel>
-										</IonItem>
-									))}
-								</>
+								// Only option to use i here - all items in the object can be duplicated.
+								data.extraartists.map((artist, i) => (
+									<InfoItem key={i} heading={artist.name}>
+										{artist.role}
+									</InfoItem>
+								))
 							) : (
 								<IonItem>
 									<IonLabel color="medium">No information found</IonLabel>
@@ -227,13 +170,13 @@ const ViewAlbumDetails: React.FC<DisplayProps> = ({ album, open, onClose }) => {
 						</ThemeItemGroup>
 					</IonList>
 				)}
-				{isSuccess && tabState === TabSet.Notes && (
+				{isSuccess && tabState === "notes" && (
 					<>
 						<IonList inset>
 							<ThemeItemGroup>
 								<IonItem>
 									<IonLabel>
-										{data.notes.split("\n").map((line, i) => (
+										{(data.notes ?? "").split("\n").map((line, i) => (
 											<div key={i}>
 												{line}
 												<br />
@@ -246,22 +189,39 @@ const ViewAlbumDetails: React.FC<DisplayProps> = ({ album, open, onClose }) => {
 						<IonList inset>
 							<ThemeItemGroup>
 								{data.identifiers.map((id) => (
-									<IonItem key={`${id.type}${id.value}${id.description}`}>
-										<IonLabel>
-											<h2>
-												{id.type} {id.description}
-											</h2>
-											<p>{id.value}</p>
-										</IonLabel>
-									</IonItem>
+									<InfoItem
+										key={`${id.type}${id.value}${id.description}`}
+										heading={`${id.type} ${id.description ?? ""}`}
+									>
+										{id.value}
+									</InfoItem>
 								))}
 							</ThemeItemGroup>
 						</IonList>
 					</>
 				)}
 			</IonContent>
-		</IonModal>
+		</>
 	)
 }
+
+interface DisplayProps {
+	album: IReleases | undefined
+	open: boolean
+	/** Requests the modal to close (it will animate out). */
+	onClose: () => void
+	/** Called once the modal has fully closed, including when swiped away. */
+	onDidDismiss: () => void
+}
+
+/**
+ * Stays mounted so Ionic can animate it open and closed. The album content is keyed by release, so tab state
+ * resets whenever a different album is shown.
+ */
+const ViewAlbumDetails: React.FC<DisplayProps> = ({ album, open, onClose, onDidDismiss }) => (
+	<IonModal isOpen={open} onDidDismiss={onDidDismiss}>
+		{album && <AlbumDetails key={album.instance_id} album={album} onClose={onClose} />}
+	</IonModal>
+)
 
 export default ViewAlbumDetails
