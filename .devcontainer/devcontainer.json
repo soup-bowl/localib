@@ -31,7 +31,20 @@
       ]
     }
   },
-  "runArgs": ["--env-file", ".devcontainer/devcontainer.env"],
+  // Add these as Codespaces secrets on the repository (Settings > Secrets and variables > Codespaces)
+  // and they are injected automatically. Everything else is worked out in localib-env.sh.
+  "secrets": {
+    "LOCALIB_DISCOGS_CONSUMER_KEY": {
+      "description": "Consumer Key from your Discogs developer application.",
+      "documentationUrl": "https://www.discogs.com/settings/developers"
+    },
+    "LOCALIB_DISCOGS_CONSUMER_SECRET": {
+      "description": "Consumer Secret from your Discogs developer application.",
+      "documentationUrl": "https://www.discogs.com/settings/developers"
+    }
+  },
+  // Pick up the variables exported by shell profiles (localib-env.sh), including for debug launches.
+  "userEnvProbe": "loginInteractiveShell",
   "portsAttributes": {
     "8080": {
       "label": "pma"
